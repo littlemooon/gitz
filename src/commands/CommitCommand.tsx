@@ -4,7 +4,7 @@ import { FormData, FormField } from '../components/Form'
 import GitBoundary from '../components/GitBoundary'
 import Log from '../components/Log'
 import LogText from '../components/LogText'
-import { isBranchFeature } from '../lib/branch'
+import { isFeatureBranch } from '../lib/branch'
 import env from '../lib/env'
 import { useGitBranches } from '../providers/GitBranchProvider'
 
@@ -15,7 +15,7 @@ export interface CommitCommandForm extends FormData {
 
 export default function CommitCommand() {
   const gitBranches = useGitBranches()
-  const isFeature = isBranchFeature(gitBranches.current)
+  const isFeature = isFeatureBranch(gitBranches.current)
 
   return (
     <GitBoundary name="git branch" state={gitBranches}>

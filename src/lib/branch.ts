@@ -22,7 +22,7 @@ export interface BranchFeature extends Branch {
   issueId: string
 }
 
-export function isBranchFeature(branch?: Branch): branch is BranchFeature {
+export function isFeatureBranch(branch?: Branch): branch is BranchFeature {
   return branch ? 'issueId' in branch : false
 }
 
@@ -30,7 +30,7 @@ export function createFeatureBranch(input: BranchInput): BranchFeature {
   if (!input.issueId) {
     throw new Error('Issue ID required')
   }
-  if (env.issueRegex.exec(input.issueId)) {
+  if (!env.issueRegex.exec(input.issueId)) {
     throw new Error(`Issue ID must be of form: ${env.issueRegex}`)
   }
   if (!input.description) {

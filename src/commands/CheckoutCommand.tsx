@@ -5,12 +5,12 @@ import GitBoundary from '../components/GitBoundary'
 import Log from '../components/Log'
 import LogText from '../components/LogText'
 import Title from '../components/Title'
-import { isBranchFeature } from '../lib/branch'
+import { isFeatureBranch } from '../lib/branch'
 import { useGitBranches } from '../providers/GitBranchProvider'
 
 export default function CheckoutCommand() {
   const gitBranches = useGitBranches()
-  const featureBranches = gitBranches.branches.filter(isBranchFeature)
+  const featureBranches = gitBranches.branches.filter(isFeatureBranch)
 
   return (
     <GitBoundary name="git branch" state={gitBranches}>
