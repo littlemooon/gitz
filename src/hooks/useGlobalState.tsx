@@ -6,7 +6,7 @@ import React, {
   useContext,
   useState,
 } from 'react'
-import { Command, commandInputMap } from '../components/Commands'
+import { Command, commandInputMap } from '../Commands'
 import Json from '../components/Json'
 import Table from '../components/Table'
 

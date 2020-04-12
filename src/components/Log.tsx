@@ -73,7 +73,8 @@ const Log = {
             <LogText.Default yellow>{name}</LogText.Default>
             {children}
           </Column>
-        </LogBase></RenderTimes>
+        </LogBase>
+      </RenderTimes>
     ) : null
   },
   Info(props: Omit<LogProps, 'type'>) {

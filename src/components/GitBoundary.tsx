@@ -3,7 +3,7 @@ import React, { Fragment, ReactNode } from 'react'
 import { GitState, GitStatus } from '../hooks/useGit'
 import Column from './Column'
 import Json from './Json'
-import Log, { LogType } from './Log'
+import { LogType } from './Log'
 import LogText from './LogText'
 import Row from './Row'
 import Table from './Table'
@@ -17,27 +17,18 @@ export interface IGitBoundaryProps<R> {
 export function GitBoundaryStatus<R>({
   children,
   state,
-}: Omit<IGitBoundaryProps<R>, 'name'>) {
+}: IGitBoundaryProps<R>) {
   switch (state.status) {
     case GitStatus.loading:
       return (
-        <Log.Info>
+        <Row gap={1}>
           <Spinner />
-        </Log.Info>
+          <LogText.Default>{name}</LogText.Default>
+        </Row>
       )
 
     case GitStatus.success:
       return <>{children}</>
-
-    case GitStatus.error:
-      return (
-        <Log.Error exit>
-          <Row gap={1}>
-            <LogText.Error>{state.error.name}</LogText.Error>
-            <LogText.Default>{state.error.message}</LogText.Default>
-          </Row>
-        </Log.Error>
-      )
 
     default:
       return <Fragment />
@@ -67,7 +58,9 @@ export default function GitBoundary<R>({
         }}
       />
 
-      <GitBoundaryStatus state={state}>{children}</GitBoundaryStatus>
+      <GitBoundaryStatus state={state} name={name}>
+        {children}
+      </GitBoundaryStatus>
     </Column>
   )
 }

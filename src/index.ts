@@ -1,5 +1,5 @@
 import { render } from 'ink'
 import { createElement } from 'react'
-import App from './components/App'
+import App from './App'
 
 render(createElement(App))

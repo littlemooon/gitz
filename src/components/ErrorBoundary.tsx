@@ -30,7 +30,9 @@ export default class ErrorBoundary extends Component<
         <Log.Error exit>
           <Row gap={1}>
             <LogText.Error>{error.name}</LogText.Error>
-            <LogText.Default>{error.message}</LogText.Default>
+            <LogText.Default>
+              {error.message?.replace('error: ', '')}
+            </LogText.Default>
           </Row>
         </Log.Error>
 

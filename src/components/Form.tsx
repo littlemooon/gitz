@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import Column from './Column'
 import Input from './Input'
-import LogText from './LogText'
+import Title from './Title'
 
 export interface FormField {
   label: string
@@ -12,13 +12,13 @@ export interface FormField {
 export type FormData = Record<string, FormField>
 
 export interface FormProps<D> {
-  label: string
+  title: string
   initialData: D
   onSubmit: (data: D) => void
 }
 
 export default function Form<D extends FormData>({
-  label,
+  title,
   initialData,
   onSubmit,
 }: FormProps<D>) {
@@ -61,7 +61,7 @@ export default function Form<D extends FormData>({
 
   return (
     <Column>
-      <LogText.Default>{label}</LogText.Default>
+      <Title>{title}</Title>
 
       <Column paddingLeft={1}>
         {Object.entries(readonlyForm).map(([id, item]) => (

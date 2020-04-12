@@ -1,10 +1,11 @@
 import meow, { BooleanFlag, Result } from 'meow'
 import React, { ReactNode, useCallback, useState } from 'react'
+import { Command, commandInputMap } from '../Commands'
+import ErrorBoundary from '../components/ErrorBoundary'
+import Json from '../components/Json'
+import Table from '../components/Table'
 import { CliContext, CliDispatchContext } from '../hooks/useCli'
-import { Command, commandInputMap } from './Commands'
-import ErrorBoundary from './ErrorBoundary'
-import Json from './Json'
-import Table from './Table'
+import env from '../lib/env'
 
 export type CliInputFlags = {
   debug: BooleanFlag
@@ -78,7 +79,7 @@ const cliInput = meow<CliInputFlags>(cliHelpText, {
   flags: { debug: { type: 'boolean', default: false } },
 })
 
-export default function Cli({ children }: { children: ReactNode }) {
+export default function CliProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<ICli>(parseCliInput(cliInput))
 
   const setCli = useCallback(({ command, flags, args }) => {
@@ -94,6 +95,13 @@ export default function Cli({ children }: { children: ReactNode }) {
     <CliContext.Provider value={state}>
       <ErrorBoundary>
         <CliDispatchContext.Provider value={setCli}>
+          <Table.Debug
+            name="env"
+            data={Object.entries(env).reduce(
+              (acc, [key, value]) => ({ ...acc, [key]: value.toString() }),
+              {}
+            )}
+          />
           <Table.Debug
             name="cli input"
             data={{

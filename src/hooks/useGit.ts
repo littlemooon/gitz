@@ -97,12 +97,12 @@ export default function useGit<A, R>(
 
   const run = useCallback((args) => {
     runGit(
-      opts?.log || flags.debug
-        ? git.outputHandler((_, stdout, stderr) => {
-            stdout.pipe(stdoutStream.stdout)
-            stderr.pipe(stdoutStream.stdout)
-          })
-        : git,
+      git.outputHandler((_, stdout, stderr) => {
+        if (opts?.log || flags.debug) {
+          stdout.pipe(stdoutStream.stdout)
+          stderr.pipe(stdoutStream.stdout)
+        }
+      }),
       args
     )
       .then((result) => {

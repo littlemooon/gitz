@@ -1,13 +1,15 @@
 import React from 'react'
-import useGit from '../../hooks/useGit'
-import GitBoundary from '../GitBoundary'
-import Table from '../Table'
+import GitBoundary from '../components/GitBoundary'
+import Table from '../components/Table'
+import Title from '../components/Title'
+import useGit from '../hooks/useGit'
 
-export default function Status() {
+export default function StatusCommand() {
   const { state } = useGit((git) => git.status(), { runWith: true })
 
   return (
     <GitBoundary name="git status" state={state}>
+      <Title>Status</Title>
       <Table.Success exit data={{ tracking: state.result?.tracking }} />
     </GitBoundary>
   )

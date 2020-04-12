@@ -1,3 +1,4 @@
+import env from './env'
 import { capitalize } from './string'
 
 export type BranchName = string
@@ -21,16 +22,19 @@ export interface BranchFeature extends Branch {
   issueId: string
 }
 
-export function isBranchFeature(branch: Branch): branch is BranchFeature {
-  return 'issueId' in branch
+export function isBranchFeature(branch?: Branch): branch is BranchFeature {
+  return branch ? 'issueId' in branch : false
 }
 
-export function createBranchFeature(input: BranchInput): BranchFeature {
+export function createFeatureBranch(input: BranchInput): BranchFeature {
   if (!input.issueId) {
-    throw new Error('Feature branch must have a valid issueId')
+    throw new Error('Issue ID required')
+  }
+  if (env.issueRegex.exec(input.issueId)) {
+    throw new Error(`Issue ID must be of form: ${env.issueRegex}`)
   }
   if (!input.description) {
-    throw new Error('Feature branch must have a valid description')
+    throw new Error('Description required')
   }
 
   const issueId = input.issueId.replace(/\s+/g, '-').toUpperCase()
@@ -43,21 +47,20 @@ export function createBranchFeature(input: BranchInput): BranchFeature {
   }
 }
 
-export function parseBranch(branch: Branch): BranchFeature | Branch {
-  const parsed = /^feature-([a-zA-Z]+-\d+)-(.*)/.exec(branch.name ?? '')
-
-  if (parsed) {
-    const name = parsed[0]
-    const issueId = parsed[1].toUpperCase()
-    const description = capitalize(parsed[2].replace(/_/g, ' '))
-
-    return {
-      ...branch,
-      issueId,
-      description,
-      name,
+export function parseBranch(
+  branch?: Branch
+): BranchFeature | Branch | undefined {
+  if (branch) {
+    const featureBranch = env.featureBranchRegex.exec(branch.name ?? '')
+    if (featureBranch) {
+      return {
+        ...branch,
+        issueId: featureBranch[1].toUpperCase(),
+        description: capitalize(featureBranch[2].replace(/_/g, ' ')),
+        name: featureBranch[0],
+      }
     }
-  } else {
+
     return branch
   }
 }
