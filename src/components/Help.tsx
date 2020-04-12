@@ -1,9 +1,12 @@
-import React, { Fragment, useEffect } from 'react'
-import { ICli } from '../hooks/useCli'
+import { useEffect } from 'react'
+import useCli from '../hooks/useCli'
 
-export default function Help({ showHelp }: ICli) {
+export default function Help() {
+  const { showHelp } = useCli()
+
   useEffect(() => {
     showHelp(0)
   }, [])
-  return <Fragment />
+
+  return null
 }

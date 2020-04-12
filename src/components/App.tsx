@@ -1,11 +1,14 @@
 import React from 'react'
-import { CliInput, CliProvider } from '../hooks/useCli'
+import Cli from './Cli'
 import Commands from './Commands'
+import ErrorBoundary from './ErrorBoundary'
 
-export default function App({ cliInput }: { cliInput: CliInput }) {
+export default function App() {
   return (
-    <CliProvider cliInput={cliInput}>
-      <Commands />
-    </CliProvider>
+    <ErrorBoundary>
+      <Cli>
+        <Commands />
+      </Cli>
+    </ErrorBoundary>
   )
 }

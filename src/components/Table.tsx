@@ -1,7 +1,9 @@
-import { Box } from 'ink'
 import React, { ReactNode, useMemo } from 'react'
 import useCli from '../hooks/useCli'
-import { LogText, LogType } from './Log'
+import Column from './Column'
+import Log, { LogType } from './Log'
+import LogText from './LogText'
+import Row from './Row'
 
 export interface TableRowNode {
   node: ReactNode
@@ -23,46 +25,65 @@ function parseRow(tableData: TableRow): TableRowNode {
   }
 }
 
-export default function Table({ data, type }: TableProps) {
+function TableBase({ data, type }: TableProps) {
   const keys = Object.keys(data)
-  const maxKey = useMemo(() => Math.max(...keys.map((x) => x.length)) + 1, [
-    keys,
-  ])
+  const maxKey = useMemo(() => Math.max(...keys.map((x) => x.length)), [keys])
 
   return (
-    <Box flexDirection="column">
+    <Column>
       {Object.entries(data).map(([key, value]) => {
         const row = parseRow(value)
         return (
-          <Box flexDirection="row" key={key}>
-            <LogText type={row.type ?? type} bold>
+          <Row key={key} gap={1}>
+            <LogText.Default type={row.type ?? type} bold>
               {key.padEnd(maxKey)}
-            </LogText>
+            </LogText.Default>
             {row.node}
-          </Box>
+          </Row>
         )
       })}
-    </Box>
+    </Column>
   )
 }
 
-export function DebugTable(props: Omit<TableProps, 'type'>) {
-  const { flags } = useCli()
-  return flags.debug ? <Table type={LogType.debug} {...props} /> : null
+const Table = {
+  Base: TableBase,
+  Debug({ name, ...props }: Omit<TableProps, 'type'> & { name: string }) {
+    const { flags } = useCli()
+    return flags.debug ? (
+      <Log.Debug name={name}>
+        <TableBase type={LogType.debug} {...props} />
+      </Log.Debug>
+    ) : null
+  },
+  Info(props: Omit<TableProps, 'type'>) {
+    return (
+      <Log.Info>
+        <TableBase type={LogType.info} {...props} />
+      </Log.Info>
+    )
+  },
+  Success({ exit, ...props }: Omit<TableProps, 'type'> & { exit?: boolean }) {
+    return (
+      <Log.Success exit={exit}>
+        <TableBase type={LogType.success} {...props} />
+      </Log.Success>
+    )
+  },
+  Warn(props: Omit<TableProps, 'type'>) {
+    return (
+      <Log.Warn>
+        <TableBase type={LogType.warn} {...props} />
+      </Log.Warn>
+    )
+  },
+  Error({ exit, ...props }: Omit<TableProps, 'type'> & { exit?: boolean }) {
+    return (
+      <Log.Error exit={exit}>
+        <TableBase type={LogType.error} {...props} />
+      </Log.Error>
+    )
+  },
 }
 
-export function InfoTable(props: Omit<TableProps, 'type'>) {
-  return <Table type={LogType.info} {...props} />
-}
-
-export function SuccessTable(props: Omit<TableProps, 'type'>) {
-  return <Table type={LogType.success} {...props} />
-}
-
-export function WarnTable(props: Omit<TableProps, 'type'>) {
-  return <Table type={LogType.warn} {...props} />
-}
-
-export function ErrorTable(props: Omit<TableProps, 'type'>) {
-  return <Table type={LogType.error} {...props} />
-}
+export default Table

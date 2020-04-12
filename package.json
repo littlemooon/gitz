@@ -2,34 +2,49 @@
   "name": "gira",
   "version": "1.0.0",
   "license": "MIT",
-  "bin": "./dist/cli.js",
+  "bin": "./dist/index.js",
   "scripts": {
-    "start": "npm run build && node ./dist/cli.js",
-    "dev": "npx ts-node ./src/cli.ts",
+    "start": "npm run build && node ./dist/index.js",
+    "dev": "npx ts-node ./src/index.ts",
     "build": "npm run clean && npx tsc",
     "build:dev": "npm run build -- --watch",
     "clean": "rm -rf dist",
-    "lint": "npx prettier .",
-    "lint:fix": "npm run lint -- --write",
-    "test": "npm run lint && npx jest",
+    "format": "npx prettier .",
+    "format:fix": "npm run format -- --write",
+    "lint": "npx eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "npx jest",
     "test:watch": "npm run test -- --watch"
   },
   "files": [
     "dist"
   ],
   "dependencies": {
-    "@types/ink-spinner": "^3.0.0",
     "chalk": "^4.0.0",
+    "figures": "^3.2.0",
     "ink": "^2.7.1",
     "ink-spinner": "^3.0.1",
+    "ink-text-input": "^3.2.2",
     "meow": "^6.1.0",
+    "mobx": "^5.15.4",
+    "mobx-state-tree": "^3.15.0",
+    "npm-run-all": "^4.1.5",
     "react": "^16.13.1",
     "simple-git": "^1.132.0"
   },
   "devDependencies": {
+    "@types/chalk": "^2.2.0",
+    "@types/ink-spinner": "^3.0.0",
     "@types/jest": "^25.2.1",
     "@types/node": "^13.11.1",
     "@types/react": "^16.9.34",
+    "@typescript-eslint/eslint-plugin": "^2.27.0",
+    "@typescript-eslint/parser": "^2.27.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.1",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-react": "^7.19.0",
+    "eslint-plugin-react-hooks": "^3.0.0",
     "husky": "^4.2.5",
     "ink-testing-library": "^1.0.3",
     "jest": "^25.3.0",
@@ -46,10 +61,10 @@
   "husky": {
     "hooks": {
       "pre-commit": "npx lint-staged",
-      "pre-push": "npm run test && npm run build"
+      "pre-push": "run-p lint test build"
     }
   },
   "lint-staged": {
-    "*": "npm run lint:fix"
+    "*.{js,jsx,ts,tsx}": "npm run lint:fix"
   }
 }

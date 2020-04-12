@@ -1,26 +1,41 @@
 import React from 'react'
-import { ICli } from '../../hooks/useCli'
-import { useGitBranches } from '../../hooks/useGit'
-import Json from '../Json'
-import { Success } from '../Log'
-import State from '../State'
-import { SuccessTable } from '../Table'
+import useGit from '../../hooks/useGit'
+import { filterArray } from '../../lib/array'
+import { isBranchFeature, parseBranch } from '../../lib/branch'
+import BranchSelect from '../BranchSelect'
+import Column from '../Column'
+import GitBoundary from '../GitBoundary'
+import Log from '../Log'
+import LogText from '../LogText'
 
-export default function Index(_: ICli) {
-  const { state } = useGitBranches()
+export default function Index() {
+  const gitBranches = useGit(
+    (git) =>
+      git
+        .branch()
+        .then((result) =>
+          filterArray(Object.values(result.branches ?? {}).map(parseBranch))
+        ),
+    { runWith: true }
+  )
+
+  const featureBranches = gitBranches.state.result?.filter(isBranchFeature)
 
   return (
-    <State name="git branches" state={state}>
-      <Success>
-        <SuccessTable
-          data={{
-            all: <Json>{state.result?.all}</Json>,
-            branches: <Json>{state.result?.branches}</Json>,
-            current: <Json>{state.result?.current}</Json>,
-            detached: <Json>{state.result?.detached}</Json>,
-          }}
-        />
-      </Success>
-    </State>
+    <GitBoundary name="git branches" state={gitBranches.state}>
+      <Column gap={1}>
+        <Log.Info><LogText.Default bold cyan>Feature Branches</LogText.Default></Log.Info>
+        {featureBranches?.length ? (
+          <BranchSelect
+            branches={featureBranches}
+            formatLabel={(x) => `${x.issueId}: ${x.description} (${x.label})`}
+          />
+        ) : (
+            <Log.Info>
+              <LogText.Info>No feature branches found</LogText.Info>
+            </Log.Info>
+          )}
+      </Column>
+    </GitBoundary>
   )
 }

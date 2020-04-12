@@ -1,6 +1,11 @@
-import { Box, Color, ColorProps, Text } from 'ink'
+import { ColorProps } from 'ink'
 import React, { ReactNode } from 'react'
 import useCli from '../hooks/useCli'
+import Column from './Column'
+import Exit from './Exit'
+import LogText from './LogText'
+import RenderTimes from './RenderTimes'
+import Row from './Row'
 
 export enum LogType {
   debug = 'debug',
@@ -10,16 +15,7 @@ export enum LogType {
   error = 'error',
 }
 
-const logColorMap: Record<LogType, ColorProps> = {
-  [LogType.debug]: { cyan: true },
-  [LogType.info]: { blue: true },
-  [LogType.success]: { green: true },
-  [LogType.warn]: { yellow: true },
-  [LogType.error]: { red: true },
-}
-
-const typeMaxLength =
-  Math.max(...Object.values(LogType).map((x) => x.length)) + 1
+const typeMaxLength = Math.max(...Object.values(LogType).map((x) => x.length))
 
 function getTypeName(type: LogType) {
   return type.padEnd(typeMaxLength)
@@ -30,81 +26,78 @@ interface LogProps {
   children: ReactNode
 }
 
-interface LogTextProps extends ColorProps {
-  type?: LogType
-  children: ReactNode
+const logColorProps: Record<LogType, ColorProps> = {
+  [LogType.debug]: { cyan: true },
+  [LogType.info]: { blue: true },
+  [LogType.success]: { green: true },
+  [LogType.warn]: { yellow: true },
+  [LogType.error]: { red: true },
 }
 
-export function LogText({ type, children, ...props }: LogTextProps) {
-  const typeColorProps = type ? logColorMap[type] : undefined
+export function getLogColorProps(type?: LogType) {
+  return type ? logColorProps[type] : undefined
+}
+
+function LogBase({ type, children }: LogProps) {
+  const { flags } = useCli()
+  const colorProps = getLogColorProps(type)
+
   return (
-    <Text>
-      <Color {...typeColorProps} {...props}>
-        {children}
-      </Color>
-    </Text>
+    <Row gap={2}>
+      {flags.debug ? (
+        <Row gap={2}>
+          <LogText.Default type={type} {...colorProps}>
+            {getTypeName(type)}
+          </LogText.Default>
+
+          <LogText.Default>{Date.now()}</LogText.Default>
+        </Row>
+      ) : null}
+
+      <Row gap={1}>{children}</Row>
+    </Row>
   )
 }
 
-export default function Log({ type, children }: LogProps) {
-  const colorProps = logColorMap[type]
-
-  return (
-    <Box padding={1}>
-      <LogText type={type} {...colorProps}>
-        {getTypeName(type)}
-      </LogText>
-      <Box flexDirection="column">{children}</Box>
-    </Box>
-  )
+const Log = {
+  Debug({
+    children,
+    name,
+    ...props
+  }: Omit<LogProps, 'type'> & { name: string }) {
+    const { flags } = useCli()
+    return flags.debug ? (
+      <RenderTimes count={1}>
+        <LogBase type={LogType.debug} {...props}>
+          <Column>
+            <LogText.Default yellow>{name}</LogText.Default>
+            {children}
+          </Column>
+        </LogBase></RenderTimes>
+    ) : null
+  },
+  Info(props: Omit<LogProps, 'type'>) {
+    return <LogBase type={LogType.info} {...props} />
+  },
+  Success({ exit, ...props }: { exit?: boolean } & Omit<LogProps, 'type'>) {
+    return (
+      <>
+        <LogBase type={LogType.success} {...props} />
+        {exit && <Exit />}
+      </>
+    )
+  },
+  Warn(props: Omit<LogProps, 'type'>) {
+    return <LogBase type={LogType.warn} {...props} />
+  },
+  Error({ exit, ...props }: { exit?: boolean } & Omit<LogProps, 'type'>) {
+    return (
+      <>
+        <LogBase type={LogType.error} {...props} />
+        {exit && <Exit />}
+      </>
+    )
+  },
 }
 
-export function Debug({
-  children,
-  name,
-  ...props
-}: Omit<LogProps, 'type'> & { name: string }) {
-  const { flags } = useCli()
-  return flags.debug ? (
-    <Log type={LogType.debug} {...props}>
-      <LogText yellow>{name}</LogText>
-      {children}
-    </Log>
-  ) : null
-}
-
-export function DebugText(props: Omit<LogTextProps, 'type'>) {
-  const { flags } = useCli()
-  return flags.debug ? <LogText type={LogType.debug} {...props} /> : null
-}
-
-export function Info(props: Omit<LogProps, 'type'>) {
-  return <Log type={LogType.info} {...props} />
-}
-
-export function InfoText(props: Omit<LogTextProps, 'type'>) {
-  return <LogText type={LogType.info} {...props} />
-}
-
-export function Success(props: Omit<LogProps, 'type'>) {
-  return <Log type={LogType.success} {...props} />
-}
-
-export function SuccessText(props: Omit<LogTextProps, 'type'>) {
-  return <LogText type={LogType.success} {...props} />
-}
-
-export function Warn(props: Omit<LogProps, 'type'>) {
-  return <Log type={LogType.warn} {...props} />
-}
-
-export function WarnText(props: Omit<LogTextProps, 'type'>) {
-  return <LogText type={LogType.warn} {...props} />
-}
-
-export function Error(props: Omit<LogProps, 'type'>) {
-  return <Log type={LogType.error} {...props} />
-}
-export function ErrorText(props: Omit<LogTextProps, 'type'>) {
-  return <LogText type={LogType.error} {...props} />
-}
+export default Log

@@ -1,18 +1,14 @@
 import React from 'react'
-import { ICli } from '../../hooks/useCli'
-import { useGitStatus } from '../../hooks/useGit'
-import { Success } from '../Log'
-import State from '../State'
-import { SuccessTable } from '../Table'
+import useGit from '../../hooks/useGit'
+import GitBoundary from '../GitBoundary'
+import Table from '../Table'
 
-export default function Status(_: ICli) {
-  const { state } = useGitStatus()
+export default function Status() {
+  const { state } = useGit((git) => git.status(), { runWith: true })
 
   return (
-    <State name="git status" state={state}>
-      <Success>
-        <SuccessTable data={{ tracking: state.result?.tracking }} />
-      </Success>
-    </State>
+    <GitBoundary name="git status" state={state}>
+      <Table.Success exit data={{ tracking: state.result?.tracking }} />
+    </GitBoundary>
   )
 }

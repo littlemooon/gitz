@@ -1,9 +1,10 @@
+import { useStdout } from 'ink'
 import { useCallback, useEffect, useReducer } from 'react'
 import { SimpleGit } from 'simple-git/promise'
-import { BranchSummary, StatusResult } from 'simple-git/typings/response'
-import git, { gitBranchList, gitStatus } from '../lib/git'
+import git from '../lib/git'
+import useCli from './useCli'
 
-export type RunGit<R> = (git: SimpleGit) => Promise<R>
+export type RunGit<R, A> = (git: SimpleGit, args: A) => Promise<R>
 
 export enum GitStatus {
   initial = 'initial',
@@ -76,17 +77,34 @@ function reducer<R>(state: GitState<R>, action: GitAction<R>): GitState<R> {
   }
 }
 
-export default function useGit<R>(
-  runGit: RunGit<R>
-): { state: GitState<R>; run: () => void } {
+export interface GitOptions<A> {
+  log?: boolean
+  runWith?: A
+}
+
+export default function useGit<A, R>(
+  runGit: RunGit<R, A>,
+  opts?: GitOptions<A>
+): { state: GitState<R>; run: (args: A) => void } {
+  const { flags } = useCli()
+  const stdoutStream = useStdout()
+
   const [state, dispatch] = useReducer<GitReducer<R>>(reducer, {
     status: GitStatus.initial,
     result: undefined,
     error: undefined,
   })
 
-  const run = useCallback(() => {
-    runGit(git)
+  const run = useCallback((args) => {
+    runGit(
+      opts?.log || flags.debug
+        ? git.outputHandler((_, stdout, stderr) => {
+            stdout.pipe(stdoutStream.stdout)
+            stderr.pipe(stdoutStream.stdout)
+          })
+        : git,
+      args
+    )
       .then((result) => {
         dispatch({ type: GitActionTypes.success, payload: result })
       })
@@ -95,24 +113,10 @@ export default function useGit<R>(
       })
   }, [])
 
-  return { state, run }
-}
-
-export function useGitStatus() {
-  const { state, run } = useGit<StatusResult>(gitStatus)
-
   useEffect(() => {
-    run()
-  }, [])
-
-  return { state, run }
-}
-
-export function useGitBranches() {
-  const { state, run } = useGit<BranchSummary>(gitBranchList)
-
-  useEffect(() => {
-    run()
+    if (opts?.runWith) {
+      run(opts.runWith)
+    }
   }, [])
 
   return { state, run }
