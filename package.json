@@ -14,7 +14,7 @@
         "build:assets": "cp readme.md dist",
         "pkg": "npx pkg . --out-path dist/bin",
         "release": "npx semantic-release",
-        "release:manual": "npm version patch && nr build && nr pkg && nr release && npm publish dist",
+        "release:manual": "npm version patch && run-s build pkg release && npm publish dist",
         "clean": "rm -rf dist",
         "format": "npx prettier .",
         "format:fix": "npm run format -- --write",
