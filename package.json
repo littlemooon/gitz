@@ -9,9 +9,9 @@
     "build": "run-s clean build:ts",
     "build:ts": "npx tsc",
     "build:dev": "npm run build -- --watch",
-    "pkg": "npx pkg . --out-path bin",
+    "pkg": "npx pkg . --out-path dist/bin",
     "release": "npx semantic-release",
-    "clean": "rm -rf dist && rm -rf bin",
+    "clean": "rm -rf dist",
     "format": "npx prettier .",
     "format:fix": "npm run format -- --write",
     "lint": "npx eslint . --ext .js,.jsx,.ts,.tsx",
@@ -74,11 +74,11 @@
   "husky": {
     "hooks": {
       "pre-commit": "npx lint-staged",
-      "pre-push": "run-p lint build"
+      "pre-push": "run-p lint test build"
     }
   },
   "lint-staged": {
-    "*": "npm run format:fix",
+    "*.{json}": "npm run format:fix",
     "*.{js,jsx,ts,tsx}": "npm run lint:fix"
   },
   "repository": {
@@ -101,7 +101,9 @@
           "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
         }
       ],
-      "@semantic-release/npm"
+      ["@semantic-release/npm", {
+        "pkgRoot": "dist"
+      }]
     ]
   }
 }
