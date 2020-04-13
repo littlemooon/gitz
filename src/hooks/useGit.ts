@@ -98,6 +98,8 @@ export default function useGit<A, R>(
 
   const run = useCallback(
     (args) => {
+      let cancelled = false
+
       runGit(
         git.outputHandler((_, stdout, stderr) => {
           if (log || flags.debug) {
@@ -108,20 +110,28 @@ export default function useGit<A, R>(
         args
       )
         .then((result) => {
-          dispatch({ type: GitActionTypes.success, payload: result })
+          if (!cancelled) {
+            dispatch({ type: GitActionTypes.success, payload: result })
+          }
         })
         .catch((error) => {
-          dispatch({ type: GitActionTypes.error, payload: error })
+          if (!cancelled) {
+            dispatch({ type: GitActionTypes.error, payload: error })
+          }
         })
+
+      return () => {
+        cancelled = true
+      }
     },
     [flags.debug, log, runGit, stdoutStream.stdout]
   )
 
   useEffect(() => {
-    if (runWith) {
+    if (runWith && state.status === GitStatus.initial) {
       run(runWith)
     }
-  }, [runWith, run])
+  }, [runWith, run, state.status])
 
   return { state, run }
 }

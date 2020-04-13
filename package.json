@@ -2,9 +2,11 @@
   "name": "gitet",
   "version": "0.0.0-development",
   "license": "MIT",
-  "bin": "./dist/src/index.js",
+  "bin": {
+    "gitet": "./dist/src/index.js"
+  },
   "scripts": {
-    "start": "node ./dist/index.js",
+    "start": "node ./dist/src/index.js",
     "dev": "npx ts-node ./src/index.ts",
     "build": "run-s clean build:ts",
     "build:ts": "npx tsc",
@@ -17,7 +19,8 @@
     "lint": "npx eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "npm run lint -- --fix",
     "test": "npx jest",
-    "test:watch": "npm run test -- --watch"
+    "test:watch": "npm run test -- --watch",
+    "install:global": "npm i -g"
   },
   "pkg": {
     "scripts": "dist"
@@ -27,6 +30,7 @@
   ],
   "dependencies": {
     "chalk": "^4.0.0",
+    "configstore": "^5.0.1",
     "figures": "^3.2.0",
     "ink": "^2.7.1",
     "ink-spinner": "^3.0.1",
@@ -101,9 +105,12 @@
           "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
         }
       ],
-      ["@semantic-release/npm", {
-        "pkgRoot": "dist"
-      }]
+      [
+        "@semantic-release/npm",
+        {
+          "pkgRoot": "dist"
+        }
+      ]
     ]
   }
 }

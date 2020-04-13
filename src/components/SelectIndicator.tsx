@@ -6,7 +6,13 @@ export default function SelectIndicator({ selected }: { selected?: boolean }) {
   const focus = useFocus()
   return (
     <Box marginRight={1}>
-      {selected && focus ? <Color cyan>{'>'}</Color> : ' '}
+      {selected && focus ? (
+        <Color bold cyan>
+          {'>'}
+        </Color>
+      ) : (
+        ' '
+      )}
     </Box>
   )
 }
