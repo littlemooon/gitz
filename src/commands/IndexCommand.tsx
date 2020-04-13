@@ -1,12 +1,14 @@
 import React from 'react'
-import CheckoutCommand from './CheckoutCommand'
-import Panels from '../components/Panels'
 import Column from '../components/Column'
+import Panels from '../components/Panels'
 import BranchCommand from './BranchCommand'
+import CheckoutCommand from './CheckoutCommand'
+import StatusCommand from './StatusCommand'
 
 export default function IndexCommand() {
   return (
     <Column gap={2}>
+      <StatusCommand />
       <Panels
         items={[
           { id: 'branch', content: <BranchCommand /> },

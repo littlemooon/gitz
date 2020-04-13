@@ -48,11 +48,11 @@ export default function BranchSelect<B extends Branch>({
 
   return branch ? (
     <GitBoundary name="git checkout" state={gitCheckout.state}>
-      <Row>
+      <Row gap={1}>
         <LogText.Success>Switched to</LogText.Success>
         <LogText.Default>{branch.name}</LogText.Default>
-        <Exit />
       </Row>
+      <Exit />
     </GitBoundary>
   ) : (
     <Select onSelect={handleSelect} items={items} />

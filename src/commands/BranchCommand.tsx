@@ -4,10 +4,12 @@ import Exit from '../components/Exit'
 import Form, { FormData, FormField } from '../components/Form'
 import GitBoundary from '../components/GitBoundary'
 import LogText from '../components/LogText'
+import Row from '../components/Row'
 import Title from '../components/Title'
 import useGit, { GitStatus } from '../hooks/useGit'
 import { BranchFeature, createFeatureBranch } from '../lib/branch'
 import env from '../lib/env'
+import FocusProvider from '../providers/FocusProvider'
 
 export interface BranchCommandForm extends FormData {
   issueId: FormField
@@ -38,16 +40,7 @@ export default function BranchCommand() {
   return (
     <Column>
       <Title>Create a new feature branch</Title>
-      {branch ? (
-        <GitBoundary
-          name={`Creating branch: ${branch.name}`}
-          state={gitCheckoutBranch.state}
-        >
-          <LogText.Success>Branch created:</LogText.Success>
-          <LogText.Default>{branch.name}</LogText.Default>
-          <Exit />
-        </GitBoundary>
-      ) : (
+      <FocusProvider focus={!branch}>
         <Form<BranchCommandForm>
           initialData={{
             issueId: { label: 'Issue ID' },
@@ -55,7 +48,17 @@ export default function BranchCommand() {
           }}
           onSubmit={onSubmit}
         />
-      )}
+      </FocusProvider>
+      <GitBoundary
+        name={`Creating branch: ${branch?.name}`}
+        state={gitCheckoutBranch.state}
+      >
+        <Row gap={1}>
+          <LogText.Success>Branch created:</LogText.Success>
+          <LogText.Default>{branch?.name}</LogText.Default>
+        </Row>
+        <Exit />
+      </GitBoundary>
     </Column>
   )
 }

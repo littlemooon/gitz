@@ -21,13 +21,13 @@ export default function CommitCommand() {
   return (
     <GitBoundary name="git branch" state={gitBranches}>
       {isFeature ? (
-        <Row>
+        <Row gap={1}>
           <LogText.Success>Current branch:</LogText.Success>
           <LogText.Default>{gitBranches.current?.name}</LogText.Default>
           <Exit />
         </Row>
       ) : (
-        <Column>
+        <Column gap={1}>
           <LogText.Error>Must be on a feature branch to commit</LogText.Error>
           <LogText.Default>
             {gitBranches.current?.name} is not of form{' '}

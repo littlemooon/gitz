@@ -1,10 +1,10 @@
 import { Box, useInput } from 'ink'
 import React, { ReactNode, useMemo, useState } from 'react'
 import { arrayRotate } from '../lib/array'
+import FocusProvider, { useFocus } from '../providers/FocusProvider'
 import Column from './Column'
 import LogText from './LogText'
 import SelectIndicator from './SelectIndicator'
-import FocusProvider, { useFocus } from '../providers/FocusProvider'
 
 export type SelectItem<T extends object = {}> = T & {
   label?: string
@@ -111,7 +111,7 @@ export default function Select(props: SelectProps) {
         const selected = index === state.selectedIndex
 
         return (
-          <FocusProvider key={item.id} focus={Boolean(focus && selected)}>
+          <FocusProvider key={item.id} focus={selected}>
             <Box>
               <SelectIndicator selected={selected} />
               <Column>

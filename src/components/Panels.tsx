@@ -16,7 +16,7 @@ export default function Panels({ items }: { items: PanelItem[] }) {
         ...item,
         content: (
           <Box paddingBottom={1}>
-            <FocusProvider focus={item.id === selected?.id}>
+            <FocusProvider force focus={item.id === selected?.id}>
               {item.content}
             </FocusProvider>
           </Box>
