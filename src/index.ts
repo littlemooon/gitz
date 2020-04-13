@@ -1,10 +1,9 @@
-import { render } from 'ink'
 import chalk from 'chalk'
+import { render } from 'ink'
 import { createElement } from 'react'
-import App from './App'
 import updateNotifier from 'update-notifier'
-
-const pkg = require(`${process.cwd()}/package.json`)
+import pkg from '../package.json'
+import App from './App'
 
 updateNotifier({ pkg }).notify()
 
