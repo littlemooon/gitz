@@ -1,6 +1,6 @@
 {
     "name": "gitet",
-    "version": "0.0.13",
+    "version": "0.0.14",
     "license": "MIT",
     "bin": {
         "gitet": "./dist/src/index.js"
