@@ -9,8 +9,6 @@
     "build": "npm run clean && npx tsc",
     "build:dev": "npm run build -- --watch",
     "clean": "rm -rf dist",
-    "format": "npx prettier .",
-    "format:fix": "npm run format -- --write",
     "lint": "npx eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "npm run lint -- --fix",
     "test": "npx jest",
