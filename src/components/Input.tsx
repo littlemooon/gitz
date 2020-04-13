@@ -1,9 +1,9 @@
 import TextInput, { InkTextInputProps } from 'ink-text-input'
 import React, { useCallback, useEffect, useState } from 'react'
-import LogText from './LogText'
-import Row from './Row'
 import useConstant from '../hooks/useConstant'
 import { useFocus } from '../providers/FocusProvider'
+import LogText from './LogText'
+import Row from './Row'
 
 export interface InputProps
   extends Omit<InkTextInputProps, 'value' | 'onChange' | 'focus'> {

@@ -1,6 +1,5 @@
 import { ColorProps } from 'ink'
 import React, { ReactNode } from 'react'
-import Column from '../components/Column'
 import LogText from '../components/LogText'
 
 export default function Title({
@@ -8,10 +7,8 @@ export default function Title({
   ...props
 }: { children: ReactNode } & ColorProps) {
   return (
-    <Column paddingBottom={1}>
-      <LogText.Default bold {...props}>
-        {children}
-      </LogText.Default>
-    </Column>
+    <LogText.Default bold {...props}>
+      {children}
+    </LogText.Default>
   )
 }

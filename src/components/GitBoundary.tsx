@@ -18,7 +18,7 @@ export function GitBoundaryStatus<R>({ children, state }: GitBoundaryProps<R>) {
   switch (state.status) {
     case GitStatus.loading:
       return (
-        <Row gap={1}>
+        <Row>
           <Spinner />
           <LogText.Default>{name}</LogText.Default>
         </Row>

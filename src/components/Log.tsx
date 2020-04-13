@@ -54,7 +54,7 @@ function LogBase({ type, children }: LogProps) {
         </Row>
       ) : null}
 
-      <Row gap={1}>{children}</Row>
+      <Row>{children}</Row>
     </Row>
   )
 }

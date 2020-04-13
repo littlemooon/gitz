@@ -1,8 +1,9 @@
 import React, { Component, ReactNode } from 'react'
 import Column from './Column'
-import Log from './Log'
+import Exit from './Exit'
 import LogText from './LogText'
 import Row from './Row'
+import Table from './Table'
 
 interface ErrorBoundaryState {
   error?: Error
@@ -27,18 +28,18 @@ export default class ErrorBoundary extends Component<
 
     return error ? (
       <Column>
-        <Log.Error exit>
-          <Row gap={1}>
-            <LogText.Error>{error.name}</LogText.Error>
-            <LogText.Default>
-              {error.message?.replace('error: ', '')}
-            </LogText.Default>
-          </Row>
-        </Log.Error>
+        <Row>
+          <LogText.Error>{error.name}</LogText.Error>
+          <LogText.Default>
+            {error.message?.replace('error: ', '')}
+          </LogText.Default>
+          <Exit />
+        </Row>
 
-        <Log.Debug name="componentStack">
-          {errorInfo.componentStack?.trim()}
-        </Log.Debug>
+        <Table.Debug
+          name="error boundary"
+          data={{ componentStack: errorInfo.componentStack?.trim() }}
+        />
       </Column>
     ) : (
       <>{this.props.children}</>

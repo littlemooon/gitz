@@ -1,7 +1,7 @@
-import React, { useMemo, ReactNode, useState } from 'react'
-import Column from './Column'
-import Select, { SelectItem } from './Select'
+import { Box } from 'ink'
+import React, { ReactNode, useMemo, useState } from 'react'
 import FocusProvider from '../providers/FocusProvider'
+import Select, { SelectItem } from './Select'
 
 export interface PanelItem extends SelectItem {
   content: ReactNode
@@ -15,19 +15,19 @@ export default function Panels({ items }: { items: PanelItem[] }) {
       return {
         ...item,
         content: (
-          <FocusProvider focus={item.id === selected?.id}>
-            {item.content}
-          </FocusProvider>
+          <Box paddingBottom={1}>
+            <FocusProvider focus={item.id === selected?.id}>
+              {item.content}
+            </FocusProvider>
+          </Box>
         ),
       }
     })
   }, [items, selected])
 
   return (
-    <Column gap={1}>
-      <FocusProvider focus={!selected}>
-        <Select items={focusItems} onSelect={setSelected} />
-      </FocusProvider>
-    </Column>
+    <FocusProvider focus={!selected}>
+      <Select items={focusItems} onSelect={setSelected} />
+    </FocusProvider>
   )
 }

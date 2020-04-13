@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import FocusProvider, { useFocus } from '../providers/FocusProvider'
 import Column from './Column'
 import Input from './Input'
-import Title from './Title'
-import FocusProvider, { useFocus } from '../providers/FocusProvider'
+import SelectIndicator from './SelectIndicator'
 
 export interface FormField {
   label: string
@@ -13,13 +13,11 @@ export interface FormField {
 export type FormData = Record<string, FormField>
 
 export interface FormProps<D> {
-  title: string
   initialData: D
   onSubmit: (data: D) => void
 }
 
 export default function Form<D extends FormData>({
-  title,
   initialData,
   onSubmit,
 }: FormProps<D>) {
@@ -63,25 +61,23 @@ export default function Form<D extends FormData>({
 
   return (
     <Column>
-      <Title>{title}</Title>
+      {Object.entries(readonlyForm).map(([id, item]) => (
+        <FocusProvider key={id} focus={false}>
+          <SelectIndicator selected={false} />
+          <Input label={item.label} initialValue={item.value} />
+        </FocusProvider>
+      ))}
 
-      <Column paddingLeft={1}>
-        {Object.entries(readonlyForm).map(([id, item]) => (
-          <FocusProvider key={id} focus={false}>
-            <Input label={item.label} initialValue={item.value} />
-          </FocusProvider>
-        ))}
-
-        {nextId ? (
-          <FocusProvider focus={Boolean(focus)}>
-            <Input
-              label={data[nextId].label}
-              initialValue={data[nextId].initialValue}
-              onSubmit={onSubmitNext}
-            />
-          </FocusProvider>
-        ) : null}
-      </Column>
+      {nextId ? (
+        <FocusProvider focus={Boolean(focus)}>
+          <SelectIndicator selected />
+          <Input
+            label={data[nextId].label}
+            initialValue={data[nextId].initialValue}
+            onSubmit={onSubmitNext}
+          />
+        </FocusProvider>
+      ) : null}
     </Column>
   )
 }

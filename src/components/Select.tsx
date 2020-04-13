@@ -1,5 +1,5 @@
 import { Box, useInput } from 'ink'
-import React, { ReactNode, useEffect, useMemo, useState } from 'react'
+import React, { ReactNode, useMemo, useState } from 'react'
 import { arrayRotate } from '../lib/array'
 import Column from './Column'
 import LogText from './LogText'

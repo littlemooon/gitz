@@ -3,7 +3,7 @@ import React, { Children, ReactNode } from 'react'
 
 export default function Row({
   children,
-  gap,
+  gap = 0,
   ...props
 }: BoxProps & { gap?: number; children: ReactNode }) {
   return (

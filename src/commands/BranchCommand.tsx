@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react'
+import Column from '../components/Column'
+import Exit from '../components/Exit'
 import Form, { FormData, FormField } from '../components/Form'
 import GitBoundary from '../components/GitBoundary'
-import Log from '../components/Log'
 import LogText from '../components/LogText'
-import useGit from '../hooks/useGit'
+import Title from '../components/Title'
+import useGit, { GitStatus } from '../hooks/useGit'
 import { BranchFeature, createFeatureBranch } from '../lib/branch'
 import env from '../lib/env'
 
@@ -14,13 +16,15 @@ export interface BranchCommandForm extends FormData {
 
 export default function BranchCommand() {
   const [branch, setBranch] = useState<BranchFeature>()
-  const { state, run } = useGit((git, { name }: BranchFeature) =>
+  const gitCheckoutBranch = useGit((git, { name }: BranchFeature) =>
     git.checkoutBranch(name, env.masterBranch)
   )
 
   useEffect(() => {
-    if (branch) run(branch)
-  }, [branch, run])
+    if (branch && gitCheckoutBranch.state.status === GitStatus.initial) {
+      gitCheckoutBranch.run(branch)
+    }
+  }, [branch, gitCheckoutBranch])
 
   const onSubmit = useCallback((newForm: BranchCommandForm) => {
     setBranch(
@@ -31,23 +35,27 @@ export default function BranchCommand() {
     )
   }, [])
 
-  return branch ? (
-    <GitBoundary name={`Creating branch: ${branch.name}`} state={state}>
-      <Log.Success exit>
-        <LogText.Success>Branch created:</LogText.Success>
-        <LogText.Default>{branch.name}</LogText.Default>
-      </Log.Success>
-    </GitBoundary>
-  ) : (
-    <Log.Info>
-      <Form<BranchCommandForm>
-        title="Create a new feature branch"
-        initialData={{
-          issueId: { label: 'Issue ID' },
-          description: { label: 'Branch Description' },
-        }}
-        onSubmit={onSubmit}
-      />
-    </Log.Info>
+  return (
+    <Column>
+      <Title>Create a new feature branch</Title>
+      {branch ? (
+        <GitBoundary
+          name={`Creating branch: ${branch.name}`}
+          state={gitCheckoutBranch.state}
+        >
+          <LogText.Success>Branch created:</LogText.Success>
+          <LogText.Default>{branch.name}</LogText.Default>
+          <Exit />
+        </GitBoundary>
+      ) : (
+        <Form<BranchCommandForm>
+          initialData={{
+            issueId: { label: 'Issue ID' },
+            description: { label: 'Branch Description' },
+          }}
+          onSubmit={onSubmit}
+        />
+      )}
+    </Column>
   )
 }

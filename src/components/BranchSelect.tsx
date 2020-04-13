@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import useGit from '../hooks/useGit'
 import { Branch } from '../lib/branch'
+import Exit from './Exit'
 import GitBoundary from './GitBoundary'
-import Log from './Log'
 import LogText from './LogText'
+import Row from './Row'
 import Select, { SelectItem } from './Select'
 
 export default function BranchSelect<B extends Branch>({
@@ -47,10 +48,11 @@ export default function BranchSelect<B extends Branch>({
 
   return branch ? (
     <GitBoundary name="git checkout" state={gitCheckout.state}>
-      <Log.Success exit>
+      <Row>
         <LogText.Success>Switched to</LogText.Success>
         <LogText.Default>{branch.name}</LogText.Default>
-      </Log.Success>
+        <Exit />
+      </Row>
     </GitBoundary>
   ) : (
     <Select onSelect={handleSelect} items={items} />

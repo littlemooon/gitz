@@ -2,7 +2,6 @@ import React from 'react'
 import BranchSelect from '../components/BranchSelect'
 import Column from '../components/Column'
 import GitBoundary from '../components/GitBoundary'
-import Log from '../components/Log'
 import LogText from '../components/LogText'
 import Title from '../components/Title'
 import { isFeatureBranch } from '../lib/branch'
@@ -15,18 +14,14 @@ export default function CheckoutCommand() {
   return (
     <GitBoundary name="git branch" state={gitBranches}>
       <Column>
-        <Log.Info>
-          <Title>Switch to feature branch</Title>
-        </Log.Info>
+        <Title>Switch to feature branch</Title>
         {featureBranches?.length ? (
           <BranchSelect
             branches={featureBranches}
             formatLabel={(x) => `${x.issueId}: ${x.description} (${x.label})`}
           />
         ) : (
-          <Log.Warn>
-            <LogText.Warn>No feature branches found</LogText.Warn>
-          </Log.Warn>
+          <LogText.Warn>No feature branches found</LogText.Warn>
         )}
       </Column>
     </GitBoundary>

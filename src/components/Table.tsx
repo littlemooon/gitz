@@ -1,7 +1,7 @@
 import React, { ReactNode, useMemo } from 'react'
 import useCli from '../hooks/useCli'
 import Column from './Column'
-import Log, { LogType } from './Log'
+import { LogType } from './Log'
 import LogText from './LogText'
 import Row from './Row'
 
@@ -34,7 +34,7 @@ function TableBase({ data, type }: TableProps) {
       {Object.entries(data).map(([key, value]) => {
         const row = parseRow(value)
         return (
-          <Row key={key} gap={1}>
+          <Row key={key}>
             <LogText.Default type={row.type ?? type} bold>
               {key.padEnd(maxKey)}
             </LogText.Default>
@@ -51,38 +51,23 @@ const Table = {
   Debug({ name, ...props }: Omit<TableProps, 'type'> & { name: string }) {
     const { flags } = useCli()
     return flags.debug ? (
-      <Log.Debug name={name}>
+      <Column>
+        <LogText.Default yellow>{name}</LogText.Default>
         <TableBase type={LogType.debug} {...props} />
-      </Log.Debug>
+      </Column>
     ) : null
   },
   Info(props: Omit<TableProps, 'type'>) {
-    return (
-      <Log.Info>
-        <TableBase type={LogType.info} {...props} />
-      </Log.Info>
-    )
+    return <TableBase type={LogType.info} {...props} />
   },
-  Success({ exit, ...props }: Omit<TableProps, 'type'> & { exit?: boolean }) {
-    return (
-      <Log.Success exit={exit}>
-        <TableBase type={LogType.success} {...props} />
-      </Log.Success>
-    )
+  Success(props: Omit<TableProps, 'type'>) {
+    return <TableBase type={LogType.success} {...props} />
   },
   Warn(props: Omit<TableProps, 'type'>) {
-    return (
-      <Log.Warn>
-        <TableBase type={LogType.warn} {...props} />
-      </Log.Warn>
-    )
+    return <TableBase type={LogType.warn} {...props} />
   },
-  Error({ exit, ...props }: Omit<TableProps, 'type'> & { exit?: boolean }) {
-    return (
-      <Log.Error exit={exit}>
-        <TableBase type={LogType.error} {...props} />
-      </Log.Error>
-    )
+  Error(props: Omit<TableProps, 'type'>) {
+    return <TableBase type={LogType.error} {...props} />
   },
 }
 

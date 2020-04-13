@@ -1,9 +1,10 @@
 import React from 'react'
 import Column from '../components/Column'
+import Exit from '../components/Exit'
 import { FormData, FormField } from '../components/Form'
 import GitBoundary from '../components/GitBoundary'
-import Log from '../components/Log'
 import LogText from '../components/LogText'
+import Row from '../components/Row'
 import { isFeatureBranch } from '../lib/branch'
 import env from '../lib/env'
 import { useGitBranches } from '../providers/GitBranchProvider'
@@ -20,20 +21,19 @@ export default function CommitCommand() {
   return (
     <GitBoundary name="git branch" state={gitBranches}>
       {isFeature ? (
-        <Log.Success exit>
+        <Row>
           <LogText.Success>Current branch:</LogText.Success>
           <LogText.Default>{gitBranches.current?.name}</LogText.Default>
-        </Log.Success>
+          <Exit />
+        </Row>
       ) : (
-        <Log.Error>
-          <Column>
-            <LogText.Error>Must be on a feature branch to commit</LogText.Error>
-            <LogText.Default>
-              {gitBranches.current?.name} is not of form{' '}
-              {env.featureBranchRegex.toString()}
-            </LogText.Default>
-          </Column>
-        </Log.Error>
+        <Column>
+          <LogText.Error>Must be on a feature branch to commit</LogText.Error>
+          <LogText.Default>
+            {gitBranches.current?.name} is not of form{' '}
+            {env.featureBranchRegex.toString()}
+          </LogText.Default>
+        </Column>
       )}
     </GitBoundary>
   )
