@@ -34,7 +34,7 @@ function GitBoundaryStatus(_a) {
     var children = _a.children, state = _a.state;
     switch (state.status) {
         case useGit_1.GitStatus.loading:
-            return (react_1["default"].createElement(Row_1["default"], { gap: 1 },
+            return (react_1["default"].createElement(Row_1["default"], null,
                 react_1["default"].createElement(ink_spinner_1["default"], null),
                 react_1["default"].createElement(LogText_1["default"].Default, null, name)));
         case useGit_1.GitStatus.success:

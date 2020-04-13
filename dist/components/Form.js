@@ -22,12 +22,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 var react_1 = __importStar(require("react"));
+var FocusProvider_1 = __importStar(require("../providers/FocusProvider"));
 var Column_1 = __importDefault(require("./Column"));
 var Input_1 = __importDefault(require("./Input"));
-var Title_1 = __importDefault(require("./Title"));
-var FocusProvider_1 = __importStar(require("../providers/FocusProvider"));
+var SelectIndicator_1 = __importDefault(require("./SelectIndicator"));
 function Form(_a) {
-    var title = _a.title, initialData = _a.initialData, onSubmit = _a.onSubmit;
+    var initialData = _a.initialData, onSubmit = _a.onSubmit;
     var focus = FocusProvider_1.useFocus();
     var _b = react_1.useState(initialData), data = _b[0], setData = _b[1];
     var nextId = react_1.useMemo(function () {
@@ -65,14 +65,14 @@ function Form(_a) {
         }
     }, [nextId]);
     return (react_1["default"].createElement(Column_1["default"], null,
-        react_1["default"].createElement(Title_1["default"], null, title),
-        react_1["default"].createElement(Column_1["default"], { paddingLeft: 1 },
-            Object.entries(readonlyForm).map(function (_a) {
-                var id = _a[0], item = _a[1];
-                return (react_1["default"].createElement(FocusProvider_1["default"], { key: id, focus: false },
-                    react_1["default"].createElement(Input_1["default"], { label: item.label, initialValue: item.value })));
-            }),
-            nextId ? (react_1["default"].createElement(FocusProvider_1["default"], { focus: Boolean(focus) },
-                react_1["default"].createElement(Input_1["default"], { label: data[nextId].label, initialValue: data[nextId].initialValue, onSubmit: onSubmitNext }))) : null)));
+        Object.entries(readonlyForm).map(function (_a) {
+            var id = _a[0], item = _a[1];
+            return (react_1["default"].createElement(FocusProvider_1["default"], { key: id, focus: false },
+                react_1["default"].createElement(SelectIndicator_1["default"], { selected: false }),
+                react_1["default"].createElement(Input_1["default"], { label: item.label, initialValue: item.value })));
+        }),
+        nextId ? (react_1["default"].createElement(FocusProvider_1["default"], { focus: Boolean(focus) },
+            react_1["default"].createElement(SelectIndicator_1["default"], { selected: true }),
+            react_1["default"].createElement(Input_1["default"], { label: data[nextId].label, initialValue: data[nextId].initialValue, onSubmit: onSubmitNext }))) : null));
 }
 exports["default"] = Form;

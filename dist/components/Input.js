@@ -34,10 +34,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
 exports.__esModule = true;
 var ink_text_input_1 = __importDefault(require("ink-text-input"));
 var react_1 = __importStar(require("react"));
-var LogText_1 = __importDefault(require("./LogText"));
-var Row_1 = __importDefault(require("./Row"));
 var useConstant_1 = __importDefault(require("../hooks/useConstant"));
 var FocusProvider_1 = require("../providers/FocusProvider");
+var LogText_1 = __importDefault(require("./LogText"));
+var Row_1 = __importDefault(require("./Row"));
 function Input(_a) {
     var onSubmit = _a.onSubmit, _b = _a.initialValue, initialValue = _b === void 0 ? '' : _b, label = _a.label, props = __rest(_a, ["onSubmit", "initialValue", "label"]);
     var focus = FocusProvider_1.useFocus();

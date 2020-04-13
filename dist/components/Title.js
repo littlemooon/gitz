@@ -26,11 +26,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 var react_1 = __importDefault(require("react"));
-var Column_1 = __importDefault(require("../components/Column"));
 var LogText_1 = __importDefault(require("../components/LogText"));
 function Title(_a) {
     var children = _a.children, props = __rest(_a, ["children"]);
-    return (react_1["default"].createElement(Column_1["default"], { paddingBottom: 1 },
-        react_1["default"].createElement(LogText_1["default"].Default, __assign({ bold: true }, props), children)));
+    return (react_1["default"].createElement(LogText_1["default"].Default, __assign({ bold: true }, props), children));
 }
 exports["default"] = Title;

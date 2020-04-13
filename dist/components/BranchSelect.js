@@ -12,9 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 var react_1 = __importStar(require("react"));
 var useGit_1 = __importDefault(require("../hooks/useGit"));
+var Exit_1 = __importDefault(require("./Exit"));
 var GitBoundary_1 = __importDefault(require("./GitBoundary"));
-var Log_1 = __importDefault(require("./Log"));
 var LogText_1 = __importDefault(require("./LogText"));
+var Row_1 = __importDefault(require("./Row"));
 var Select_1 = __importDefault(require("./Select"));
 function BranchSelect(_a) {
     var branches = _a.branches, formatLabel = _a.formatLabel;
@@ -42,8 +43,9 @@ function BranchSelect(_a) {
         }); })) !== null && _a !== void 0 ? _a : []);
     }, [branches, formatLabel]);
     return branch ? (react_1["default"].createElement(GitBoundary_1["default"], { name: "git checkout", state: gitCheckout.state },
-        react_1["default"].createElement(Log_1["default"].Success, { exit: true },
+        react_1["default"].createElement(Row_1["default"], null,
             react_1["default"].createElement(LogText_1["default"].Success, null, "Switched to"),
-            react_1["default"].createElement(LogText_1["default"].Default, null, branch.name)))) : (react_1["default"].createElement(Select_1["default"], { onSelect: handleSelect, items: items }));
+            react_1["default"].createElement(LogText_1["default"].Default, null, branch.name),
+            react_1["default"].createElement(Exit_1["default"], null)))) : (react_1["default"].createElement(Select_1["default"], { onSelect: handleSelect, items: items }));
 }
 exports["default"] = BranchSelect;

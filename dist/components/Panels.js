@@ -21,20 +21,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
+var ink_1 = require("ink");
 var react_1 = __importStar(require("react"));
-var Column_1 = __importDefault(require("./Column"));
-var Select_1 = __importDefault(require("./Select"));
 var FocusProvider_1 = __importDefault(require("../providers/FocusProvider"));
+var Select_1 = __importDefault(require("./Select"));
 function Panels(_a) {
     var items = _a.items;
     var _b = react_1.useState(), selected = _b[0], setSelected = _b[1];
     var focusItems = react_1.useMemo(function () {
         return items.map(function (item) {
-            return __assign(__assign({}, item), { content: (react_1["default"].createElement(FocusProvider_1["default"], { focus: item.id === (selected === null || selected === void 0 ? void 0 : selected.id) }, item.content)) });
+            return __assign(__assign({}, item), { content: (react_1["default"].createElement(ink_1.Box, { paddingBottom: 1 },
+                    react_1["default"].createElement(FocusProvider_1["default"], { focus: item.id === (selected === null || selected === void 0 ? void 0 : selected.id) }, item.content))) });
         });
     }, [items, selected]);
-    return (react_1["default"].createElement(Column_1["default"], { gap: 1 },
-        react_1["default"].createElement(FocusProvider_1["default"], { focus: !selected },
-            react_1["default"].createElement(Select_1["default"], { items: focusItems, onSelect: setSelected }))));
+    return (react_1["default"].createElement(FocusProvider_1["default"], { focus: !selected },
+        react_1["default"].createElement(Select_1["default"], { items: focusItems, onSelect: setSelected })));
 }
 exports["default"] = Panels;

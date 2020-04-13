@@ -35,7 +35,7 @@ exports.__esModule = true;
 var react_1 = __importStar(require("react"));
 var useCli_1 = __importDefault(require("../hooks/useCli"));
 var Column_1 = __importDefault(require("./Column"));
-var Log_1 = __importStar(require("./Log"));
+var Log_1 = require("./Log");
 var LogText_1 = __importDefault(require("./LogText"));
 var Row_1 = __importDefault(require("./Row"));
 function parseRow(tableData) {
@@ -54,7 +54,7 @@ function TableBase(_a) {
         var key = _a[0], value = _a[1];
         var _b;
         var row = parseRow(value);
-        return (react_1["default"].createElement(Row_1["default"], { key: key, gap: 1 },
+        return (react_1["default"].createElement(Row_1["default"], { key: key },
             react_1["default"].createElement(LogText_1["default"].Default, { type: (_b = row.type) !== null && _b !== void 0 ? _b : type, bold: true }, key.padEnd(maxKey)),
             row.node));
     })));
@@ -64,26 +64,21 @@ var Table = {
     Debug: function (_a) {
         var name = _a.name, props = __rest(_a, ["name"]);
         var flags = useCli_1["default"]().flags;
-        return flags.debug ? (react_1["default"].createElement(Log_1["default"].Debug, { name: name },
+        return flags.debug ? (react_1["default"].createElement(Column_1["default"], null,
+            react_1["default"].createElement(LogText_1["default"].Default, { yellow: true }, name),
             react_1["default"].createElement(TableBase, __assign({ type: Log_1.LogType.debug }, props)))) : null;
     },
     Info: function (props) {
-        return (react_1["default"].createElement(Log_1["default"].Info, null,
-            react_1["default"].createElement(TableBase, __assign({ type: Log_1.LogType.info }, props))));
+        return react_1["default"].createElement(TableBase, __assign({ type: Log_1.LogType.info }, props));
     },
-    Success: function (_a) {
-        var exit = _a.exit, props = __rest(_a, ["exit"]);
-        return (react_1["default"].createElement(Log_1["default"].Success, { exit: exit },
-            react_1["default"].createElement(TableBase, __assign({ type: Log_1.LogType.success }, props))));
+    Success: function (props) {
+        return react_1["default"].createElement(TableBase, __assign({ type: Log_1.LogType.success }, props));
     },
     Warn: function (props) {
-        return (react_1["default"].createElement(Log_1["default"].Warn, null,
-            react_1["default"].createElement(TableBase, __assign({ type: Log_1.LogType.warn }, props))));
+        return react_1["default"].createElement(TableBase, __assign({ type: Log_1.LogType.warn }, props));
     },
-    Error: function (_a) {
-        var exit = _a.exit, props = __rest(_a, ["exit"]);
-        return (react_1["default"].createElement(Log_1["default"].Error, { exit: exit },
-            react_1["default"].createElement(TableBase, __assign({ type: Log_1.LogType.error }, props))));
+    Error: function (props) {
+        return react_1["default"].createElement(TableBase, __assign({ type: Log_1.LogType.error }, props));
     }
 };
 exports["default"] = Table;

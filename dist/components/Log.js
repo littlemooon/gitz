@@ -64,7 +64,7 @@ function LogBase(_a) {
         flags.debug ? (react_1["default"].createElement(Row_1["default"], { gap: 2 },
             react_1["default"].createElement(LogText_1["default"].Default, __assign({ type: type }, colorProps), getTypeName(type)),
             react_1["default"].createElement(LogText_1["default"].Default, null, Date.now()))) : null,
-        react_1["default"].createElement(Row_1["default"], { gap: 1 }, children)));
+        react_1["default"].createElement(Row_1["default"], null, children)));
 }
 var Log = {
     Debug: function (_a) {

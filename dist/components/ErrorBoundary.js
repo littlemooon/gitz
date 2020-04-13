@@ -25,9 +25,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 var react_1 = __importStar(require("react"));
 var Column_1 = __importDefault(require("./Column"));
-var Log_1 = __importDefault(require("./Log"));
+var Exit_1 = __importDefault(require("./Exit"));
 var LogText_1 = __importDefault(require("./LogText"));
 var Row_1 = __importDefault(require("./Row"));
+var Table_1 = __importDefault(require("./Table"));
 var ErrorBoundary = /** @class */ (function (_super) {
     __extends(ErrorBoundary, _super);
     function ErrorBoundary() {
@@ -45,11 +46,11 @@ var ErrorBoundary = /** @class */ (function (_super) {
         var _a, _b;
         var _c = this.state, error = _c.error, errorInfo = _c.errorInfo;
         return error ? (react_1["default"].createElement(Column_1["default"], null,
-            react_1["default"].createElement(Log_1["default"].Error, { exit: true },
-                react_1["default"].createElement(Row_1["default"], { gap: 1 },
-                    react_1["default"].createElement(LogText_1["default"].Error, null, error.name),
-                    react_1["default"].createElement(LogText_1["default"].Default, null, (_a = error.message) === null || _a === void 0 ? void 0 : _a.replace('error: ', '')))),
-            react_1["default"].createElement(Log_1["default"].Debug, { name: "componentStack" }, (_b = errorInfo.componentStack) === null || _b === void 0 ? void 0 : _b.trim()))) : (react_1["default"].createElement(react_1["default"].Fragment, null, this.props.children));
+            react_1["default"].createElement(Row_1["default"], null,
+                react_1["default"].createElement(LogText_1["default"].Error, null, error.name),
+                react_1["default"].createElement(LogText_1["default"].Default, null, (_a = error.message) === null || _a === void 0 ? void 0 : _a.replace('error: ', '')),
+                react_1["default"].createElement(Exit_1["default"], null)),
+            react_1["default"].createElement(Table_1["default"].Debug, { name: "error boundary", data: { componentStack: (_b = errorInfo.componentStack) === null || _b === void 0 ? void 0 : _b.trim() } }))) : (react_1["default"].createElement(react_1["default"].Fragment, null, this.props.children));
     };
     return ErrorBoundary;
 }(react_1.Component));

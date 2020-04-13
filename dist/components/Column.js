@@ -32,7 +32,7 @@ exports.__esModule = true;
 var ink_1 = require("ink");
 var react_1 = __importStar(require("react"));
 function Column(_a) {
-    var children = _a.children, gap = _a.gap, props = __rest(_a, ["children", "gap"]);
+    var children = _a.children, _b = _a.gap, gap = _b === void 0 ? 0 : _b, props = __rest(_a, ["children", "gap"]);
     return (react_1["default"].createElement(ink_1.Box, __assign({ flexDirection: "column" }, props), react_1.Children.map(children, function (c, i) { return (react_1["default"].createElement(ink_1.Box, { paddingBottom: i === react_1.Children.count(children) - 1 ? 0 : gap }, c)); })));
 }
 exports["default"] = Column;
