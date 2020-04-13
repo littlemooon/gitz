@@ -1,9 +1,0 @@
-src
-test
-.eslintignore
-.eslintrc.js
-.gitignore
-.prettierrc
-tsconfig.json
-.vscode
-.github
