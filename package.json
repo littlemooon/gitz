@@ -6,10 +6,10 @@
   "scripts": {
     "start": "node ./dist/index.js",
     "dev": "npx ts-node ./src/index.ts",
-    "build": "run-s clean build:ts build:pkg",
+    "build": "run-s clean build:ts",
     "build:ts": "npx tsc",
     "build:dev": "npm run build -- --watch",
-    "build:pkg": "npx pkg . --out-path bin",
+    "pkg": "npx pkg . --out-path bin",
     "release": "npx semantic-release",
     "clean": "rm -rf dist && rm -rf bin",
     "format": "npx prettier .",
@@ -74,7 +74,7 @@
   "husky": {
     "hooks": {
       "pre-commit": "npx lint-staged",
-      "pre-push-off": "run-p lint test build"
+      "pre-push": "run-p lint build"
     }
   },
   "lint-staged": {
