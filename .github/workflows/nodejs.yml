@@ -10,22 +10,42 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    # Setup .npmrc file to publish to npm
-    - uses: actions/setup-node@v1
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup
+      uses: actions/setup-node@v1
       with:
-        node-version: '10.x'
+        node-version: 12
         registry-url: 'https://registry.npmjs.org'
-    - run: npm ci
-    # Publish to npm
-    - run: npm publish --access public
+
+    - name: Install
+      run: npm ci
+
+    - name: Lint
+      run: npm run lint
+
+    - name: Test
+      run: npm run test
+
+    - name: Build
+      run: npm run build
+
+    - name: Release
+      run: npm run release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        
+    - name: Publish npm
+      run: npm publish --access public
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-    # Setup .npmrc file to publish to GitHub Packages
+        
     - uses: actions/setup-node@v1
       with:
         registry-url: 'https://npm.pkg.github.com'
-    # Publish to GitHub Packages
-    - run: npm publish
+    - name: Publish github
+      run: npm publish
       env:
         NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

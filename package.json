@@ -10,6 +10,7 @@
     "build:ts": "npx tsc",
     "build:dev": "npm run build -- --watch",
     "build:pkg": "npx pkg . --out-path bin",
+    "release": "npx semantic-release",
     "clean": "rm -rf dist && rm -rf bin",
     "lint": "npx eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "npm run lint -- --fix",
@@ -54,6 +55,7 @@
     "lint-staged": "^10.1.3",
     "pkg": "^4.4.7",
     "prettier": "^2.0.4",
+    "semantic-release": "^17.0.4",
     "ts-jest": "^25.3.1",
     "ts-node": "^8.8.2",
     "typescript": "^3.8.3"
