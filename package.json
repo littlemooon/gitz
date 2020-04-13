@@ -20,7 +20,9 @@
         "lint:fix": "npm run lint -- --fix",
         "test": "npx jest",
         "test:watch": "npm run test -- --watch",
-        "install:global": "npm i -g"
+        "install:global": "npm i -g",
+        "prepublish": "run-s build pkg",
+        "postpublish": "cp -r dist/package.json ."
     },
     "pkg": {
         "scripts": "dist"
