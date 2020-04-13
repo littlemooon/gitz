@@ -21,7 +21,7 @@ export default function BranchSelect<B extends Branch>({
     if (branch) {
       gitCheckout.run(branch)
     }
-  }, [branch])
+  }, [branch, gitCheckout])
 
   const handleSelect = useCallback(
     (item: SelectItem) => {
@@ -43,7 +43,7 @@ export default function BranchSelect<B extends Branch>({
         current: branch.current,
       })) ?? []
     )
-  }, [branches])
+  }, [branches, formatLabel])
 
   return branch ? (
     <GitBoundary name="git checkout" state={gitCheckout.state}>

@@ -6,7 +6,7 @@ export default function Help() {
 
   useEffect(() => {
     showHelp(0)
-  }, [])
+  }, [showHelp])
 
   return null
 }

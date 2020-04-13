@@ -19,5 +19,5 @@ export default function useDebug<T extends { [x: string]: any }>(
       }
     })
     console.groupEnd()
-  }, [obj])
+  }, [name, obj, prev])
 }

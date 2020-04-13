@@ -24,10 +24,10 @@ export default function IndexCommand() {
             formatLabel={(x) => `${x.issueId}: ${x.description} (${x.label})`}
           />
         ) : (
-            <Log.Info>
-              <LogText.Info>No feature branches found</LogText.Info>
-            </Log.Info>
-          )}
+          <Log.Info>
+            <LogText.Info>No feature branches found</LogText.Info>
+          </Log.Info>
+        )}
       </Column>
     </GitBoundary>
   )

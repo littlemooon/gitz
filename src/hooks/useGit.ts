@@ -13,7 +13,7 @@ export enum GitStatus {
   error = 'error',
 }
 
-export interface IGitError {
+export interface GitError {
   name: string
   message: string
 }
@@ -37,7 +37,7 @@ export type GitState<R> =
   | {
       status: GitStatus.error
       result: undefined
-      error: IGitError
+      error: GitError
     }
 
 export enum GitActionTypes {
@@ -49,7 +49,7 @@ export enum GitActionTypes {
 export type GitAction<R> =
   | { type: GitActionTypes.loading }
   | { type: GitActionTypes.success; payload: R }
-  | { type: GitActionTypes.error; payload: IGitError }
+  | { type: GitActionTypes.error; payload: GitError }
 
 export type GitReducer<R> = (
   state: GitState<R>,
@@ -86,6 +86,7 @@ export default function useGit<A, R>(
   runGit: RunGit<R, A>,
   opts?: GitOptions<A>
 ): { state: GitState<R>; run: (args: A) => void } {
+  const { runWith, log } = opts ?? {}
   const { flags } = useCli()
   const stdoutStream = useStdout()
 
@@ -95,29 +96,32 @@ export default function useGit<A, R>(
     error: undefined,
   })
 
-  const run = useCallback((args) => {
-    runGit(
-      git.outputHandler((_, stdout, stderr) => {
-        if (opts?.log || flags.debug) {
-          stdout.pipe(stdoutStream.stdout)
-          stderr.pipe(stdoutStream.stdout)
-        }
-      }),
-      args
-    )
-      .then((result) => {
-        dispatch({ type: GitActionTypes.success, payload: result })
-      })
-      .catch((error) => {
-        dispatch({ type: GitActionTypes.error, payload: error })
-      })
-  }, [])
+  const run = useCallback(
+    (args) => {
+      runGit(
+        git.outputHandler((_, stdout, stderr) => {
+          if (log || flags.debug) {
+            stdout.pipe(stdoutStream.stdout)
+            stderr.pipe(stdoutStream.stdout)
+          }
+        }),
+        args
+      )
+        .then((result) => {
+          dispatch({ type: GitActionTypes.success, payload: result })
+        })
+        .catch((error) => {
+          dispatch({ type: GitActionTypes.error, payload: error })
+        })
+    },
+    [flags.debug, log, runGit, stdoutStream.stdout]
+  )
 
   useEffect(() => {
-    if (opts?.runWith) {
-      run(opts.runWith)
+    if (runWith) {
+      run(runWith)
     }
-  }, [])
+  }, [runWith, run])
 
   return { state, run }
 }

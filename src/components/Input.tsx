@@ -2,6 +2,7 @@ import TextInput, { InkTextInputProps } from 'ink-text-input'
 import React, { useCallback, useEffect, useState } from 'react'
 import LogText from './LogText'
 import Row from './Row'
+import useConstant from '../hooks/useConstant'
 
 export interface InputProps
   extends Omit<InkTextInputProps, 'value' | 'onChange'> {
@@ -15,11 +16,12 @@ export default function Input({
   label,
   ...props
 }: InputProps) {
-  const [value, setValue] = useState<string>(initialValue)
+  const initial = useConstant(() => initialValue)
+  const [value, setValue] = useState<string>(initial)
 
   useEffect(() => {
-    setValue(initialValue)
-  }, [label])
+    setValue(initial)
+  }, [initial, label])
 
   const handleChange = useCallback((value: string) => {
     setValue(value)

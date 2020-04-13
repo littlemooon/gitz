@@ -8,16 +8,13 @@ import LogText from './LogText'
 import Row from './Row'
 import Table from './Table'
 
-export interface IGitBoundaryProps<R> {
+export interface GitBoundaryProps<R> {
   name: string
   state: GitState<R>
   children: ReactNode
 }
 
-export function GitBoundaryStatus<R>({
-  children,
-  state,
-}: IGitBoundaryProps<R>) {
+export function GitBoundaryStatus<R>({ children, state }: GitBoundaryProps<R>) {
   switch (state.status) {
     case GitStatus.loading:
       return (
@@ -39,7 +36,7 @@ export default function GitBoundary<R>({
   state,
   name,
   children,
-}: IGitBoundaryProps<R>) {
+}: GitBoundaryProps<R>) {
   return (
     <Column>
       <Table.Debug

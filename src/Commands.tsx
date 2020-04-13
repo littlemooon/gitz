@@ -6,7 +6,7 @@ import IndexCommand from './commands/IndexCommand'
 import StatusCommand from './commands/StatusCommand'
 import Help from './components/Help'
 import useCli from './hooks/useCli'
-import { ICli } from './providers/CliProvider'
+import { Cli } from './providers/CliProvider'
 
 export enum Command {
   'STATUS' = 'status',
@@ -15,7 +15,7 @@ export enum Command {
   'COMMIT' = 'commit',
 }
 
-const commandMap: Record<Command, ComponentType<ICli>> = {
+const commandMap: Record<Command, ComponentType<Cli>> = {
   [Command.STATUS]: StatusCommand,
   [Command.BRANCH]: BranchCommand,
   [Command.CHECKOUT]: CheckoutCommand,

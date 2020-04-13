@@ -21,22 +21,20 @@ export default function CommitCommand() {
     <GitBoundary name="git branch" state={gitBranches}>
       {isFeature ? (
         <Log.Success exit>
-          <LogText.Success>
-            Current branch:
-          </LogText.Success>
+          <LogText.Success>Current branch:</LogText.Success>
           <LogText.Default>{gitBranches.current?.name}</LogText.Default>
         </Log.Success>
       ) : (
-          <Log.Error>
-            <Column>
-              <LogText.Error>Must be on a feature branch to commit</LogText.Error>
-              <LogText.Default>
-                {gitBranches.current?.name} is not of form{' '}
-                {env.featureBranchRegex.toString()}
-              </LogText.Default>
-            </Column>
-          </Log.Error>
-        )}
+        <Log.Error>
+          <Column>
+            <LogText.Error>Must be on a feature branch to commit</LogText.Error>
+            <LogText.Default>
+              {gitBranches.current?.name} is not of form{' '}
+              {env.featureBranchRegex.toString()}
+            </LogText.Default>
+          </Column>
+        </Log.Error>
+      )}
     </GitBoundary>
   )
 }

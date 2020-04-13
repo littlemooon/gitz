@@ -65,7 +65,7 @@ export function useGitBranches() {
     if (context.status === GitStatus.initial) {
       context.run(undefined)
     }
-  }, [])
+  }, [context])
 
   return context
 }

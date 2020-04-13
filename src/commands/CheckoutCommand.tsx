@@ -24,11 +24,11 @@ export default function CheckoutCommand() {
             formatLabel={(x) => `${x.issueId}: ${x.description} (${x.label})`}
           />
         ) : (
-            <Log.Warn>
-              <LogText.Warn>No feature branches found</LogText.Warn>
-            </Log.Warn>
-          )}
+          <Log.Warn>
+            <LogText.Warn>No feature branches found</LogText.Warn>
+          </Log.Warn>
+        )}
       </Column>
-    </GitBoundary >
+    </GitBoundary>
   )
 }

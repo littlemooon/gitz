@@ -10,7 +10,7 @@ import { Command, commandInputMap } from '../Commands'
 import Json from '../components/Json'
 import Table from '../components/Table'
 
-export interface IGlobal {
+export interface Global {
   command?: Command
   args: string[]
   flags: {
@@ -39,7 +39,7 @@ export type GlobalFlags = {
   debug?: boolean
 }
 
-export const GlobalContext = createContext<IGlobal>({
+export const GlobalContext = createContext<Global>({
   command: undefined,
   args: [],
   flags: {},
@@ -52,7 +52,7 @@ export const GlobalContext = createContext<IGlobal>({
 })
 
 export const GlobalDispatchContext = createContext<
-  (Global: Partial<Omit<IGlobal, 'showHelp' | 'showVersion'>>) => void
+  (Global: Partial<Omit<Global, 'showHelp' | 'showVersion'>>) => void
 >(() => {
   throw new Error('GlobalDispatchContext has not been initialized')
 })
@@ -72,7 +72,7 @@ function parseCommand(command?: string): Command | undefined {
   }
 }
 
-function parseGlobalInput(GlobalInput: GlobalInput): IGlobal {
+function parseGlobalInput(GlobalInput: GlobalInput): Global {
   const [command, ...args] = GlobalInput.input
 
   return {
@@ -91,7 +91,7 @@ export function GlobalProvider({
   GlobalInput: GlobalInput
   children: ReactNode
 }) {
-  const [state, setState] = useState<IGlobal>(parseGlobalInput(GlobalInput))
+  const [state, setState] = useState<Global>(parseGlobalInput(GlobalInput))
 
   const setGlobal = useCallback(({ command, flags, args }) => {
     setState((state) => ({

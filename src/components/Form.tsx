@@ -26,7 +26,7 @@ export default function Form<D extends FormData>({
 
   const nextId = useMemo(() => {
     const nextItem = Object.entries(data).find(
-      ([_, item]) => typeof item.value !== 'string'
+      ([, item]) => typeof item.value !== 'string'
     )
     return nextItem ? nextItem[0] : undefined
   }, [data])
@@ -48,7 +48,7 @@ export default function Form<D extends FormData>({
     if (!nextId && onSubmit) {
       onSubmit(data)
     }
-  }, [nextId])
+  }, [data, nextId, onSubmit])
 
   const onSubmitNext = useCallback(
     (value: string) => {

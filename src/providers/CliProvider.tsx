@@ -17,7 +17,7 @@ export type CliFlags = {
   debug?: boolean
 }
 
-export interface ICli {
+export interface Cli {
   command?: Command
   args: string[]
   flags: {
@@ -51,7 +51,7 @@ function parseCommand(command?: string): Command | undefined {
   }
 }
 
-function parseCliInput(cliInput: CliInput): ICli {
+function parseCliInput(cliInput: CliInput): Cli {
   const [command, ...args] = cliInput.input
 
   return {
@@ -80,7 +80,7 @@ const cliInput = meow<CliInputFlags>(cliHelpText, {
 })
 
 export default function CliProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<ICli>(parseCliInput(cliInput))
+  const [state, setState] = useState<Cli>(parseCliInput(cliInput))
 
   const setCli = useCallback(({ command, flags, args }) => {
     setState((state) => ({

@@ -39,15 +39,15 @@ export default function BranchCommand() {
       </Log.Success>
     </GitBoundary>
   ) : (
-      <Log.Info>
-        <Form<BranchCommandForm>
-          title="Create a new feature branch"
-          initialData={{
-            issueId: { label: 'Issue ID' },
-            description: { label: 'Branch Description' },
-          }}
-          onSubmit={onSubmit}
-        />
-      </Log.Info>
-    )
+    <Log.Info>
+      <Form<BranchCommandForm>
+        title="Create a new feature branch"
+        initialData={{
+          issueId: { label: 'Issue ID' },
+          description: { label: 'Branch Description' },
+        }}
+        onSubmit={onSubmit}
+      />
+    </Log.Info>
+  )
 }

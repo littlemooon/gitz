@@ -1,7 +1,7 @@
 import { createContext, useContext } from 'react'
-import { ICli } from '../providers/CliProvider'
+import { Cli } from '../providers/CliProvider'
 
-export const CliContext = createContext<ICli>({
+export const CliContext = createContext<Cli>({
   command: undefined,
   args: [],
   flags: {},
@@ -14,7 +14,7 @@ export const CliContext = createContext<ICli>({
 })
 
 export const CliDispatchContext = createContext<
-  (cli: Partial<Omit<ICli, 'showHelp' | 'showVersion'>>) => void
+  (cli: Partial<Omit<Cli, 'showHelp' | 'showVersion'>>) => void
 >(() => {
   throw new Error('CliDispatchContext has not been initialized')
 })
