@@ -1,25 +1,25 @@
-# gira
+# gitet
 
 Git wrapper for feature flow with ticket numbers
 
 ## Install
 
 ```bash
-npm install --global gira
+npm install --global gitet
 ```
 
 ## CLI
 
 ```
-$ gira --help
+$ gitet --help
 
   Usage
-    $ gira
+    $ gitet
 
   Options
     --name Your name
 
   Examples
-    $ gira --name=Jane
+    $ gitet --name=Jane
     Hello, Jane
 ```

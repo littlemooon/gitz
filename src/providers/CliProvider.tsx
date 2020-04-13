@@ -65,13 +65,13 @@ function parseCliInput(cliInput: CliInput): Cli {
 
 export const cliHelpText = `
 Usage
-  $ gira
+  $ gitet
 
 Options
   --name Your name
 
 Examples
-  $ gira --name=Jane
+  $ gitet --name=Jane
   Hello, Jane
 `
 
