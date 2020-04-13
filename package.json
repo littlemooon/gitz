@@ -2,7 +2,7 @@
   "name": "gitet",
   "version": "0.0.0-development",
   "license": "MIT",
-  "bin": "./dist/index.js",
+  "bin": "./dist/src/index.js",
   "scripts": {
     "start": "node ./dist/index.js",
     "dev": "npx ts-node ./src/index.ts",
