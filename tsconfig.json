@@ -4,6 +4,7 @@
   "compilerOptions": {
     "outDir": "dist",
     "jsx": "react",
+    "resolveJsonModule": true,
     "esModuleInterop": true,
     "strict": true,
     "types": ["jest", "node"]

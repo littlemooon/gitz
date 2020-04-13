@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react'
-import { Cli } from '../providers/CliProvider'
+import { Cli } from '../lib/cli'
 
 export const CliContext = createContext<Cli>({
   command: undefined,

@@ -10,7 +10,7 @@ export default function StatusCommand() {
   return (
     <GitBoundary name="git status" state={state}>
       <Title>Status</Title>
-      <Table.Success exit data={{ tracking: state.result?.tracking }} />
+      <Table.Success data={{ tracking: state.result?.tracking }} />
     </GitBoundary>
   )
 }

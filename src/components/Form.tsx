@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import Column from './Column'
 import Input from './Input'
 import Title from './Title'
+import FocusProvider, { useFocus } from '../providers/FocusProvider'
 
 export interface FormField {
   label: string
@@ -22,6 +23,7 @@ export default function Form<D extends FormData>({
   initialData,
   onSubmit,
 }: FormProps<D>) {
+  const focus = useFocus()
   const [data, setData] = useState<D>(initialData)
 
   const nextId = useMemo(() => {
@@ -65,21 +67,19 @@ export default function Form<D extends FormData>({
 
       <Column paddingLeft={1}>
         {Object.entries(readonlyForm).map(([id, item]) => (
-          <Input
-            key={id}
-            focus={false}
-            label={item.label}
-            initialValue={item.value}
-          />
+          <FocusProvider key={id} focus={false}>
+            <Input label={item.label} initialValue={item.value} />
+          </FocusProvider>
         ))}
 
         {nextId ? (
-          <Input
-            focus
-            label={data[nextId].label}
-            initialValue={data[nextId].initialValue}
-            onSubmit={onSubmitNext}
-          />
+          <FocusProvider focus={Boolean(focus)}>
+            <Input
+              label={data[nextId].label}
+              initialValue={data[nextId].initialValue}
+              onSubmit={onSubmitNext}
+            />
+          </FocusProvider>
         ) : null}
       </Column>
     </Column>

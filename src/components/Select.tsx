@@ -4,9 +4,10 @@ import { arrayRotate } from '../lib/array'
 import Column from './Column'
 import LogText from './LogText'
 import SelectIndicator from './SelectIndicator'
+import FocusProvider, { useFocus } from '../providers/FocusProvider'
 
 export type SelectItem<T extends object = {}> = T & {
-  label: string
+  label?: string
   content?: ReactNode
   id: string
   current?: boolean
@@ -14,7 +15,6 @@ export type SelectItem<T extends object = {}> = T & {
 
 export interface SelectProps {
   items: SelectItem[]
-  focus?: boolean
   initialIndex?: number
   limit?: number
   onSelect: (item: SelectItem) => void
@@ -27,6 +27,8 @@ export interface SelectState {
 }
 
 export default function Select(props: SelectProps) {
+  const focus = useFocus()
+
   const [state, setState] = useState<SelectState>({
     rotateIndex: 0,
     selectedIndex: props.initialIndex ?? 0,
@@ -47,66 +49,61 @@ export default function Select(props: SelectProps) {
   }, [props.items, state.rotateIndex, limit, hasLimit])
 
   useInput((input, key) => {
-    if (key.upArrow) {
-      const lastIndex = (hasLimit ? limit : props.items.length) - 1
-      const atFirstIndex = state.selectedIndex === 0
-      const nextIndex = hasLimit ? state.selectedIndex : lastIndex
-      const nextRotateIndex = atFirstIndex
-        ? state.rotateIndex + 1
-        : state.rotateIndex
-      const nextSelectedIndex = atFirstIndex
-        ? nextIndex
-        : state.selectedIndex - 1
+    if (focus) {
+      if (key.upArrow) {
+        const lastIndex = (hasLimit ? limit : props.items.length) - 1
+        const atFirstIndex = state.selectedIndex === 0
+        const nextIndex = hasLimit ? state.selectedIndex : lastIndex
+        const nextRotateIndex = atFirstIndex
+          ? state.rotateIndex + 1
+          : state.rotateIndex
+        const nextSelectedIndex = atFirstIndex
+          ? nextIndex
+          : state.selectedIndex - 1
 
-      setState({
-        rotateIndex: nextRotateIndex,
-        selectedIndex: nextSelectedIndex,
-      })
+        setState({
+          rotateIndex: nextRotateIndex,
+          selectedIndex: nextSelectedIndex,
+        })
 
-      const slicedItems = hasLimit
-        ? arrayRotate(props.items, nextRotateIndex).slice(0, limit)
-        : props.items
-      if (props.onHighlight) {
-        props.onHighlight(slicedItems[nextSelectedIndex])
-      }
-    } else if (key.downArrow) {
-      const atLastIndex =
-        state.selectedIndex === (hasLimit ? limit : props.items.length) - 1
-      const nextIndex = hasLimit ? state.selectedIndex : 0
-      const nextRotateIndex = atLastIndex
-        ? state.rotateIndex - 1
-        : state.rotateIndex
-      const nextSelectedIndex = atLastIndex
-        ? nextIndex
-        : state.selectedIndex + 1
+        const slicedItems = hasLimit
+          ? arrayRotate(props.items, nextRotateIndex).slice(0, limit)
+          : props.items
+        if (props.onHighlight) {
+          props.onHighlight(slicedItems[nextSelectedIndex])
+        }
+      } else if (key.downArrow) {
+        const atLastIndex =
+          state.selectedIndex === (hasLimit ? limit : props.items.length) - 1
+        const nextIndex = hasLimit ? state.selectedIndex : 0
+        const nextRotateIndex = atLastIndex
+          ? state.rotateIndex - 1
+          : state.rotateIndex
+        const nextSelectedIndex = atLastIndex
+          ? nextIndex
+          : state.selectedIndex + 1
 
-      setState({
-        rotateIndex: nextRotateIndex,
-        selectedIndex: nextSelectedIndex,
-      })
+        setState({
+          rotateIndex: nextRotateIndex,
+          selectedIndex: nextSelectedIndex,
+        })
 
-      const slicedItems = hasLimit
-        ? arrayRotate(props.items, nextRotateIndex).slice(0, limit)
-        : props.items
-      if (props.onHighlight) {
-        props.onHighlight(slicedItems[nextSelectedIndex])
-      }
-    } else if (key.return) {
-      const slicedItems = hasLimit
-        ? arrayRotate(props.items, state.rotateIndex).slice(0, limit)
-        : props.items
-      if (props.onSelect) {
-        props.onSelect(slicedItems[state.selectedIndex])
+        const slicedItems = hasLimit
+          ? arrayRotate(props.items, nextRotateIndex).slice(0, limit)
+          : props.items
+        if (props.onHighlight) {
+          props.onHighlight(slicedItems[nextSelectedIndex])
+        }
+      } else if (key.return) {
+        const slicedItems = hasLimit
+          ? arrayRotate(props.items, state.rotateIndex).slice(0, limit)
+          : props.items
+        if (props.onSelect) {
+          props.onSelect(slicedItems[state.selectedIndex])
+        }
       }
     }
   })
-
-  useEffect(() => {
-    setState({
-      rotateIndex: 0,
-      selectedIndex: 0,
-    })
-  }, [props.items])
 
   return (
     <Column>
@@ -114,15 +111,20 @@ export default function Select(props: SelectProps) {
         const selected = index === state.selectedIndex
 
         return (
-          <Box key={item.id || item.label}>
-            <SelectIndicator selected={selected} />
-            <Column>
-              <LogText.Default bold={item.current} cyan={selected}>
-                {item.label}
-              </LogText.Default>
-              {item.content}
-            </Column>
-          </Box>
+          <FocusProvider key={item.id} focus={Boolean(focus && selected)}>
+            <Box>
+              <SelectIndicator selected={selected} />
+              <Column>
+                {item.label ? (
+                  <LogText.Default bold={item.current} cyan={focus && selected}>
+                    {item.label}
+                  </LogText.Default>
+                ) : null}
+
+                {item.content}
+              </Column>
+            </Box>
+          </FocusProvider>
         )
       })}
     </Column>

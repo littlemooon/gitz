@@ -14,9 +14,9 @@ export default function CheckoutCommand() {
 
   return (
     <GitBoundary name="git branch" state={gitBranches}>
-      <Column gap={1}>
+      <Column>
         <Log.Info>
-          <Title cyan>Switch to feature branch</Title>
+          <Title>Switch to feature branch</Title>
         </Log.Info>
         {featureBranches?.length ? (
           <BranchSelect
