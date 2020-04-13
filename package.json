@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./dist/index.js",
     "dev": "npx ts-node ./src/index.ts",
-    "build": "run-s clean build:ts build:pkg",
+    "build": "run-s clean build:ts",
     "build:ts": "npx tsc",
     "build:dev": "npm run build -- --watch",
     "build:pkg": "npx pkg . --out-path bin",
