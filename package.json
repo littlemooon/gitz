@@ -3,12 +3,12 @@
     "version": "0.0.14",
     "license": "MIT",
     "bin": {
-        "gitet": "./dist/src/index.js"
+        "gitet": "./src/index.js"
     },
     "scripts": {
         "start": "node ./dist/src/index.js",
         "dev": "npx ts-node ./src/index.ts",
-        "build": "run-s clean build:ts build:pkg build:assets",
+        "build": "run-s clean build:ts build:assets",
         "build:ts": "npx tsc",
         "build:dev": "npm run build -- --watch",
         "build:assets": "cp readme.md dist",
