@@ -15,20 +15,22 @@ export default function useGitMutation<R, A>(
   mutation: GitMutation<R, A>,
   args: A
 ): GitMutationResponse<R> {
-  const async = useAsync({
-    promiseFn: mutation.run,
-    git,
-    ...args,
+  const { run, status, data, error, isInitial } = useAsync({
+    deferFn: () =>
+      mutation.run(
+        git.outputHandler(() => undefined),
+        args
+      ),
   })
 
   useEffect(() => {
-    if (args) {
-      async.run()
+    if (args && isInitial) {
+      run()
     }
-  }, [args, async])
+  }, [args, run, isInitial])
 
-  const status = useMemo(() => {
-    switch (async.status) {
+  const gitStatus = useMemo(() => {
+    switch (status) {
       case 'initial':
         return GitStatus.initial
       case 'pending':
@@ -38,13 +40,13 @@ export default function useGitMutation<R, A>(
       default:
         return GitStatus.error
     }
-  }, [async.status])
+  }, [status])
 
   return {
     name: mutation.name,
-    state: async.data,
-    status,
-    run: async.run,
-    error: async.error,
+    state: data,
+    status: gitStatus,
+    run: run,
+    error,
   }
 }

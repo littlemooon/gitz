@@ -7,7 +7,9 @@ export type Env = {
 
 const { DIR, MASTER_BRANCH, ISSUE_REGEX, FEATURE_BRANCH_REGEX } = process.env
 
-const issueRegex = RegExp(ISSUE_REGEX ?? /[a-zA-Z]+-\d+/)
+const jiraRegex = /[a-zA-Z]+-\d+/
+
+const issueRegex = RegExp(ISSUE_REGEX ?? jiraRegex)
 
 const env: Env = {
   rootDir: DIR ?? process.cwd(),

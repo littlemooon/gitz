@@ -32,6 +32,8 @@ const defaultStore: Store = {
 
 const store = new Conf({ defaults: defaultStore })
 
+store.set('sessionId', sessionId)
+
 export function getStoreItem<K extends keyof GitStore>(
   key: K
 ): Maybe<GitStore[K]> {

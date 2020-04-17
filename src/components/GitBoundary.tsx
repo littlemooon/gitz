@@ -5,6 +5,7 @@ import { GitMutationResponse } from '../hooks/useGitMutation'
 import { GitQueryResponse, GitStatus } from '../hooks/useGitQuery'
 import { StoreKey } from '../lib/store'
 import Column from './Column'
+import Exit from './Exit'
 import Json from './Json'
 import { LogType } from './Log'
 import LogText from './LogText'
@@ -40,13 +41,8 @@ export default function GitBoundary<K extends StoreKey, R>({
         }}
       />
 
-      {response.error ? (
-        <Row gap={1}>
-          <LogText.Error>{response.error.name}</LogText.Error>
-          <LogText.Default>{response.error.message}</LogText.Default>
-        </Row>
-      ) : response.status === GitStatus.error ? (
-        <LogText.Error>Unknown error from git</LogText.Error>
+      {response.status === GitStatus.error ? (
+        <Exit />
       ) : response.status === GitStatus.loading ? (
         <Row gap={1}>
           <Color cyan>

@@ -3,6 +3,7 @@ import { useAsync } from 'react-async'
 import git, { GitQuery, GitStore } from '../lib/git'
 import store, { getStoreItem, StoreKey } from '../lib/store'
 import { Maybe } from '../types'
+import useConstant from './useConstant'
 
 export enum GitStatus {
   initial = 'initial',
@@ -22,56 +23,49 @@ export default function useGitQuery<K extends StoreKey, R, A>(
   query: GitQuery<K, R, A>,
   args: A
 ): GitQueryResponse<K> {
-  const [state, setState] = useState<Maybe<GitStore[K]>>(
-    getStoreItem(query.key)
-  )
+  const initialState = useConstant(() => getStoreItem(query.key))
+  const [state, setState] = useState<Maybe<GitStore[K]>>(initialState)
 
   useEffect(() => {
     const unsubscribe = store.onDidChange(query.key, setState)
     return unsubscribe
   }, [query.key])
 
-  const async = useAsync({
-    promiseFn: query.run,
+  const { data, error, status } = useAsync({
+    [state ? 'deferFn' : 'promiseFn']: query.run,
     git,
     ...args,
   })
 
   useEffect(() => {
-    if (async.data) {
-      query.set(async.data as R)
+    if (data) {
+      query.set(data as R)
     }
-  }, [async.data, query])
+  }, [data, query])
 
   useEffect(() => {
-    if (async.error) {
+    if (error) {
       query.set(undefined)
     }
-  }, [async.error, query])
+  }, [error, query])
 
-  useEffect(() => {
-    if (async.isInitial) {
-      async.run()
-    }
-  }, [async])
-
-  const status = useMemo(() => {
-    switch (async.status) {
+  const gitStatus = useMemo(() => {
+    switch (status) {
       case 'initial':
         return GitStatus.initial
       case 'pending':
         return GitStatus.loading
       case 'fulfilled':
-        return GitStatus.success
+        return state ? GitStatus.success : GitStatus.loading
       default:
         return GitStatus.error
     }
-  }, [async.status])
+  }, [status, state])
 
   return {
     name: query.name,
     state,
-    status,
-    error: async.error,
+    status: gitStatus,
+    error,
   }
 }

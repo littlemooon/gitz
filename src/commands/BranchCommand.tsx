@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import Column from '../components/Column'
+import { useError } from '../components/ErrorBoundary'
 import Exit from '../components/Exit'
 import Form, { FormData, FormField } from '../components/Form'
 import GitBoundary from '../components/GitBoundary'
@@ -17,18 +18,26 @@ export interface BranchCommandForm extends FormData {
 }
 
 export default function BranchCommand() {
+  const { setError } = useError()
   const [branch, setBranch] = useState<BranchFeature>()
 
   const checkout = useGitMutation(mutations.checkout, branch)
 
-  const onSubmit = useCallback((newForm: BranchCommandForm) => {
-    setBranch(
-      createFeatureBranch({
-        issueId: newForm.issueId.value,
-        description: newForm.description.value,
-      })
-    )
-  }, [])
+  const onSubmit = useCallback(
+    (newForm: BranchCommandForm) => {
+      try {
+        setBranch(
+          createFeatureBranch({
+            issueId: newForm.issueId.value,
+            description: newForm.description.value,
+          })
+        )
+      } catch (error) {
+        setError(error)
+      }
+    },
+    [setError]
+  )
 
   return (
     <Column>

@@ -43,7 +43,7 @@ export function createFeatureBranch(input: BranchInput): BranchFeature {
   return {
     issueId,
     description,
-    name: ['feature', issueId, description].join('-').toLowerCase(),
+    name: ['feature', issueId, description.toLowerCase()].join('-'),
   }
 }
 

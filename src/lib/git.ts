@@ -28,7 +28,7 @@ export interface GitQuery<K extends StoreKey, R, A> {
 
 export interface GitMutation<R, A> {
   name: string
-  run: (a: A & { git: SimpleGit }) => Promise<R>
+  run: (git: SimpleGit, args: A) => Promise<R>
 }
 
 function createGitQuery<K extends StoreKey, R, A>(
@@ -69,11 +69,21 @@ export const queries = {
 export const mutations = {
   checkout: createGitMutation<void, Maybe<Branch>>({
     name: 'git checkout',
-    run: ({ git, name }) => {
-      if (!name) {
+    run: (git, branch) => {
+      if (!branch?.name) {
         throw new Error('Cannot checkout undefined branch name')
       }
-      return git.checkoutBranch(name, env.masterBranch)
+      return git.checkout(branch?.name)
+    },
+  }),
+
+  checkoutBranch: createGitMutation<void, Maybe<Branch>>({
+    name: 'git checkout -b',
+    run: (git, branch) => {
+      if (!branch?.name) {
+        throw new Error('Cannot create undefined branch name')
+      }
+      return git.checkoutBranch(branch?.name, env.masterBranch)
     },
   }),
 }
