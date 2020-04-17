@@ -30,15 +30,16 @@ export function createFeatureBranch(input: BranchInput): BranchFeature {
   if (!input.issueId) {
     throw new Error('Issue ID required')
   }
-  if (!env.issueRegex.exec(input.issueId)) {
-    throw new Error(`Issue ID must be of form: ${env.issueRegex}`)
-  }
   if (!input.description) {
     throw new Error('Description required')
   }
 
   const issueId = input.issueId.replace(/\s+/g, '-').toUpperCase()
   const description = capitalize(input.description.replace(/\s+/g, '_'))
+
+  if (!env.issueRegex.exec(issueId)) {
+    throw new Error(`Issue ID (${issueId}) must be of form: ${env.issueRegex}`)
+  }
 
   return {
     issueId,

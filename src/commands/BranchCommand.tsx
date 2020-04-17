@@ -21,7 +21,7 @@ export default function BranchCommand() {
   const { setError } = useError()
   const [branch, setBranch] = useState<BranchFeature>()
 
-  const checkout = useGitMutation(mutations.checkout, branch)
+  const checkout = useGitMutation(mutations.checkoutBranch, branch)
 
   const onSubmit = useCallback(
     (newForm: BranchCommandForm) => {
@@ -51,12 +51,13 @@ export default function BranchCommand() {
           onSubmit={onSubmit}
         />
       </FocusProvider>
+
       <GitBoundary
         loadingText={`Creating branch: ${branch?.name}`}
         response={checkout}
       >
         <Row gap={1}>
-          <LogText.Success>Branch created:</LogText.Success>
+          <LogText.Success>Switched to new branch:</LogText.Success>
           <LogText.Default>{branch?.name}</LogText.Default>
         </Row>
         <Exit />

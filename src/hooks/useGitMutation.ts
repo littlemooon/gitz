@@ -29,6 +29,12 @@ export default function useGitMutation<R, A>(
     }
   }, [args, run, isInitial])
 
+  // useEffect(() => {
+  //   if (error) {
+  //     setError(error)
+  //   }
+  // }, [error, setError])
+
   const gitStatus = useMemo(() => {
     switch (status) {
       case 'initial':

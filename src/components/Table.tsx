@@ -34,7 +34,7 @@ function TableBase({ data, type }: TableProps) {
       {Object.entries(data).map(([key, value]) => {
         const row = parseRow(value)
         return (
-          <Row key={key}>
+          <Row key={key} gap={1}>
             <LogText.Default type={row.type ?? type} bold>
               {key.padEnd(maxKey)}
             </LogText.Default>

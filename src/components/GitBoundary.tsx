@@ -42,7 +42,15 @@ export default function GitBoundary<K extends StoreKey, R>({
       />
 
       {response.status === GitStatus.error ? (
-        <Exit />
+        <>
+          <Row gap={1}>
+            <LogText.Error>{response.error?.name ?? 'Error'}</LogText.Error>
+            <LogText.Default>
+              {response.error?.message ?? 'unknown'}
+            </LogText.Default>
+          </Row>
+          <Exit />
+        </>
       ) : response.status === GitStatus.loading ? (
         <Row gap={1}>
           <Color cyan>

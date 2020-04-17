@@ -1,7 +1,9 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import useGitMutation from '../hooks/useGitMutation'
+import { GitStatus } from '../hooks/useGitQuery'
 import { Branch } from '../lib/branch'
 import { mutations } from '../lib/git'
+import Column from './Column'
 import Exit from './Exit'
 import GitBoundary from './GitBoundary'
 import LogText from './LogText'
@@ -41,15 +43,19 @@ export default function BranchSelect<B extends Branch>({
     )
   }, [branches, formatLabel])
 
-  return branch ? (
-    <GitBoundary response={checkout}>
-      <Row gap={1}>
-        <LogText.Success>Switched to</LogText.Success>
-        <LogText.Default>{branch.name}</LogText.Default>
-      </Row>
-      <Exit />
-    </GitBoundary>
-  ) : (
-    <Select onSelect={handleSelect} items={items} />
+  return (
+    <Column>
+      {checkout.status === GitStatus.initial ? (
+        <Select onSelect={handleSelect} items={items} />
+      ) : null}
+
+      <GitBoundary response={checkout}>
+        <Row gap={1}>
+          <LogText.Success>Switched to</LogText.Success>
+          <LogText.Default>{branch?.name}</LogText.Default>
+        </Row>
+        <Exit />
+      </GitBoundary>
+    </Column>
   )
 }
