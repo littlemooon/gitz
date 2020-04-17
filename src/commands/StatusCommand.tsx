@@ -18,7 +18,7 @@ export default function StatusCommand() {
           <Table.Success data={{ tracking: response.state?.tracking }} />
         ),
         [GitStatus.error]: (
-          <LogText.Error prefix={response.error?.name}>
+          <LogText.Error prefix={response.name} exit>
             {response.error?.message}
           </LogText.Error>
         ),

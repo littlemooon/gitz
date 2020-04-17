@@ -1,6 +1,5 @@
 import React, { Component, createContext, ReactNode, useContext } from 'react'
 import Column from './Column'
-import Exit from './Exit'
 import LogText from './LogText'
 import Table from './Table'
 
@@ -39,8 +38,9 @@ export default class ErrorBoundary extends Component<
       <ErrorContext.Provider value={{ setError: this.setError }}>
         {error ? (
           <Column>
-            <LogText.Error prefix={error.name}>{error.message}</LogText.Error>
-            <Exit />
+            <LogText.Error prefix={error.name} exit>
+              {error.message}
+            </LogText.Error>
 
             {errorInfo ? (
               <Table.Debug

@@ -65,7 +65,7 @@ export default function BranchCommand() {
           </LogText.Success>
         ),
         [GitStatus.error]: (
-          <LogText.Error prefix={response.error?.name} exit>
+          <LogText.Error prefix={response.name} exit>
             {response.error?.message}
           </LogText.Error>
         ),

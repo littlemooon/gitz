@@ -4,22 +4,23 @@ import { GitStatus } from '../hooks/useGitQuery'
 import { Branch } from '../lib/branch'
 import { mutations } from '../lib/git'
 import Column from './Column'
-import Exit from './Exit'
-import GitBoundary from './GitBoundary'
 import LogText from './LogText'
-import Row from './Row'
+import Router from './Router'
 import Select, { SelectItem } from './Select'
+import Title from './Title'
 
 export default function BranchSelect<B extends Branch>({
+  title,
   branches,
   formatLabel,
 }: {
+  title?: string
   branches: B[]
   formatLabel?: (branch: B) => string
 }) {
   const [branch, setBranch] = useState<B | undefined>()
 
-  const checkout = useGitMutation(mutations.checkout, branch)
+  const response = useGitMutation(mutations.checkout, branch)
 
   const handleSelect = useCallback(
     (item: SelectItem) => {
@@ -44,18 +45,31 @@ export default function BranchSelect<B extends Branch>({
   }, [branches, formatLabel])
 
   return (
-    <Column>
-      {checkout.status === GitStatus.initial ? (
-        <Select onSelect={handleSelect} items={items} />
-      ) : null}
-
-      <GitBoundary response={checkout}>
-        <Row gap={1}>
-          <LogText.Success>Switched to</LogText.Success>
-          <LogText.Default>{branch?.name}</LogText.Default>
-        </Row>
-        <Exit />
-      </GitBoundary>
-    </Column>
+    <Router
+      path={response.status}
+      config={{
+        [GitStatus.initial]: (
+          <Column>
+            <Title>{title ?? 'Switch to branch'}</Title>
+            <Select onSelect={handleSelect} items={items} />
+          </Column>
+        ),
+        [GitStatus.loading]: <LogText.Loading>{response.name}</LogText.Loading>,
+        [GitStatus.success]: (
+          <LogText.Success prefix="Switched to:">
+            {branch?.name}
+          </LogText.Success>
+        ),
+        [GitStatus.error]: (
+          <Column>
+            <LogText.Error prefix={response.name}>
+              {response.error?.message}
+            </LogText.Error>
+            <Title>{title ?? 'Switch to branch'}</Title>
+            <Select onSelect={handleSelect} items={items} />
+          </Column>
+        ),
+      }}
+    />
   )
 }

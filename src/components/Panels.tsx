@@ -14,11 +14,17 @@ export default function Panels({ items }: { items: PanelItem[] }) {
     return items.map((item) => {
       return {
         ...item,
-        content: (
+        content: selected ? (
+          item.id === selected.id ? (
+            <Box paddingBottom={1}>
+              <FocusProvider force focus={true}>
+                {item.content}
+              </FocusProvider>
+            </Box>
+          ) : null
+        ) : (
           <Box paddingBottom={1}>
-            <FocusProvider force focus={item.id === selected?.id}>
-              {item.content}
-            </FocusProvider>
+            <FocusProvider focus={false}>{item.content}</FocusProvider>
           </Box>
         ),
       }

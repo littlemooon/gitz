@@ -1,6 +1,7 @@
 import meow, { BooleanFlag, Result } from 'meow'
 
 export enum CliCommand {
+  'INDEX' = 'index',
   'STATUS' = 'status',
   'BRANCH' = 'branch',
   'CHECKOUT' = 'checkout',
@@ -51,7 +52,7 @@ export interface Cli {
   showVersion(): void
 }
 
-function parseCommand(command?: string): CliCommand | undefined {
+function parseCommand(command?: string): CliCommand {
   if (command) {
     const c = commandInputMap[command]
     if (c) {
@@ -63,6 +64,8 @@ function parseCommand(command?: string): CliCommand | undefined {
         )}]`
       )
     }
+  } else {
+    return CliCommand.INDEX
   }
 }
 

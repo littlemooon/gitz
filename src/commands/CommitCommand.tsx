@@ -41,7 +41,7 @@ export default function CommitCommand() {
           </Column>
         ),
         [GitStatus.error]: (
-          <LogText.Error prefix={response.error?.name}>
+          <LogText.Error prefix={response.name} exit>
             {response.error?.message}
           </LogText.Error>
         ),

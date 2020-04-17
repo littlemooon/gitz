@@ -3,6 +3,7 @@ import BranchCommand from './commands/BranchCommand'
 import CheckoutCommand from './commands/CheckoutCommand'
 import CommitCommand from './commands/CommitCommand'
 import HelpCommand from './commands/HelpCommand'
+import IndexCommand from './commands/IndexCommand'
 import StatusCommand from './commands/StatusCommand'
 import ErrorBoundary from './components/ErrorBoundary'
 import Router from './components/Router'
@@ -17,6 +18,7 @@ export default function App() {
           <Router
             path={cli.command}
             config={{
+              [CliCommand.INDEX]: <IndexCommand />,
               [CliCommand.STATUS]: <StatusCommand />,
               [CliCommand.BRANCH]: <BranchCommand />,
               [CliCommand.CHECKOUT]: <CheckoutCommand />,

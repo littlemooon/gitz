@@ -1,9 +1,7 @@
 import React from 'react'
 import BranchSelect from '../components/BranchSelect'
-import Column from '../components/Column'
 import LogText from '../components/LogText'
 import Router from '../components/Router'
-import Title from '../components/Title'
 import useGitQuery, { GitStatus } from '../hooks/useGitQuery'
 import { queries } from '../lib/git'
 
@@ -16,23 +14,17 @@ export default function CheckoutCommand() {
       config={{
         [GitStatus.initial]: null,
         [GitStatus.loading]: <LogText.Loading>{response.name}</LogText.Loading>,
-        [GitStatus.success]: (
-          <Column>
-            <Title>Switch to feature branch</Title>
-            {response.state?.feature?.length ? (
-              <BranchSelect
-                branches={response.state?.feature}
-                formatLabel={(x) =>
-                  `${x.issueId}: ${x.description} (${x.label})`
-                }
-              />
-            ) : (
-              <LogText.Warn>No feature branches found</LogText.Warn>
-            )}
-          </Column>
+        [GitStatus.success]: response.state?.feature?.length ? (
+          <BranchSelect
+            title="Switch to feature branch"
+            branches={response.state?.feature}
+            formatLabel={(x) => `${x.issueId}: ${x.description} (${x.label})`}
+          />
+        ) : (
+          <LogText.Warn>No feature branches found</LogText.Warn>
         ),
         [GitStatus.error]: (
-          <LogText.Error prefix={response.error?.name}>
+          <LogText.Error prefix={response.name} exit>
             {response.error?.message}
           </LogText.Error>
         ),
