@@ -1,6 +1,9 @@
+import { Color } from 'ink'
 import Spinner from 'ink-spinner'
-import React, { Fragment, ReactNode } from 'react'
-import { GitState, GitStatus } from '../hooks/useGit'
+import React, { ReactNode } from 'react'
+import { GitMutationResponse } from '../hooks/useGitMutation'
+import { GitQueryResponse, GitStatus } from '../hooks/useGitQuery'
+import { StoreKey } from '../lib/store'
 import Column from './Column'
 import Json from './Json'
 import { LogType } from './Log'
@@ -8,56 +11,52 @@ import LogText from './LogText'
 import Row from './Row'
 import Table from './Table'
 
-export interface GitBoundaryProps<R> {
-  name: string
-  state: GitState<R>
+export interface GitBoundaryProps<K extends StoreKey, R> {
+  loadingText?: string
+  response: GitQueryResponse<K> | GitMutationResponse<R>
   children: ReactNode
 }
 
-export function GitBoundaryStatus<R>({ children, state }: GitBoundaryProps<R>) {
-  switch (state.status) {
-    case GitStatus.loading:
-      return (
-        <Row>
-          <Spinner />
-          <LogText.Default>{name}</LogText.Default>
-        </Row>
-      )
-
-    case GitStatus.success:
-      return <>{children}</>
-
-    default:
-      return <Fragment />
-  }
-}
-
-export default function GitBoundary<R>({
-  state,
-  name,
+export default function GitBoundary<K extends StoreKey, R>({
+  loadingText,
+  response,
   children,
-}: GitBoundaryProps<R>) {
+}: GitBoundaryProps<K, R>) {
   return (
     <Column>
       <Table.Debug
-        name={name}
+        name={response.name}
         data={{
-          status: state.status,
-          ...(state.result && {
+          status: response.status,
+          ...(response.state && {
             result: {
               type: LogType.success,
-              node: <Json>{state.result}</Json>,
+              node: <Json>{response.state}</Json>,
             },
           }),
-          ...(state.error && {
-            error: { type: LogType.error, node: <Json>{state.error}</Json> },
+          ...(response.error && {
+            error: { type: LogType.error, node: <Json>{response.error}</Json> },
           }),
         }}
       />
 
-      <GitBoundaryStatus state={state} name={name}>
-        {children}
-      </GitBoundaryStatus>
+      {response.error ? (
+        <Row gap={1}>
+          <LogText.Error>{response.error.name}</LogText.Error>
+          <LogText.Default>{response.error.message}</LogText.Default>
+        </Row>
+      ) : response.status === GitStatus.error ? (
+        <LogText.Error>Unknown error from git</LogText.Error>
+      ) : response.status === GitStatus.loading ? (
+        <Row gap={1}>
+          <Color cyan>
+            <Spinner type="dots12" />
+          </Color>
+          <LogText.Default>{loadingText ?? response.name}</LogText.Default>
+        </Row>
+      ) : response.status === GitStatus.success ? (
+        children
+      ) : null}
     </Column>
   )
 }

@@ -5,9 +5,10 @@ import { FormData, FormField } from '../components/Form'
 import GitBoundary from '../components/GitBoundary'
 import LogText from '../components/LogText'
 import Row from '../components/Row'
+import useGitQuery from '../hooks/useGitQuery'
 import { isFeatureBranch } from '../lib/branch'
 import env from '../lib/env'
-import { useGitBranches } from '../providers/GitBranchProvider'
+import { queries } from '../lib/git'
 
 export interface CommitCommandForm extends FormData {
   issueId: FormField
@@ -15,22 +16,22 @@ export interface CommitCommandForm extends FormData {
 }
 
 export default function CommitCommand() {
-  const gitBranches = useGitBranches()
-  const isFeature = isFeatureBranch(gitBranches.current)
+  const branches = useGitQuery(queries.branch, undefined)
+  const isFeature = isFeatureBranch(branches.state?.current)
 
   return (
-    <GitBoundary name="git branch" state={gitBranches}>
+    <GitBoundary response={branches}>
       {isFeature ? (
         <Row gap={1}>
           <LogText.Success>Current branch:</LogText.Success>
-          <LogText.Default>{gitBranches.current?.name}</LogText.Default>
+          <LogText.Default>{branches.state?.current?.name}</LogText.Default>
           <Exit />
         </Row>
       ) : (
         <Column gap={1}>
           <LogText.Error>Must be on a feature branch to commit</LogText.Error>
           <LogText.Default>
-            {gitBranches.current?.name} is not of form{' '}
+            {branches.state?.current?.name} is not of form{' '}
             {env.featureBranchRegex.toString()}
           </LogText.Default>
         </Column>

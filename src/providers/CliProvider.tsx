@@ -3,8 +3,8 @@ import ErrorBoundary from '../components/ErrorBoundary'
 import Json from '../components/Json'
 import Table from '../components/Table'
 import { CliContext, CliDispatchContext } from '../hooks/useCli'
-import env from '../lib/env'
 import cli, { Cli } from '../lib/cli'
+import env from '../lib/env'
 
 export default function CliProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<Cli>(cli)

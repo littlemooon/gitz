@@ -4,20 +4,19 @@ import Column from '../components/Column'
 import GitBoundary from '../components/GitBoundary'
 import LogText from '../components/LogText'
 import Title from '../components/Title'
-import { isFeatureBranch } from '../lib/branch'
-import { useGitBranches } from '../providers/GitBranchProvider'
+import useGitQuery from '../hooks/useGitQuery'
+import { queries } from '../lib/git'
 
 export default function CheckoutCommand() {
-  const gitBranches = useGitBranches()
-  const featureBranches = gitBranches.branches.filter(isFeatureBranch)
+  const branches = useGitQuery(queries.branch, undefined)
 
   return (
-    <GitBoundary name="git branch" state={gitBranches}>
+    <GitBoundary response={branches}>
       <Column>
         <Title>Switch to feature branch</Title>
-        {featureBranches?.length ? (
+        {branches.state?.feature?.length ? (
           <BranchSelect
-            branches={featureBranches}
+            branches={branches.state?.feature}
             formatLabel={(x) => `${x.issueId}: ${x.description} (${x.label})`}
           />
         ) : (

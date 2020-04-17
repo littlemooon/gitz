@@ -2,15 +2,16 @@ import React from 'react'
 import GitBoundary from '../components/GitBoundary'
 import Table from '../components/Table'
 import Title from '../components/Title'
-import useGit from '../hooks/useGit'
+import useGitQuery from '../hooks/useGitQuery'
+import { queries } from '../lib/git'
 
 export default function StatusCommand() {
-  const { state } = useGit((git) => git.status(), { runWith: true })
+  const status = useGitQuery(queries.status, undefined)
 
   return (
-    <GitBoundary name="git status" state={state}>
+    <GitBoundary response={status}>
       <Title>Status</Title>
-      <Table.Success data={{ tracking: state.result?.tracking }} />
+      <Table.Success data={{ tracking: status.state?.tracking }} />
     </GitBoundary>
   )
 }

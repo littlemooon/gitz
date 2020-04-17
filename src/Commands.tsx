@@ -2,11 +2,10 @@ import React, { ComponentType } from 'react'
 import BranchCommand from './commands/BranchCommand'
 import CheckoutCommand from './commands/CheckoutCommand'
 import CommitCommand from './commands/CommitCommand'
+import HelpCommand from './commands/HelpCommand'
 import IndexCommand from './commands/IndexCommand'
 import StatusCommand from './commands/StatusCommand'
 import useCli from './hooks/useCli'
-import HelpCommand from './commands/HelpCommand'
-import { Cli } from './lib/cli'
 
 export enum Command {
   'STATUS' = 'status',
@@ -16,7 +15,7 @@ export enum Command {
   'HELP' = 'help',
 }
 
-const commandMap: Record<Command, ComponentType<Cli>> = {
+const commandMap: Record<Command, ComponentType> = {
   [Command.STATUS]: StatusCommand,
   [Command.BRANCH]: BranchCommand,
   [Command.CHECKOUT]: CheckoutCommand,
@@ -41,5 +40,5 @@ export default function Commands() {
     ? commandMap[cli.command] ?? HelpCommand
     : IndexCommand
 
-  return <Command {...cli} />
+  return <Command />
 }

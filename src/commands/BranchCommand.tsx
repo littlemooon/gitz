@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import Column from '../components/Column'
 import Exit from '../components/Exit'
 import Form, { FormData, FormField } from '../components/Form'
@@ -6,9 +6,9 @@ import GitBoundary from '../components/GitBoundary'
 import LogText from '../components/LogText'
 import Row from '../components/Row'
 import Title from '../components/Title'
-import useGit, { GitStatus } from '../hooks/useGit'
+import useGitMutation from '../hooks/useGitMutation'
 import { BranchFeature, createFeatureBranch } from '../lib/branch'
-import env from '../lib/env'
+import { mutations } from '../lib/git'
 import FocusProvider from '../providers/FocusProvider'
 
 export interface BranchCommandForm extends FormData {
@@ -18,15 +18,8 @@ export interface BranchCommandForm extends FormData {
 
 export default function BranchCommand() {
   const [branch, setBranch] = useState<BranchFeature>()
-  const gitCheckoutBranch = useGit((git, { name }: BranchFeature) =>
-    git.checkoutBranch(name, env.masterBranch)
-  )
 
-  useEffect(() => {
-    if (branch && gitCheckoutBranch.state.status === GitStatus.initial) {
-      gitCheckoutBranch.run(branch)
-    }
-  }, [branch, gitCheckoutBranch])
+  const checkout = useGitMutation(mutations.checkout, branch)
 
   const onSubmit = useCallback((newForm: BranchCommandForm) => {
     setBranch(
@@ -50,8 +43,8 @@ export default function BranchCommand() {
         />
       </FocusProvider>
       <GitBoundary
-        name={`Creating branch: ${branch?.name}`}
-        state={gitCheckoutBranch.state}
+        loadingText={`Creating branch: ${branch?.name}`}
+        response={checkout}
       >
         <Row gap={1}>
           <LogText.Success>Branch created:</LogText.Success>

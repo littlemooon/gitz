@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import useGit from '../hooks/useGit'
+import React, { useCallback, useMemo, useState } from 'react'
+import useGitMutation from '../hooks/useGitMutation'
 import { Branch } from '../lib/branch'
+import { mutations } from '../lib/git'
 import Exit from './Exit'
 import GitBoundary from './GitBoundary'
 import LogText from './LogText'
@@ -16,13 +17,7 @@ export default function BranchSelect<B extends Branch>({
 }) {
   const [branch, setBranch] = useState<B | undefined>()
 
-  const gitCheckout = useGit((git, branch: B) => git.checkout(branch.name))
-
-  useEffect(() => {
-    if (branch) {
-      gitCheckout.run(branch)
-    }
-  }, [branch, gitCheckout])
+  const checkout = useGitMutation(mutations.checkout, branch)
 
   const handleSelect = useCallback(
     (item: SelectItem) => {
@@ -47,7 +42,7 @@ export default function BranchSelect<B extends Branch>({
   }, [branches, formatLabel])
 
   return branch ? (
-    <GitBoundary name="git checkout" state={gitCheckout.state}>
+    <GitBoundary response={checkout}>
       <Row gap={1}>
         <LogText.Success>Switched to</LogText.Success>
         <LogText.Default>{branch.name}</LogText.Default>

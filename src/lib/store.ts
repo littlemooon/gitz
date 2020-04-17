@@ -1,14 +1,60 @@
-import Configstore from 'configstore'
-import { BranchSummary, StatusResult } from 'simple-git/typings/response'
-import packageJson from '../../package.json'
+import Conf from 'conf'
+import { Maybe } from '../types'
+import { GitStore } from './git'
+import getUuid, { Uuid } from './uuid'
 
-export interface Store {
-  status?: StatusResult
-  branches?: BranchSummary
+export enum StoreKey {
+  status = 'status',
+  branches = 'branches',
+  checkout = 'checkout',
 }
 
-const initialStore: Store = {}
+export type StoreItem<T extends object> = T & {
+  sessionId: Uuid
+  updated: Date
+}
 
-const store = new Configstore(packageJson.name, initialStore)
+export interface Store extends GitStore {
+  sessionId: Uuid
+  version: number
+  created: number
+  updated: number
+}
+
+const sessionId = getUuid()
+
+const defaultStore: Store = {
+  sessionId: sessionId,
+  version: 1,
+  created: Date.now(),
+  updated: Date.now(),
+}
+
+const store = new Conf({ defaults: defaultStore })
+
+export function getStoreItem<K extends keyof GitStore>(
+  key: K
+): Maybe<GitStore[K]> {
+  const item = store.get(key)
+  if (item?.sessionId === store.get('sessionId')) {
+    return item
+  }
+}
+
+export function setStoreItem<K extends keyof GitStore>(
+  key: K,
+  value?: Omit<Store[K], 'sessionId' | 'updated'>
+): GitStore[K] {
+  store.set({
+    sessionId: sessionId,
+    updated: Date.now(),
+    [key]: {
+      sessionId: sessionId,
+      updated: Date.now(),
+      ...value,
+    },
+  })
+  return getStoreItem(key)
+}
 
 export default store
