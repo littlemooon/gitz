@@ -6,7 +6,11 @@ import { CliContext, CliDispatchContext } from '../hooks/useCli'
 import cli, { Cli } from '../lib/cli'
 import env from '../lib/env'
 
-export default function CliProvider({ children }: { children: ReactNode }) {
+export default function CliProvider({
+  children,
+}: {
+  children: (cli: Cli) => ReactNode
+}) {
   const [state, setState] = useState<Cli>(cli)
 
   const setCli = useCallback(({ command, flags, args }) => {
@@ -38,7 +42,7 @@ export default function CliProvider({ children }: { children: ReactNode }) {
             }}
           />
 
-          {children}
+          {children(cli)}
         </CliDispatchContext.Provider>
       </ErrorBoundary>
     </CliContext.Provider>

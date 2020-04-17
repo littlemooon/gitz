@@ -1,5 +1,23 @@
 import meow, { BooleanFlag, Result } from 'meow'
-import { Command, commandInputMap } from '../Commands'
+
+export enum CliCommand {
+  'STATUS' = 'status',
+  'BRANCH' = 'branch',
+  'CHECKOUT' = 'checkout',
+  'COMMIT' = 'commit',
+  'HELP' = 'help',
+}
+
+export const commandInputMap: Record<string, CliCommand> = {
+  status: CliCommand.STATUS,
+  s: CliCommand.STATUS,
+  branch: CliCommand.BRANCH,
+  b: CliCommand.BRANCH,
+  checkout: CliCommand.CHECKOUT,
+  c: CliCommand.CHECKOUT,
+  commit: CliCommand.COMMIT,
+  m: CliCommand.COMMIT,
+}
 
 export const cliHelpText = `
 Usage
@@ -24,25 +42,16 @@ export type CliFlags = {
 }
 
 export interface Cli {
-  command?: Command
+  command?: CliCommand
   args: string[]
   flags: {
     debug?: boolean
   }
-  /**
-  Show the help text and exit with code.
-
-  @param exitCode - The exit code to use. Default: `2`.
-  */
   showHelp(exitCode?: number): void
-
-  /**
-  Show the version text and exit.
-  */
   showVersion(): void
 }
 
-function parseCommand(command?: string): Command | undefined {
+function parseCommand(command?: string): CliCommand | undefined {
   if (command) {
     const c = commandInputMap[command]
     if (c) {

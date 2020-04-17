@@ -1,17 +1,28 @@
 import React from 'react'
-import GitBoundary from '../components/GitBoundary'
+import LogText from '../components/LogText'
+import Router from '../components/Router'
 import Table from '../components/Table'
-import Title from '../components/Title'
-import useGitQuery from '../hooks/useGitQuery'
+import useGitQuery, { GitStatus } from '../hooks/useGitQuery'
 import { queries } from '../lib/git'
 
 export default function StatusCommand() {
-  const status = useGitQuery(queries.status, undefined)
+  const response = useGitQuery(queries.status, undefined)
 
   return (
-    <GitBoundary response={status}>
-      <Title>Status</Title>
-      <Table.Success data={{ tracking: status.state?.tracking }} />
-    </GitBoundary>
+    <Router
+      path={response.status}
+      config={{
+        [GitStatus.initial]: null,
+        [GitStatus.loading]: <LogText.Loading>{response.name}</LogText.Loading>,
+        [GitStatus.success]: (
+          <Table.Success data={{ tracking: response.state?.tracking }} />
+        ),
+        [GitStatus.error]: (
+          <LogText.Error prefix={response.error?.name}>
+            {response.error?.message}
+          </LogText.Error>
+        ),
+      }}
+    />
   )
 }

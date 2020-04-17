@@ -2,7 +2,6 @@ import React, { Component, createContext, ReactNode, useContext } from 'react'
 import Column from './Column'
 import Exit from './Exit'
 import LogText from './LogText'
-import Row from './Row'
 import Table from './Table'
 
 interface ErrorBoundaryState {
@@ -40,13 +39,8 @@ export default class ErrorBoundary extends Component<
       <ErrorContext.Provider value={{ setError: this.setError }}>
         {error ? (
           <Column>
-            <Row gap={1}>
-              <LogText.Error>{error.name}</LogText.Error>
-              <LogText.Default>
-                {error.message?.replace('error: ', '')}
-              </LogText.Default>
-              <Exit />
-            </Row>
+            <LogText.Error prefix={error.name}>{error.message}</LogText.Error>
+            <Exit />
 
             {errorInfo ? (
               <Table.Debug
