@@ -52,7 +52,7 @@ export default function useGitQuery<K extends StoreKey, R, A>(
   const gitStatus = useMemo(() => {
     switch (status) {
       case 'initial':
-        return GitStatus.initial
+        return state ? GitStatus.success : GitStatus.initial
       case 'pending':
         return GitStatus.loading
       case 'fulfilled':

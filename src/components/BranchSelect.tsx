@@ -56,7 +56,7 @@ export default function BranchSelect<B extends Branch>({
         ),
         [GitStatus.loading]: <LogText.Loading>{response.name}</LogText.Loading>,
         [GitStatus.success]: (
-          <LogText.Success prefix="Switched to:">
+          <LogText.Success prefix="Switched to:" exit>
             {branch?.name}
           </LogText.Success>
         ),

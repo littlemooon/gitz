@@ -1,12 +1,11 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Column from '../components/Column'
-import Exit from '../components/Exit'
 import { FormData, FormField } from '../components/Form'
 import LogText from '../components/LogText'
-import Router from '../components/Router'
+import Router, { RouteTo, useRoute } from '../components/Router'
 import useGitQuery, { GitStatus } from '../hooks/useGitQuery'
 import { isFeatureBranch } from '../lib/branch'
-import env from '../lib/env'
+import { CliCommand } from '../lib/cli'
 import { queries } from '../lib/git'
 
 export interface CommitCommandForm extends FormData {
@@ -15,8 +14,15 @@ export interface CommitCommandForm extends FormData {
 }
 
 export default function CommitCommand() {
+  const route = useRoute()
   const response = useGitQuery(queries.branch, undefined)
   const isFeature = isFeatureBranch(response.state?.current)
+
+  useEffect(() => {
+    if (response.state?.current && !isFeature) {
+      route.setPath(CliCommand.CHECKOUT)
+    }
+  }, [isFeature, response.state, route])
 
   return (
     <Router
@@ -25,19 +31,13 @@ export default function CommitCommand() {
         [GitStatus.initial]: null,
         [GitStatus.loading]: <LogText.Loading>{response.name}</LogText.Loading>,
         [GitStatus.success]: isFeature ? (
-          <>
-            <LogText.Success prefix="Current branch:">
-              {response.state?.current?.name}
-            </LogText.Success>
-            <Exit />
-          </>
+          <LogText.Success prefix="Current branch:" exit>
+            {response.state?.current?.name}
+          </LogText.Success>
         ) : (
           <Column gap={1}>
             <LogText.Error>Must be on a feature branch to commit</LogText.Error>
-            <LogText.Default>
-              {response.state?.current?.name} is not of form{' '}
-              {env.featureBranchRegex.toString()}
-            </LogText.Default>
+            <RouteTo path={CliCommand.CHECKOUT} />
           </Column>
         ),
         [GitStatus.error]: (
