@@ -3,11 +3,12 @@ import Column from '../components/Column'
 import Panels from '../components/Panels'
 import BranchCommand from './BranchCommand'
 import CheckoutCommand from './CheckoutCommand'
+import StatusCommand from './StatusCommand'
 
 export default function IndexCommand() {
   return (
-    <Column gap={2}>
-      {/* <StatusCommand key="status" /> */}
+    <Column>
+      <StatusCommand />
       <Panels
         items={[
           { id: 'branch', content: <BranchCommand /> },

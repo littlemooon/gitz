@@ -14,7 +14,7 @@
     "build:assets": "cp readme.md dist",
     "build:pkg": "npx pkg . --out-path dist/bin",
     "release": "npx semantic-release",
-    "release:manual": "run-s build release && npm publish dist",
+    "release:manual": "run-s build release && npm publish dist && git push",
     "release:patch": "npm version patch && npm run release:manual",
     "release:minor": "npm version minor && npm run release:manual",
     "release:major": "npm version major && npm run release:manual",

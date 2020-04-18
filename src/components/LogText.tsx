@@ -6,6 +6,7 @@ import useCli from '../hooks/useCli'
 import Exit from './Exit'
 import { getLogColorProps, LogType } from './Log'
 import Row from './Row'
+import { Static } from './Static'
 
 interface LogTextProps extends ColorProps {
   type?: LogType
@@ -28,7 +29,11 @@ const LogText = {
   },
   Debug(props: Omit<LogTextProps, 'type'>) {
     const { flags } = useCli()
-    return flags.debug ? <LogTextBase type={LogType.debug} {...props} /> : null
+    return flags.debug ? (
+      <Static>
+        <LogTextBase type={LogType.debug} {...props} />
+      </Static>
+    ) : null
   },
   Info(props: Omit<LogTextProps, 'type'>) {
     return <LogTextBase type={LogType.info} {...props} />

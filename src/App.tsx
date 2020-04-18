@@ -9,25 +9,28 @@ import ErrorBoundary from './components/ErrorBoundary'
 import Router from './components/Router'
 import { CliCommand } from './lib/cli'
 import CliProvider from './providers/CliProvider'
+import StaticProvider from './providers/StaticProvider'
 
 export default function App() {
   return (
     <ErrorBoundary>
-      <CliProvider>
-        {(cli) => (
-          <Router
-            path={cli.command}
-            config={{
-              [CliCommand.INDEX]: <IndexCommand />,
-              [CliCommand.STATUS]: <StatusCommand />,
-              [CliCommand.BRANCH]: <BranchCommand />,
-              [CliCommand.CHECKOUT]: <CheckoutCommand />,
-              [CliCommand.COMMIT]: <CommitCommand />,
-              [CliCommand.HELP]: <HelpCommand />,
-            }}
-          />
-        )}
-      </CliProvider>
+      <StaticProvider>
+        <CliProvider>
+          {(cli) => (
+            <Router
+              path={cli.command}
+              config={{
+                [CliCommand.INDEX]: <IndexCommand />,
+                [CliCommand.STATUS]: <StatusCommand />,
+                [CliCommand.BRANCH]: <BranchCommand />,
+                [CliCommand.CHECKOUT]: <CheckoutCommand />,
+                [CliCommand.COMMIT]: <CommitCommand />,
+                [CliCommand.HELP]: <HelpCommand />,
+              }}
+            />
+          )}
+        </CliProvider>
+      </StaticProvider>
     </ErrorBoundary>
   )
 }

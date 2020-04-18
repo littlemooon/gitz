@@ -7,6 +7,7 @@ import Column from './Column'
 import LogText from './LogText'
 import Router from './Router'
 import Select, { SelectItem } from './Select'
+import { Static } from './Static'
 import Title from './Title'
 
 export default function BranchSelect<B extends Branch>({
@@ -62,9 +63,11 @@ export default function BranchSelect<B extends Branch>({
         ),
         [GitStatus.error]: (
           <Column>
-            <LogText.Error prefix={response.name}>
-              {response.error?.message}
-            </LogText.Error>
+            <Static>
+              <LogText.Error prefix={response.name}>
+                {response.error?.message}
+              </LogText.Error>
+            </Static>
             <Title>{title ?? 'Switch to branch'}</Title>
             <Select onSelect={handleSelect} items={items} />
           </Column>

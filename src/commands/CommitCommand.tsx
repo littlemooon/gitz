@@ -2,11 +2,13 @@ import React, { useEffect } from 'react'
 import Column from '../components/Column'
 import { FormData, FormField } from '../components/Form'
 import LogText from '../components/LogText'
-import Router, { RouteTo, useRoute } from '../components/Router'
+import Router, { useRoute } from '../components/Router'
+import { Static } from '../components/Static'
 import useGitQuery, { GitStatus } from '../hooks/useGitQuery'
 import { isFeatureBranch } from '../lib/branch'
 import { CliCommand } from '../lib/cli'
 import { queries } from '../lib/git'
+import CheckoutCommand from './CheckoutCommand'
 
 export interface CommitCommandForm extends FormData {
   issueId: FormField
@@ -36,8 +38,12 @@ export default function CommitCommand() {
           </LogText.Success>
         ) : (
           <Column gap={1}>
-            <LogText.Error>Must be on a feature branch to commit</LogText.Error>
-            <RouteTo path={CliCommand.CHECKOUT} />
+            <Static>
+              <LogText.Error>
+                Must be on a feature branch to commit
+              </LogText.Error>
+            </Static>
+            <CheckoutCommand />
           </Column>
         ),
         [GitStatus.error]: (
