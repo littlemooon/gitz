@@ -26,7 +26,7 @@
     "test": "npx jest",
     "test:watch": "npm run test -- --watch",
     "install:global": "npm i -g",
-    "postpublish": "cp -r ./package.json ../ && npx prettier package.json --write"
+    "postpublish": "cp -r ./package.json ../ && npx prettier ../package.json --write"
   },
   "pkg": {
     "scripts": "dist"
