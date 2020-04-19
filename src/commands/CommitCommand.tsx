@@ -67,7 +67,7 @@ export default function CommitCommand() {
               }}
             />
           ) : (
-            <Column gap={1}>
+            <Column>
               <Static>
                 <LogText.Error prefix={commitMutation.name.prefix}>
                   Must be on a feature branch to commit

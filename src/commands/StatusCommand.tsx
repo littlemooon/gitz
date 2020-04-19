@@ -13,11 +13,11 @@ export default function StatusCommand() {
       response={response}
       config={{
         [GitStatus.success]: function StatusSuccess() {
-          return (
+          return response.state ? (
             <Static>
               <Table.Success data={{ tracking: response.state?.tracking }} />
             </Static>
-          )
+          ) : null
         },
       }}
     />
