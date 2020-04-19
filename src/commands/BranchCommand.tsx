@@ -1,20 +1,19 @@
 import React, { useCallback, useState } from 'react'
 import Column from '../components/Column'
 import { useError } from '../components/ErrorBoundary'
-import Form, { FormData, FormField } from '../components/Form'
-import LogText from '../components/LogText'
-import Router from '../components/Router'
+import Form from '../components/Form'
+import GitRouter from '../components/GitRouter'
 import Title from '../components/Title'
 import useGitMutation from '../hooks/useGitMutation'
 import { GitStatus } from '../hooks/useGitQuery'
-import { BranchFeature, createFeatureBranch } from '../lib/branch'
+import {
+  BranchFeature,
+  createFeatureBranch,
+  featureBranchForm,
+  FeatureBranchForm,
+} from '../lib/branch'
 import { mutations } from '../lib/git'
 import FocusProvider from '../providers/FocusProvider'
-
-export interface BranchCommandForm extends FormData {
-  issueId: FormField
-  description: FormField
-}
 
 export default function BranchCommand() {
   const { setError } = useError()
@@ -23,14 +22,9 @@ export default function BranchCommand() {
   const response = useGitMutation(mutations.checkoutBranch, branch)
 
   const onSubmit = useCallback(
-    (newForm: BranchCommandForm) => {
+    (form: FeatureBranchForm) => {
       try {
-        setBranch(
-          createFeatureBranch({
-            issueId: newForm.issueId.value,
-            description: newForm.description.value,
-          })
-        )
+        setBranch(createFeatureBranch(form))
       } catch (error) {
         setError(error)
       }
@@ -39,36 +33,22 @@ export default function BranchCommand() {
   )
 
   return (
-    <Router
-      path={response.status}
+    <GitRouter
+      response={response}
       config={{
-        [GitStatus.initial]: (
-          <Column>
-            <Title>Create a new feature branch</Title>
-            <FocusProvider focus={!branch}>
-              <Form<BranchCommandForm>
-                initialData={{
-                  issueId: { label: 'Issue ID' },
-                  description: { label: 'Branch Description' },
-                }}
-                onSubmit={onSubmit}
-              />
-            </FocusProvider>
-          </Column>
-        ),
-        [GitStatus.loading]: (
-          <LogText.Loading>{`Creating branch: ${branch?.name}`}</LogText.Loading>
-        ),
-        [GitStatus.success]: (
-          <LogText.Success prefix={'Switched to new branch:'} exit>
-            {branch?.name}
-          </LogText.Success>
-        ),
-        [GitStatus.error]: (
-          <LogText.Error prefix={response.name} exit>
-            {response.error?.message}
-          </LogText.Error>
-        ),
+        [GitStatus.initial]: function BranchInitial() {
+          return (
+            <Column>
+              <Title>Create a new feature branch</Title>
+              <FocusProvider focus={!branch}>
+                <Form<FeatureBranchForm>
+                  fields={featureBranchForm}
+                  onSubmit={onSubmit}
+                />
+              </FocusProvider>
+            </Column>
+          )
+        },
       }}
     />
   )

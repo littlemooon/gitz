@@ -9,6 +9,7 @@ import Row from './Row'
 
 export enum LogType {
   debug = 'debug',
+  loading = 'loading',
   info = 'info',
   success = 'success',
   warn = 'warn',
@@ -28,6 +29,7 @@ interface LogProps {
 
 const logColorProps: Record<LogType, ColorProps> = {
   [LogType.debug]: { cyan: true },
+  [LogType.loading]: { cyan: true },
   [LogType.info]: { blue: true },
   [LogType.success]: { green: true },
   [LogType.warn]: { yellow: true },

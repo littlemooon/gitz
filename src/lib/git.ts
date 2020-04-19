@@ -1,8 +1,12 @@
 import gitP, { SimpleGit } from 'simple-git/promise'
-import { BranchSummary, StatusResult } from 'simple-git/typings/response'
-import { Maybe } from '../types'
+import {
+  BranchSummary,
+  CommitSummary,
+  StatusResult,
+} from 'simple-git/typings/response'
 import { filterArray } from './array'
 import { Branch, BranchFeature, isFeatureBranch, parseBranch } from './branch'
+import { Commit } from './commit'
 import env from './env'
 import { setStoreItem, StoreItem, StoreKey } from './store'
 
@@ -19,38 +23,43 @@ const git = gitP(env.rootDir)
 
 export default git
 
-export interface GitQuery<K extends StoreKey, R, A> {
-  name: string
+export interface GitOperationName {
+  prefix: string
+  suffix?: string
+}
+
+export interface GitQuery<K extends StoreKey, A, R> {
+  getName: (args: A) => GitOperationName
   key: K
-  run: (a: A & { git: SimpleGit }) => Promise<R>
+  run: (args: A & { git: SimpleGit }) => Promise<R>
   set: (result?: R) => GitStore[K]
 }
 
-export interface GitMutation<R, A> {
-  name: string
-  run: (git: SimpleGit, args: A) => Promise<R>
+export interface GitMutation<I, R> {
+  getName: (item?: I) => GitOperationName
+  run: (git: SimpleGit, item: I) => Promise<R>
 }
 
-function createGitQuery<K extends StoreKey, R, A>(
-  input: GitQuery<K, R, A>
-): GitQuery<K, R, A> {
+function createGitQuery<K extends StoreKey, I, R>(
+  input: GitQuery<K, I, R>
+): GitQuery<K, I, R> {
   return input
 }
 
-function createGitMutation<R, A>(input: GitMutation<R, A>): GitMutation<R, A> {
+function createGitMutation<I, R>(input: GitMutation<I, R>): GitMutation<I, R> {
   return input
 }
 
 export const queries = {
   status: createGitQuery({
-    name: 'git status',
+    getName: () => ({ prefix: 'Current status' }),
     key: StoreKey.status,
     run: ({ git }) => git.status(),
     set: (result?: StatusResult) => setStoreItem(StoreKey.status, result),
   }),
 
   branch: createGitQuery({
-    name: 'git branch',
+    getName: () => ({ prefix: 'Branch status' }),
     key: StoreKey.branches,
     run: ({ git }) => git.branch(),
     set: (result?: BranchSummary) => {
@@ -67,23 +76,33 @@ export const queries = {
 }
 
 export const mutations = {
-  checkout: createGitMutation<void, Maybe<Branch>>({
-    name: 'git checkout',
+  checkout: createGitMutation<Branch, void>({
+    getName: (branch) => ({
+      prefix: 'Switch branch:',
+      suffix: branch?.name,
+    }),
     run: (git, branch) => {
-      if (!branch?.name) {
-        throw new Error('Cannot checkout undefined branch name')
-      }
       return git.checkout(branch?.name)
     },
   }),
 
-  checkoutBranch: createGitMutation<void, Maybe<Branch>>({
-    name: 'git checkout -b',
+  checkoutBranch: createGitMutation<Branch, void>({
+    getName: (branch) => ({
+      prefix: 'Create branch:',
+      suffix: branch?.name,
+    }),
     run: (git, branch) => {
-      if (!branch?.name) {
-        throw new Error('Cannot create undefined branch name')
-      }
       return git.checkoutBranch(branch?.name, env.masterBranch)
+    },
+  }),
+
+  commit: createGitMutation<Commit, CommitSummary>({
+    getName: (commit) => ({
+      prefix: 'Commit:',
+      suffix: commit?.message,
+    }),
+    run: (git, commit) => {
+      return git.commit(commit.message)
     },
   }),
 }

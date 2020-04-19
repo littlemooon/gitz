@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useAsync } from 'react-async'
-import git, { GitQuery, GitStore } from '../lib/git'
+import git, { GitOperationName, GitQuery, GitStore } from '../lib/git'
 import store, { getStoreItem, StoreKey } from '../lib/store'
 import { Maybe } from '../types'
 import useConstant from './useConstant'
@@ -13,14 +13,14 @@ export enum GitStatus {
 }
 
 export interface GitQueryResponse<K extends StoreKey> {
-  name: string
+  name: GitOperationName
   state?: GitStore[K]
   status: GitStatus
   error?: Error
 }
 
-export default function useGitQuery<K extends StoreKey, R, A>(
-  query: GitQuery<K, R, A>,
+export default function useGitQuery<K extends StoreKey, A, R>(
+  query: GitQuery<K, A, R>,
   args: A
 ): GitQueryResponse<K> {
   const initialState = useConstant(() => getStoreItem(query.key))
@@ -63,7 +63,7 @@ export default function useGitQuery<K extends StoreKey, R, A>(
   }, [status, state])
 
   return {
-    name: query.name,
+    name: query.getName(args),
     state,
     status: gitStatus,
     error,

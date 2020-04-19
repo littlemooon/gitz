@@ -7,27 +7,31 @@ import SelectIndicator from './SelectIndicator'
 
 export interface FormField {
   label: string
-  initialValue?: string
+  defaultValue?: string
   value?: string
+  set?: boolean
+  required?: boolean
+  sanitize: (f: FormField) => string
 }
 
-export type FormData = Record<string, FormField>
+export type FormFields<T = Record<string, FormField>> = Record<
+  keyof T,
+  FormField
+>
 
 export interface FormProps<D> {
-  initialData: D
+  fields: D
   onSubmit: (data: D) => void
 }
 
-export default function Form<D extends FormData>({
-  initialData,
+export default function Form<D extends FormFields>({
+  fields,
   onSubmit,
 }: FormProps<D>) {
-  const [data, setData] = useState<D>(initialData)
+  const [data, setData] = useState<D>(fields)
 
   const nextId = useMemo(() => {
-    const nextItem = Object.entries(data).find(
-      ([, item]) => typeof item.value !== 'string'
-    )
+    const nextItem = Object.entries(data).find(([, item]) => !item.set)
     return nextItem ? nextItem[0] : undefined
   }, [data])
 
@@ -53,7 +57,10 @@ export default function Form<D extends FormData>({
   const onSubmitNext = useCallback(
     (value: string) => {
       if (nextId) {
-        setData((form) => ({ ...form, [nextId]: { ...form[nextId], value } }))
+        setData((form) => ({
+          ...form,
+          [nextId]: { ...form[nextId], value, set: true },
+        }))
       }
     },
     [nextId]
@@ -75,7 +82,7 @@ export default function Form<D extends FormData>({
           <SelectIndicator selected />
           <Input
             label={data[nextId].label}
-            initialValue={data[nextId].initialValue}
+            initialValue={data[nextId].value}
             onSubmit={onSubmitNext}
           />
         </Row>

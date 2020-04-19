@@ -1,6 +1,5 @@
 import TextInput, { InkTextInputProps } from 'ink-text-input'
 import React, { useCallback, useEffect, useState } from 'react'
-import useConstant from '../hooks/useConstant'
 import { useFocus } from '../providers/FocusProvider'
 import LogText from './LogText'
 import Row from './Row'
@@ -18,12 +17,11 @@ export default function Input({
   ...props
 }: InputProps) {
   const focus = useFocus()
-  const initial = useConstant(() => initialValue)
-  const [value, setValue] = useState<string>(initial)
+  const [value, setValue] = useState<string>(initialValue)
 
   useEffect(() => {
-    setValue(initial)
-  }, [initial, label])
+    setValue(initialValue)
+  }, [initialValue, label])
 
   const handleChange = useCallback((value: string) => {
     setValue(value)

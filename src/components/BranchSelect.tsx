@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo, useState } from 'react'
+import CommitCommand from '../commands/CommitCommand'
 import useGitMutation from '../hooks/useGitMutation'
 import { GitStatus } from '../hooks/useGitQuery'
 import { Branch } from '../lib/branch'
 import { mutations } from '../lib/git'
 import Column from './Column'
-import LogText from './LogText'
-import Router from './Router'
+import GitRouter from './GitRouter'
 import Select, { SelectItem } from './Select'
 import { Static } from './Static'
 import Title from './Title'
@@ -46,32 +46,25 @@ export default function BranchSelect<B extends Branch>({
   }, [branches, formatLabel])
 
   return (
-    <Router
-      path={response.status}
+    <GitRouter
+      response={response}
       config={{
-        [GitStatus.initial]: (
-          <Column>
-            <Title>{title ?? 'Switch to branch'}</Title>
-            <Select onSelect={handleSelect} items={items} />
-          </Column>
-        ),
-        [GitStatus.loading]: <LogText.Loading>{response.name}</LogText.Loading>,
-        [GitStatus.success]: (
-          <LogText.Success prefix="Switched to:" exit>
-            {branch?.name}
-          </LogText.Success>
-        ),
-        [GitStatus.error]: (
-          <Column>
-            <Static>
-              <LogText.Error prefix={response.name}>
-                {response.error?.message}
-              </LogText.Error>
-            </Static>
-            <Title>{title ?? 'Switch to branch'}</Title>
-            <Select onSelect={handleSelect} items={items} />
-          </Column>
-        ),
+        [GitStatus.initial]: function BranchSelectInitial() {
+          return (
+            <Column>
+              <Title>{title ?? response.name.prefix}</Title>
+              <Select onSelect={handleSelect} items={items} />
+            </Column>
+          )
+        },
+        [GitStatus.error]: function BranchSelectError(errorMessage) {
+          return (
+            <Column>
+              <Static>{errorMessage}</Static>
+              <CommitCommand />
+            </Column>
+          )
+        },
       }}
     />
   )

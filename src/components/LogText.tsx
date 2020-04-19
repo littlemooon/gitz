@@ -38,19 +38,24 @@ const LogText = {
   Info(props: Omit<LogTextProps, 'type'>) {
     return <LogTextBase type={LogType.info} {...props} />
   },
-  Loading(props: Omit<LogTextProps, 'type'>) {
+  Loading({
+    prefix,
+    ...props
+  }: { prefix?: string } & Omit<LogTextProps, 'type'>) {
     return (
       <Row gap={1}>
         <Color cyan>
           <Spinner type="dots" />
         </Color>
-        <LogTextBase type={LogType.success} {...props} />
+        <LogTextBase type={LogType.loading} {...props}>
+          {prefix}
+        </LogTextBase>
+        <LogTextBase {...props} />
       </Row>
     )
   },
   Success({
     prefix,
-    children,
     exit,
     ...props
   }: { prefix?: string; exit?: boolean } & Omit<LogTextProps, 'type'>) {
@@ -60,14 +65,13 @@ const LogText = {
         <LogTextBase type={LogType.success} {...props}>
           {prefix}
         </LogTextBase>
-        <LogTextBase {...props}>{children}</LogTextBase>
+        <LogTextBase {...props} />
         {exit ? <Exit /> : null}
       </Row>
     )
   },
   Warn({
     prefix,
-    children,
     exit,
     ...props
   }: { prefix?: string; exit?: boolean } & Omit<LogTextProps, 'type'>) {
@@ -77,7 +81,7 @@ const LogText = {
         <LogTextBase type={LogType.warn} {...props}>
           {prefix}
         </LogTextBase>
-        <LogTextBase {...props}>{children}</LogTextBase>
+        <LogTextBase {...props} />
         {exit ? <Exit /> : null}
       </Row>
     )

@@ -1,6 +1,5 @@
 import React from 'react'
-import LogText from '../components/LogText'
-import Router from '../components/Router'
+import GitRouter from '../components/GitRouter'
 import { Static } from '../components/Static'
 import Table from '../components/Table'
 import useGitQuery, { GitStatus } from '../hooks/useGitQuery'
@@ -10,21 +9,16 @@ export default function StatusCommand() {
   const response = useGitQuery(queries.status, undefined)
 
   return (
-    <Router
-      path={response.status}
+    <GitRouter
+      response={response}
       config={{
-        [GitStatus.initial]: null,
-        [GitStatus.loading]: <LogText.Loading>{response.name}</LogText.Loading>,
-        [GitStatus.success]: (
-          <Static>
-            <Table.Success data={{ tracking: response.state?.tracking }} />
-          </Static>
-        ),
-        [GitStatus.error]: (
-          <LogText.Error prefix={response.name} exit>
-            {response.error?.message}
-          </LogText.Error>
-        ),
+        [GitStatus.success]: function StatusSuccess() {
+          return (
+            <Static>
+              <Table.Success data={{ tracking: response.state?.tracking }} />
+            </Static>
+          )
+        },
       }}
     />
   )

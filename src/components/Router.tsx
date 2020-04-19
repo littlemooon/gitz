@@ -18,12 +18,14 @@ const RouteContext = createContext<IRouteContext>({
   },
 })
 
+export type RouteConfig = Record<string, ReactNode>
+
 export default function Router({
   path,
   config,
 }: {
   path?: string
-  config: Record<string, ReactNode>
+  config: RouteConfig
 }) {
   const [state, setState] = useState<string>(path ?? '')
 
