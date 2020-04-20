@@ -7,6 +7,8 @@ import { GitQueryResponse, GitStatus } from '../hooks/useGitQuery'
 import { StoreKey } from '../lib/store'
 import { Maybe } from '../types'
 import Exit from './Exit'
+import Json from './Json'
+import Table from './Table'
 
 type GetGitRoute = (d: ReactNode) => Maybe<ReactNode>
 
@@ -39,41 +41,51 @@ export default function GitRouter({
   }
 
   return (
-    <Router
-      path={response.status}
-      config={{
-        [GitStatus.initial]: isFunction(config[GitStatus.initial])
-          ? (config[GitStatus.initial] as GetGitRoute)(
-              defaults[GitStatus.initial]
+    <>
+      <Table.Debug
+        name={response.name.prefix}
+        data={{
+          status: response.status,
+          ...(response.state && { state: <Json>{response.state}</Json> }),
+          ...(response.error && { error: <Json>{response.error}</Json> }),
+        }}
+      />
+      <Router
+        path={response.status}
+        config={{
+          [GitStatus.initial]: isFunction(config[GitStatus.initial])
+            ? (config[GitStatus.initial] as GetGitRoute)(
+                defaults[GitStatus.initial]
+              )
+            : defaults[GitStatus.initial],
+
+          [GitStatus.loading]: isFunction(config[GitStatus.loading])
+            ? (config[GitStatus.loading] as GetGitRoute)(
+                defaults[GitStatus.loading]
+              )
+            : defaults[GitStatus.loading],
+
+          [GitStatus.success]: isFunction(config[GitStatus.success]) ? (
+            (config[GitStatus.success] as GetGitRoute)(
+              defaults[GitStatus.success]
             )
-          : defaults[GitStatus.initial],
+          ) : (
+            <>
+              {defaults[GitStatus.success]}
+              <Exit />
+            </>
+          ),
 
-        [GitStatus.loading]: isFunction(config[GitStatus.loading])
-          ? (config[GitStatus.loading] as GetGitRoute)(
-              defaults[GitStatus.loading]
-            )
-          : defaults[GitStatus.loading],
-
-        [GitStatus.success]: isFunction(config[GitStatus.success]) ? (
-          (config[GitStatus.success] as GetGitRoute)(
-            defaults[GitStatus.success]
-          )
-        ) : (
-          <>
-            {defaults[GitStatus.success]}
-            <Exit />
-          </>
-        ),
-
-        [GitStatus.error]: isFunction(config[GitStatus.error]) ? (
-          (config[GitStatus.error] as GetGitRoute)(defaults[GitStatus.error])
-        ) : (
-          <>
-            {defaults[GitStatus.error]}
-            <Exit />
-          </>
-        ),
-      }}
-    />
+          [GitStatus.error]: isFunction(config[GitStatus.error]) ? (
+            (config[GitStatus.error] as GetGitRoute)(defaults[GitStatus.error])
+          ) : (
+            <>
+              {defaults[GitStatus.error]}
+              <Exit />
+            </>
+          ),
+        }}
+      />
+    </>
   )
 }

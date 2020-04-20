@@ -30,15 +30,15 @@ export default function Form<D extends FormFields>({
 }: FormProps<D>) {
   const [data, setData] = useState<D>(fields)
 
-  const nextId = useMemo(() => {
-    const nextItem = Object.entries(data).find(([, item]) => !item.set)
-    return nextItem ? nextItem[0] : undefined
+  const nextItem = useMemo(() => {
+    const next = Object.entries(data).find(([, item]) => !item.set)
+    return next ? { id: next[0], ...next[1] } : undefined
   }, [data])
 
   const readonlyForm = useMemo(() => {
-    if (nextId) {
+    if (nextItem) {
       const ids = Object.keys(data)
-      const nextIndex = ids.indexOf(nextId)
+      const nextIndex = ids.indexOf(nextItem.id)
 
       return Object.entries(data).reduce<Partial<D>>((acc, [id, value]) => {
         return ids.indexOf(id) < nextIndex ? { ...acc, [id]: value } : acc
@@ -46,24 +46,24 @@ export default function Form<D extends FormFields>({
     } else {
       return data
     }
-  }, [nextId, data])
+  }, [nextItem, data])
 
   useEffect(() => {
-    if (!nextId && onSubmit) {
+    if (!nextItem && onSubmit) {
       onSubmit(data)
     }
-  }, [data, nextId, onSubmit])
+  }, [data, nextItem, onSubmit])
 
   const onSubmitNext = useCallback(
     (value: string) => {
-      if (nextId) {
+      if (nextItem && (value || !nextItem?.required)) {
         setData((form) => ({
           ...form,
-          [nextId]: { ...form[nextId], value, set: true },
+          [nextItem.id]: { ...form[nextItem.id], value, set: true },
         }))
       }
     },
-    [nextId]
+    [nextItem]
   )
 
   return (
@@ -77,12 +77,12 @@ export default function Form<D extends FormFields>({
         </FocusProvider>
       ))}
 
-      {nextId ? (
+      {nextItem ? (
         <Row>
           <SelectIndicator selected />
           <Input
-            label={data[nextId].label}
-            initialValue={data[nextId].value}
+            label={nextItem.label}
+            initialValue={nextItem.value}
             onSubmit={onSubmitNext}
           />
         </Row>

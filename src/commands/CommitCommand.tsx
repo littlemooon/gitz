@@ -5,21 +5,17 @@ import Form from '../components/Form'
 import GitRouter from '../components/GitRouter'
 import LogText from '../components/LogText'
 import { Static } from '../components/Static'
-import Title from '../components/Title'
 import useGitMutation from '../hooks/useGitMutation'
-import useGitQuery, { GitStatus } from '../hooks/useGitQuery'
+import { GitStatus } from '../hooks/useGitQuery'
 import { isFeatureBranch } from '../lib/branch'
 import { Commit, commitForm, CommitForm, createCommit } from '../lib/commit'
-import { mutations, queries } from '../lib/git'
+import { mutations } from '../lib/git'
+import GitBranchProvider from '../providers/GitBranchProvider'
 import { Maybe } from '../types'
 import CheckoutCommand from './CheckoutCommand'
 
 export default function CommitCommand() {
   const { setError } = useError()
-  const branchQuery = useGitQuery(queries.branch, undefined)
-  const current = branchQuery.state?.current
-  const isFeature = isFeatureBranch(current)
-
   const [commit, setCommit] = useState<Maybe<Commit>>()
   const commitMutation = useGitMutation(mutations.commit, commit)
 
@@ -35,49 +31,39 @@ export default function CommitCommand() {
   )
 
   return (
-    <GitRouter
-      response={branchQuery}
-      config={{
-        [GitStatus.initial]: function CommitBranchInitial() {
-          return (
+    <GitBranchProvider>
+      {(branchQuery) =>
+        isFeatureBranch(branchQuery.state?.current) ? (
+          <GitRouter
+            response={commitMutation}
+            config={{
+              [GitStatus.initial]: function CommitInitial() {
+                return (
+                  <Form<CommitForm>
+                    fields={{
+                      ...commitForm,
+                      issueId: {
+                        ...commitForm.issueId,
+                        value: branchQuery.state?.current?.issueId,
+                      },
+                    }}
+                    onSubmit={onSubmit}
+                  />
+                )
+              },
+            }}
+          />
+        ) : (
+          <Column>
             <Static>
-              <Title>Commit</Title>
+              <LogText.Error prefix={commitMutation.name.prefix}>
+                Must be on a feature branch to commit
+              </LogText.Error>
             </Static>
-          )
-        },
-        [GitStatus.success]: function CommitBranchSuccess() {
-          return isFeature ? (
-            <GitRouter
-              response={commitMutation}
-              config={{
-                [GitStatus.initial]: function CommitInitial() {
-                  return (
-                    <Form<CommitForm>
-                      fields={{
-                        ...commitForm,
-                        issueId: {
-                          ...commitForm.issueId,
-                          value: current?.issueId,
-                        },
-                      }}
-                      onSubmit={onSubmit}
-                    />
-                  )
-                },
-              }}
-            />
-          ) : (
-            <Column>
-              <Static>
-                <LogText.Error prefix={commitMutation.name.prefix}>
-                  Must be on a feature branch to commit
-                </LogText.Error>
-              </Static>
-              <CheckoutCommand />
-            </Column>
-          )
-        },
-      }}
-    />
+            <CheckoutCommand />
+          </Column>
+        )
+      }
+    </GitBranchProvider>
   )
 }

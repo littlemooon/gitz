@@ -2,7 +2,6 @@ import React from 'react'
 import BranchCommand from './commands/BranchCommand'
 import CheckoutCommand from './commands/CheckoutCommand'
 import CommitCommand from './commands/CommitCommand'
-import HelpCommand from './commands/HelpCommand'
 import IndexCommand from './commands/IndexCommand'
 import StatusCommand from './commands/StatusCommand'
 import ErrorBoundary from './components/ErrorBoundary'
@@ -25,7 +24,6 @@ export default function App() {
                 [CliCommand.BRANCH]: <BranchCommand />,
                 [CliCommand.CHECKOUT]: <CheckoutCommand />,
                 [CliCommand.COMMIT]: <CommitCommand />,
-                [CliCommand.HELP]: <HelpCommand />,
               }}
             />
           )}

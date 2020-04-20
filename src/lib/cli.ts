@@ -6,7 +6,6 @@ export enum CliCommand {
   'BRANCH' = 'branch',
   'CHECKOUT' = 'checkout',
   'COMMIT' = 'commit',
-  'HELP' = 'help',
 }
 
 export const commandInputMap: Record<string, CliCommand> = {
@@ -21,15 +20,17 @@ export const commandInputMap: Record<string, CliCommand> = {
 }
 
 export const cliHelpText = `
-Usage
-  $ gitet
+Usage:
+  gitet
+  gitet status (s)
+  gitet branch (b)
+  gitet checkout (c)
+  gitet commit (m)
 
-Options
-  --name Your name
-
-Examples
-  $ gitet --name=Jane
-  Hello, Jane
+Options:
+  -h --help     Show this screen
+  -v --version  Show version
+  -d --debug    Run with debug logs
 `
 
 export type CliInputFlags = {

@@ -5,7 +5,6 @@ import Exit from './Exit'
 import { LogType } from './Log'
 import LogText from './LogText'
 import Row from './Row'
-import { Static } from './Static'
 
 export interface TableRowNode {
   node: ReactNode
@@ -53,12 +52,10 @@ const Table = {
   Debug({ name, ...props }: Omit<TableProps, 'type'> & { name: string }) {
     const { flags } = useCli()
     return flags.debug ? (
-      <Static>
-        <Column>
-          <LogText.Default yellow>{name}</LogText.Default>
-          <TableBase type={LogType.debug} {...props} />
-        </Column>
-      </Static>
+      <Column>
+        <LogText.Default yellow>{name}</LogText.Default>
+        <TableBase type={LogType.debug} {...props} />
+      </Column>
     ) : null
   },
   Info(props: Omit<TableProps, 'type'>) {
