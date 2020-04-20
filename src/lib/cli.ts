@@ -20,16 +20,18 @@ export const commandInputMap: Record<string, CliCommand> = {
 }
 
 export const cliHelpText = `
+gitet - interactive git client for feature development
+
 Usage:
-  gitet
-  gitet status (s)
-  gitet branch (b)
-  gitet checkout (c)
-  gitet commit (m)
+  gitet (index of commands)
+  gitet status (s - current feature status)
+  gitet branch (b - create new feature branch)
+  gitet checkout (c - switch between feature branches)
+  gitet commit (m - commit with attached issueId)
 
 Options:
-  -h --help     Show this screen
-  -v --version  Show version
+  --help        Show this screen
+  --version     Show version
   -d --debug    Run with debug logs
 `
 
@@ -83,7 +85,9 @@ function parseCliInput(cliInput: CliInput): Cli {
 }
 
 const cliInput = meow<CliInputFlags>(cliHelpText, {
-  flags: { debug: { type: 'boolean', default: false, alias: 'd' } },
+  flags: {
+    debug: { type: 'boolean', default: false, alias: 'd' },
+  },
 })
 
 const cli = parseCliInput(cliInput)
