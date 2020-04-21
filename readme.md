@@ -1,25 +1,25 @@
-# gitet
+# gitx
 
 Git wrapper for feature flow with ticket numbers
 
 ## Install
 
 ```bash
-npm install --global gitet
+npm install --global gitx
 ```
 
 ## CLI
 
 ```
-$ gitet --help
+$ gitx --help
 
   Usage
-    $ gitet
+    $ gitx
 
   Options
     --name Your name
 
   Examples
-    $ gitet --name=Jane
+    $ gitx --name=Jane
     Hello, Jane
 ```

@@ -20,14 +20,14 @@ export const commandInputMap: Record<string, CliCommand> = {
 }
 
 export const cliHelpText = `
-gitet - interactive git client for feature development
+gitx - interactive git client for feature development
 
 Usage:
-  gitet                     (index of commands)
-  gitet status              (s - current branch status)
-  gitet branch <name>       (b - create new feature branch)
-  gitet checkout            (c - switch to feature branch)
-  gitet commit <message>    (m - commit with issueId)
+  gitx                     (index of commands)
+  gitx status              (s - current branch status)
+  gitx branch <name>       (b - create new feature branch)
+  gitx checkout            (c - switch to feature branch)
+  gitx commit <message>    (m - commit with issueId)
 
 Options:
   --help        Show this screen
