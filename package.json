@@ -1,6 +1,6 @@
 {
   "name": "gitz",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "license": "MIT",
   "bin": {
     "gitz": "./src/index.js"
