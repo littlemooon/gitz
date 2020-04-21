@@ -3,11 +3,12 @@ export type Env = {
   masterBranch: string
   issueRegex: RegExp
   featureBranchRegex: RegExp
+  commitRegex: RegExp
 }
 
 const { DIR, MASTER_BRANCH, ISSUE_REGEX, FEATURE_BRANCH_REGEX } = process.env
 
-const jiraRegex = /[a-zA-Z]+-\d+/
+export const jiraRegex = /[a-zA-Z]+-\d+/
 
 const issueRegex = RegExp(ISSUE_REGEX ?? jiraRegex)
 
@@ -21,6 +22,12 @@ const env: Env = {
         .toString()
         .replace(/^\//, '')
         .replace(/\/$/, '')})-(.*)`
+  ),
+  commitRegex: RegExp(
+    `([\\w\\s]+)(\\s?jiraid:\\s?(${issueRegex
+      .toString()
+      .replace(/^\//, '')
+      .replace(/\/$/, '')}))`
   ),
 }
 

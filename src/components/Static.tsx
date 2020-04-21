@@ -7,7 +7,7 @@ export function Static({ children }: { children: ReactNode }) {
   const { addStatic } = useStatic()
 
   useEffect(() => {
-    addStatic(Children.only(firstChildren))
+    Children.map(firstChildren, (c) => addStatic(c))
   }, [addStatic, firstChildren])
 
   return null

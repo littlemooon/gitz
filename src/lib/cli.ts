@@ -23,11 +23,11 @@ export const cliHelpText = `
 gitet - interactive git client for feature development
 
 Usage:
-  gitet (index of commands)
-  gitet status (s - current feature status)
-  gitet branch (b - create new feature branch)
-  gitet checkout (c - switch between feature branches)
-  gitet commit (m - commit with attached issueId)
+  gitet                     (index of commands)
+  gitet status              (s - current branch status)
+  gitet branch <name>       (b - create new feature branch)
+  gitet checkout            (c - switch to feature branch)
+  gitet commit <message>    (m - commit with issueId)
 
 Options:
   --help        Show this screen

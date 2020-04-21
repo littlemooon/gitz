@@ -1,7 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import FocusProvider from '../providers/FocusProvider'
+import { Maybe } from '../types'
 import Column from './Column'
 import Input from './Input'
+import Log from './Log'
 import Row from './Row'
 import SelectIndicator from './SelectIndicator'
 
@@ -11,7 +13,9 @@ export interface FormField {
   value?: string
   set?: boolean
   required?: boolean
-  sanitize: (f: FormField) => string
+  validate: (f: FormField) => Maybe<string>
+  format: (v?: string) => Maybe<string>
+  validationError?: string
 }
 
 export type FormFields<T = Record<string, FormField>> = Record<
@@ -57,10 +61,22 @@ export default function Form<D extends FormFields>({
   const onSubmitNext = useCallback(
     (value: string) => {
       if (nextItem && (value || !nextItem?.required)) {
-        setData((form) => ({
-          ...form,
-          [nextItem.id]: { ...form[nextItem.id], value, set: true },
-        }))
+        setData((form) => {
+          const validationError = nextItem.validate({
+            ...form[nextItem.id],
+            value,
+          })
+
+          return {
+            ...form,
+            [nextItem.id]: {
+              ...form[nextItem.id],
+              value,
+              validationError,
+              set: Boolean(validationError),
+            },
+          }
+        })
       }
     },
     [nextItem]
@@ -78,14 +94,20 @@ export default function Form<D extends FormFields>({
       ))}
 
       {nextItem ? (
-        <Row>
-          <SelectIndicator selected />
-          <Input
-            label={nextItem.label}
-            initialValue={nextItem.value}
-            onSubmit={onSubmitNext}
-          />
-        </Row>
+        <Column>
+          <Row>
+            <SelectIndicator selected />
+            <Input
+              label={nextItem.label}
+              initialValue={nextItem.value}
+              onSubmit={onSubmitNext}
+            />
+          </Row>
+
+          {nextItem.validationError ? (
+            <Log.Error>{nextItem.validationError}</Log.Error>
+          ) : null}
+        </Column>
       ) : null}
     </Column>
   )

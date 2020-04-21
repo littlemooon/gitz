@@ -1,6 +1,7 @@
 import { FormField, FormFields } from '../components/Form'
 import { featureBranchForm } from './branch'
-import { createFormField } from './form'
+import { createFormField, throwValidationErrors } from './form'
+import { join, reduceWhitespace } from './string'
 
 export interface Commit {
   issueId: string
@@ -18,23 +19,34 @@ export const commitForm: CommitForm = {
   message: createFormField({
     label: 'Message',
     required: true,
-    sanitize: (field: FormField) => {
+    validate: (field: FormField) => {
       if (!field.value) {
-        throw new Error('Message required')
+        return 'Message required'
       }
-
-      return field.value.toLowerCase()
+    },
+    format: (v?: string) => {
+      return v?.toLowerCase()
     },
   }),
 }
 
 export function createCommit(form: CommitForm): Commit {
-  const issueId = form.issueId.sanitize(form.issueId)
-  const message = form.message.sanitize(form.message)
+  throwValidationErrors(form)
 
   return {
-    issueId,
-    description: message,
-    message: `${message} JIRAID: ${issueId}`.replace(/  +/g, ' '),
+    issueId: form.issueId.value ?? '',
+    description: form.message.value ?? '',
+    message: reduceWhitespace(
+      `${form.message.value} JIRAID: ${form.issueId.value}`
+    ),
+  }
+}
+
+export function parseCommitArgs(args: string[]) {
+  const input = join(args, ' ')
+  const issueMatch = /[a-zA-Z]+-\d+/g.exec(input)
+  return {
+    issueId: commitForm.issueId.format(issueMatch ? issueMatch[0] : undefined),
+    message: commitForm.message.format(input),
   }
 }

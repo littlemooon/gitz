@@ -1,7 +1,7 @@
 import { FormField, FormFields } from '../components/Form'
 import env from './env'
-import { createFormField } from './form'
-import { capitalize } from './string'
+import { createFormField, throwValidationErrors } from './form'
+import { capitalize, join } from './string'
 
 export type BranchName = string
 export type IssueId = string
@@ -33,41 +33,44 @@ export const featureBranchForm: FeatureBranchForm = {
   issueId: createFormField({
     label: 'Issue ID',
     required: true,
-    sanitize: (field: FormField): IssueId => {
+    validate: (field: FormField) => {
       if (!field.value) {
-        throw new Error('Issue ID required')
+        return 'Issue ID required'
       }
 
-      const issueId = field.value.replace(/\s+/g, '-').toUpperCase()
-      if (!env.issueRegex.exec(issueId)) {
-        throw new Error(
-          `Issue ID (${issueId}) must be of form: ${env.issueRegex}`
-        )
+      if (!env.issueRegex.exec(field.value)) {
+        return `Issue ID (${field.value}) must be of form: ${env.issueRegex}`
       }
-
-      return issueId
+    },
+    format: (value) => {
+      return value?.replace(/\s+/g, '-').toUpperCase()
     },
   }),
   description: createFormField({
     label: 'Description',
     required: true,
-    sanitize: (field: FormField) => {
+    validate: (field: FormField) => {
       if (!field.value) {
-        throw new Error('Description required')
+        return 'Description required'
       }
-
-      return capitalize(field.value.replace(/\s+/g, '_'))
+    },
+    format: (v?: string) => {
+      return capitalize(v?.replace(/\s+/g, '_'))
     },
   }),
 }
 
 export function createFeatureBranch(form: FeatureBranchForm): BranchFeature {
-  const issueId = form.issueId.sanitize(form.issueId)
-  const description = form.description.sanitize(form.description)
+  throwValidationErrors(form)
+
   return {
-    issueId,
-    description,
-    name: ['feature', issueId, description.toLowerCase()].join('-'),
+    issueId: form.issueId.value ?? '',
+    description: form.description.value ?? '',
+    name: [
+      'feature',
+      form.issueId.value,
+      form.description.value?.toLowerCase(),
+    ].join('-'),
   }
 }
 
@@ -86,5 +89,15 @@ export function parseBranch(
     }
 
     return branch
+  }
+}
+
+export function parseBranchArgs(args: string[]) {
+  const input = join(args, ' ')
+  const commitMatch = env.commitRegex.exec(input)
+  return {
+    input,
+    issueId: commitMatch ? commitMatch[0] : undefined,
+    description: input.replace(/\s?jiraid:\s?([a-zA-Z]+-\d+)/i, ''),
   }
 }

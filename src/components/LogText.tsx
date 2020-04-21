@@ -35,8 +35,16 @@ const LogText = {
       </Static>
     ) : null
   },
-  Info(props: Omit<LogTextProps, 'type'>) {
-    return <LogTextBase type={LogType.info} {...props} />
+  Info({ prefix, ...props }: { prefix?: string } & Omit<LogTextProps, 'type'>) {
+    return (
+      <Row gap={1}>
+        <LogTextBase type={LogType.info}>{figures.info}</LogTextBase>
+        <LogTextBase type={LogType.info} {...props}>
+          {prefix}
+        </LogTextBase>
+        <LogTextBase {...props} />
+      </Row>
+    )
   },
   Loading({
     prefix,

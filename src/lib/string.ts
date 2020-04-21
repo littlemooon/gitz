@@ -8,3 +8,7 @@ export function capitalize(s?: string) {
 export function join(arr: Maybe<string>[], joinString = '') {
   return filterArray(arr).join(joinString)
 }
+
+export function reduceWhitespace(s?: string) {
+  return s ? s.replace(/  +/g, ' ').trim() : ''
+}

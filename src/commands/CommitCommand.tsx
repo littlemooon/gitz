@@ -1,17 +1,26 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import Column from '../components/Column'
 import { useError } from '../components/ErrorBoundary'
 import Form from '../components/Form'
 import GitRouter from '../components/GitRouter'
 import LogText from '../components/LogText'
+import Panels from '../components/Panels'
 import { Static } from '../components/Static'
+import useCli from '../hooks/useCli'
 import useGitMutation from '../hooks/useGitMutation'
 import { GitStatus } from '../hooks/useGitQuery'
 import { isFeatureBranch } from '../lib/branch'
-import { Commit, commitForm, CommitForm, createCommit } from '../lib/commit'
+import {
+  Commit,
+  commitForm,
+  CommitForm,
+  createCommit,
+  parseCommitArgs,
+} from '../lib/commit'
 import { mutations } from '../lib/git'
 import GitBranchProvider from '../providers/GitBranchProvider'
 import { Maybe } from '../types'
+import BranchCommand from './BranchCommand'
 import CheckoutCommand from './CheckoutCommand'
 
 export default function CommitCommand() {
@@ -38,13 +47,25 @@ export default function CommitCommand() {
             response={commitMutation}
             config={{
               [GitStatus.initial]: function CommitInitial() {
+                const { args } = useCli()
+
+                const intialValues = useMemo(() => parseCommitArgs(args), [
+                  args,
+                ])
+
                 return (
                   <Form<CommitForm>
                     fields={{
                       ...commitForm,
                       issueId: {
                         ...commitForm.issueId,
-                        value: branchQuery.state?.current?.issueId,
+                        value:
+                          intialValues.issueId ??
+                          branchQuery.state?.current.issueId,
+                      },
+                      message: {
+                        ...commitForm.message,
+                        value: intialValues.message,
                       },
                     }}
                     onSubmit={onSubmit}
@@ -56,11 +77,20 @@ export default function CommitCommand() {
         ) : (
           <Column>
             <Static>
-              <LogText.Error prefix={commitMutation.name.prefix}>
+              <LogText.Warn prefix={commitMutation.name.prefix}>
                 Must be on a feature branch to commit
-              </LogText.Error>
+              </LogText.Warn>
             </Static>
-            <CheckoutCommand />
+
+            <Panels
+              items={[
+                { id: 'branch', content: <BranchCommand /> },
+                {
+                  id: 'checkout',
+                  content: <CheckoutCommand />,
+                },
+              ]}
+            />
           </Column>
         )
       }
