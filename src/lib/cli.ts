@@ -20,14 +20,14 @@ export const commandInputMap: Record<string, CliCommand> = {
 }
 
 export const cliHelpText = `
-gitx - interactive git client for feature development
+gitz - interactive git client for feature development
 
 Usage:
-  gitx                     (index of commands)
-  gitx status              (s - current branch status)
-  gitx branch <name>       (b - create new feature branch)
-  gitx checkout            (c - switch to feature branch)
-  gitx commit <message>    (m - commit with issueId)
+  gitz                     (index of commands)
+  gitz status              (s - current branch status)
+  gitz branch <name>       (b - create new feature branch)
+  gitz checkout            (c - switch to feature branch)
+  gitz commit <message>    (m - commit with issueId)
 
 Options:
   --help        Show this screen

@@ -1,25 +1,25 @@
-# gitx
+# gitz
 
 Git wrapper for feature flow with ticket numbers
 
 ## Install
 
 ```bash
-npm install --global gitx
+npm install --global gitz
 ```
 
 ## CLI
 
 ```
-$ gitx --help
+$ gitz --help
 
   Usage
-    $ gitx
+    $ gitz
 
   Options
     --name Your name
 
   Examples
-    $ gitx --name=Jane
+    $ gitz --name=Jane
     Hello, Jane
 ```
