@@ -4,7 +4,7 @@ import useGitQuery, { GitQueryResponse, GitStatus } from '../hooks/useGitQuery'
 import { queries } from '../lib/gitOperations'
 import { StoreKey } from '../lib/store'
 
-export default function GitStatusProvider({
+export default function StatusQueryProvider({
   children,
 }: {
   children: (statusQuery: GitQueryResponse<StoreKey.status>) => ReactNode

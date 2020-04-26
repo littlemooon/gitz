@@ -1,20 +1,28 @@
-import React, { useCallback, useMemo, useState } from 'react'
-import { RouteTo } from '../components/Router'
+import { useApp } from 'ink'
+import React, { ReactNode, useCallback, useMemo, useState } from 'react'
+import Command from '../components/Command'
 import Select, { SelectItem } from '../components/Select'
-import { CliCommand, CliCommandKey } from '../lib/cli'
+import { CliCommand, CliCommandKey, cliCommands } from '../lib/command'
 
 export default function CommandSelect({
-  commands,
+  commands = Object.values(cliCommands),
+  children,
 }: {
-  commands: CliCommand[]
+  children: ReactNode
+  commands?: CliCommand[]
 }) {
+  const { exit } = useApp()
   const [command, setCommand] = useState<CliCommandKey | undefined>()
 
   const handleSelect = useCallback(
     (item: SelectItem) => {
-      setCommand(item.id as CliCommandKey)
+      if (item.id === 'exit') {
+        exit()
+      } else {
+        setCommand(item.id as CliCommandKey)
+      }
     },
-    [setCommand]
+    [setCommand, exit]
   )
 
   const items: SelectItem[] = useMemo(() => {
@@ -33,8 +41,12 @@ export default function CommandSelect({
   }, [commands])
 
   return command ? (
-    <RouteTo path={command} />
+    <Command command={cliCommands[command]}>{children}</Command>
   ) : (
-    <Select onSelect={handleSelect} items={items} />
+    <Select
+      title="Commands"
+      onSelect={handleSelect}
+      items={[...items, { id: 'exit', label: 'exit' }]}
+    />
   )
 }

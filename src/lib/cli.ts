@@ -1,61 +1,17 @@
 import meow, { BooleanFlag, Result } from 'meow'
-
-export enum CliCommandKey {
-  'INDEX' = 'index',
-  'STATUS' = 'status',
-  'BRANCH' = 'branch',
-  'CHECKOUT' = 'checkout',
-  'COMMIT' = 'commit',
-}
-
-export interface CliCommand {
-  id: CliCommandKey
-  name: string
-  shortcut?: string
-  description: string
-}
-
-export const cliCommands: Record<CliCommandKey, CliCommand> = {
-  [CliCommandKey.INDEX]: {
-    id: CliCommandKey.INDEX,
-    name: 'index',
-    description: 'index of commands',
-  },
-  [CliCommandKey.STATUS]: {
-    id: CliCommandKey.STATUS,
-    name: 'status',
-    shortcut: 's',
-    description: 'current branch status',
-  },
-  [CliCommandKey.BRANCH]: {
-    id: CliCommandKey.BRANCH,
-    name: 'branch',
-    shortcut: 'b',
-    description: 'create new feature branch',
-  },
-  [CliCommandKey.CHECKOUT]: {
-    id: CliCommandKey.CHECKOUT,
-    name: 'checkout',
-    shortcut: 'c',
-    description: 'switch to feature branch',
-  },
-  [CliCommandKey.COMMIT]: {
-    id: CliCommandKey.COMMIT,
-    name: 'commit',
-    shortcut: 'm',
-    description: 'commit with issueId',
-  },
-}
+import { CliCommand, cliCommands } from './command'
+import env from './env'
 
 export const cliHelpText = `
 gitz - interactive git client for feature development
 
 Usage:
-  gitz                     (index of commands)
-  gitz status              (s - current branch status)
-  gitz branch <name>       (b - create new feature branch)
-  gitz checkout            (c - switch to feature branch)
-  gitz commit <message>    (m - commit with issueId)
+  gitz                      index of commands
+  gitz status               (s) current branch status
+  gitz branch <name?>       (b) create new feature branch
+  gitz checkout             (c) switch to feature branch
+  gitz commit <message?>    (m) commit with issueId
+  gitz update               (u) rebase current branch onto ${env.masterBranch}
 
 Options:
   --help        Show this screen
@@ -83,7 +39,7 @@ export interface Cli {
   showVersion(): void
 }
 
-function parseCommand(command?: string): CliCommand {
+function parseCommand(command?: string): CliCommand | undefined {
   if (command) {
     const c = Object.values(cliCommands).find(
       ({ name, shortcut }) => command === name || command === shortcut
@@ -95,8 +51,6 @@ function parseCommand(command?: string): CliCommand {
         `Unknown command: ${command} [${Object.keys(cliCommands).join(', ')}]`
       )
     }
-  } else {
-    return cliCommands[CliCommandKey.INDEX]
   }
 }
 

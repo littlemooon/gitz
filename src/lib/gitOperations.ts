@@ -2,10 +2,11 @@ import { SimpleGit } from 'simple-git/promise'
 import {
   BranchSummary,
   CommitSummary,
+  PullResult,
   StatusResult,
 } from 'simple-git/typings/response'
 import { filterArray } from './array'
-import { Branch, BranchFeature, isFeatureBranch, parseBranch } from './branch'
+import { Branch, FeatureBranch, isFeatureBranch, parseBranch } from './branch'
 import { Commit } from './commit'
 import env from './env'
 import { setStoreItem, StoreItem, StoreKey } from './store'
@@ -14,7 +15,7 @@ export interface GitStore extends Partial<Record<StoreKey, StoreItem<any>>> {
   [StoreKey.status]?: StoreItem<StatusResult>
   [StoreKey.branches]?: StoreItem<{
     all: Branch[]
-    feature: BranchFeature[]
+    feature: FeatureBranch[]
     current: Branch
   }>
 }
@@ -74,7 +75,7 @@ export const queries = {
 export const mutations = {
   checkout: createGitMutation<Branch, void>({
     getName: (branch) => ({
-      prefix: 'Switch branch:',
+      prefix: 'Switch branch',
       suffix: branch?.name,
     }),
     run: (git, branch) => {
@@ -84,7 +85,7 @@ export const mutations = {
 
   checkoutBranch: createGitMutation<Branch, void>({
     getName: (branch) => ({
-      prefix: 'Create branch:',
+      prefix: 'Create branch',
       suffix: branch?.name,
     }),
     run: (git, branch) => {
@@ -94,11 +95,21 @@ export const mutations = {
 
   commit: createGitMutation<Commit, CommitSummary>({
     getName: (commit) => ({
-      prefix: 'Commit:',
+      prefix: 'Commit',
       suffix: commit?.message,
     }),
     run: (git, commit) => {
       return git.commit(commit.message)
+    },
+  }),
+
+  pull: createGitMutation<Branch, PullResult>({
+    getName: (branch) => ({
+      prefix: 'Pull',
+      suffix: branch?.name,
+    }),
+    run: (git, branch) => {
+      return git.pull('origin', branch?.name)
     },
   }),
 }

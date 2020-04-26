@@ -1,4 +1,4 @@
-import { Children, ReactNode, useEffect } from 'react'
+import React, { Children, ReactNode, useEffect } from 'react'
 import useConstant from '../hooks/useConstant'
 import { useStatic } from '../providers/StaticProvider'
 
@@ -14,8 +14,10 @@ export default function Static({
   const { addStatic } = useStatic()
 
   useEffect(() => {
-    Children.map(firstChildren, (c, i) => addStatic(`${firstId}-${i}`, c))
-  }, [addStatic, firstChildren, firstId])
+    if (id === 'BranchStatusProvider') {
+      Children.map(firstChildren, (c, i) => addStatic(`${firstId}-${i}`, c))
+    }
+  }, [addStatic, firstChildren, id, firstId])
 
-  return null
+  return id === 'BranchStatusProvider' ? null : <>{children}</>
 }

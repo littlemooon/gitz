@@ -1,3 +1,4 @@
+import { Box } from 'ink'
 import React, { ReactNode } from 'react'
 import { isFunction } from 'util'
 import LogText from '../components/LogText'
@@ -6,9 +7,12 @@ import { GitMutationResponse } from '../hooks/useGitMutation'
 import { GitQueryResponse, GitStatus } from '../hooks/useGitQuery'
 import { parseGitError } from '../lib/gitError'
 import { StoreKey } from '../lib/store'
+import { join } from '../lib/string'
 import { Maybe } from '../types'
-import Exit from './Exit'
+import Column from './Column'
+import CommandSelect from './CommandSelect'
 import Json from './Json'
+import Static from './Static'
 import Table from './Table'
 
 type GetGitRoute = (d: ReactNode) => Maybe<ReactNode>
@@ -18,10 +22,14 @@ export type GitRouteConfig = Partial<Record<GitStatus, GetGitRoute>>
 export default function GitRouter({
   response,
   config,
+  children,
 }: {
   response: GitQueryResponse<StoreKey> | GitMutationResponse<any>
   config: GitRouteConfig
+  children?: ReactNode
 }) {
+  const error = parseGitError(response.error)
+
   const defaults = {
     [GitStatus.initial]: null,
     [GitStatus.loading]: (
@@ -30,21 +38,26 @@ export default function GitRouter({
       </LogText.Loading>
     ),
     [GitStatus.success]: (
-      <LogText.Success prefix={response.name.prefix}>
-        {response.name.suffix}
-      </LogText.Success>
+      <Column>
+        <LogText.Success prefix={response.name.prefix}>
+          {response.name.suffix}
+        </LogText.Success>
+        {children}
+      </Column>
     ),
     [GitStatus.error]: (
       <LogText.Error prefix={response.name.prefix}>
-        {parseGitError(response.error)}
+        {error?.message}
       </LogText.Error>
     ),
   }
 
+  const id = join([response.name.prefix, response.status], '.')
+
   return (
     <>
       <Table.Debug
-        name={response.name.prefix}
+        name={join(['debug', id], '.')}
         data={{
           status: response.status,
           ...(response.state && { state: <Json>{response.state}</Json> }),
@@ -71,19 +84,27 @@ export default function GitRouter({
               defaults[GitStatus.success]
             )
           ) : (
-            <>
-              {defaults[GitStatus.success]}
-              <Exit />
-            </>
+            <Column>
+              <Static id={id}>
+                <Box paddingBottom={1}>{defaults[GitStatus.success]}</Box>
+              </Static>
+
+              {children}
+            </Column>
           ),
 
           [GitStatus.error]: isFunction(config[GitStatus.error]) ? (
             (config[GitStatus.error] as GetGitRoute)(defaults[GitStatus.error])
           ) : (
-            <>
-              {defaults[GitStatus.error]}
-              <Exit />
-            </>
+            <Column>
+              <Static id={id}>
+                <Box paddingBottom={1}>{defaults[GitStatus.error]}</Box>
+              </Static>
+
+              <CommandSelect commands={error?.commands}>
+                {children}
+              </CommandSelect>
+            </Column>
           ),
         }}
       />

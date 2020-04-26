@@ -36,7 +36,7 @@ export default function CliProvider({
           <Table.Debug
             name="cli input"
             data={{
-              command: state.command ?? 'index',
+              command: <Json>{state.command}</Json>,
               args: <Json>{state.args}</Json>,
               flags: <Json>{state.flags}</Json>,
             }}

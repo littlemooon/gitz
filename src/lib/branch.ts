@@ -15,12 +15,12 @@ export interface Branch {
   issueId?: IssueId
 }
 
-export interface BranchFeature extends Branch {
+export interface FeatureBranch extends Branch {
   description: string
   issueId: IssueId
 }
 
-export function isFeatureBranch(branch?: Branch): branch is BranchFeature {
+export function isFeatureBranch(branch?: Branch): branch is FeatureBranch {
   return branch ? 'issueId' in branch : false
 }
 
@@ -60,7 +60,7 @@ export const featureBranchForm: FeatureBranchForm = {
   }),
 }
 
-export function createFeatureBranch(form: FeatureBranchForm): BranchFeature {
+export function createFeatureBranch(form: FeatureBranchForm): FeatureBranch {
   throwValidationErrors(form)
 
   return {
@@ -76,7 +76,7 @@ export function createFeatureBranch(form: FeatureBranchForm): BranchFeature {
 
 export function parseBranch(
   branch?: Branch
-): BranchFeature | Branch | undefined {
+): FeatureBranch | Branch | undefined {
   if (branch) {
     const featureBranch = env.featureBranchRegex.exec(branch.name ?? '')
     if (featureBranch) {

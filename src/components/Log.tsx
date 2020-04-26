@@ -2,7 +2,6 @@ import { ColorProps } from 'ink'
 import React, { ReactNode } from 'react'
 import useCli from '../hooks/useCli'
 import Column from './Column'
-import Exit from './Exit'
 import LogText from './LogText'
 import RenderTimes from './RenderTimes'
 import Row from './Row'
@@ -82,24 +81,14 @@ const Log = {
   Info(props: Omit<LogProps, 'type'>) {
     return <LogBase type={LogType.info} {...props} />
   },
-  Success({ exit, ...props }: { exit?: boolean } & Omit<LogProps, 'type'>) {
-    return (
-      <>
-        <LogBase type={LogType.success} {...props} />
-        {exit && <Exit />}
-      </>
-    )
+  Success(props: Omit<LogProps, 'type'>) {
+    return <LogBase type={LogType.success} {...props} />
   },
   Warn(props: Omit<LogProps, 'type'>) {
     return <LogBase type={LogType.warn} {...props} />
   },
-  Error({ exit, ...props }: { exit?: boolean } & Omit<LogProps, 'type'>) {
-    return (
-      <>
-        <LogBase type={LogType.error} {...props} />
-        {exit && <Exit />}
-      </>
-    )
+  Error(props: Omit<LogProps, 'type'>) {
+    return <LogBase type={LogType.error} {...props} />
   },
 }
 

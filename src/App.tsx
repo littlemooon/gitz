@@ -1,22 +1,10 @@
-import React, { ReactNode } from 'react'
-import BranchCommand from './commands/BranchCommand'
-import CheckoutCommand from './commands/CheckoutCommand'
-import CommitCommand from './commands/CommitCommand'
-import IndexCommand from './commands/IndexCommand'
-import StatusCommand from './commands/StatusCommand'
+import React from 'react'
+import Command from './components/Command'
 import ErrorBoundary from './components/ErrorBoundary'
-import Router from './components/Router'
-import { CliCommandKey } from './lib/cli'
+import Exit from './components/Exit'
+import BranchStatusProvider from './providers/BranchStatusProvider'
 import CliProvider from './providers/CliProvider'
 import StaticProvider from './providers/StaticProvider'
-
-const commandRouteConfig: Record<CliCommandKey, ReactNode> = {
-  [CliCommandKey.INDEX]: <IndexCommand />,
-  [CliCommandKey.STATUS]: <StatusCommand />,
-  [CliCommandKey.BRANCH]: <BranchCommand />,
-  [CliCommandKey.CHECKOUT]: <CheckoutCommand />,
-  [CliCommandKey.COMMIT]: <CommitCommand />,
-}
 
 export default function App() {
   return (
@@ -24,7 +12,11 @@ export default function App() {
       <StaticProvider>
         <CliProvider>
           {(cli) => (
-            <Router path={cli.command?.id} config={commandRouteConfig} />
+            <BranchStatusProvider>
+              <Command command={cli.command}>
+                <Exit />
+              </Command>
+            </BranchStatusProvider>
           )}
         </CliProvider>
       </StaticProvider>

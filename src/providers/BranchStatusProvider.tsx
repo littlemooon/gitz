@@ -1,26 +1,30 @@
 import { Color } from 'ink'
 import React, { ReactNode } from 'react'
+import Column from '../components/Column'
+import LogText from '../components/LogText'
+import Row from '../components/Row'
+import Static from '../components/Static'
+import Table from '../components/Table'
+import Title from '../components/Title'
 import { isFeatureBranch } from '../lib/branch'
-import GitBranchProvider from '../providers/GitBranchProvider'
-import GitStatusProvider from '../providers/GitStatusProvider'
-import Column from './Column'
-import LogText from './LogText'
-import Row from './Row'
-import Static from './Static'
-import Table from './Table'
-import Title from './Title'
+import BranchQueryProvider from '../providers/BranchQueryProvider'
+import StatusQueryProvider from '../providers/StatusQueryProvider'
 
-export default function BranchStatus({ children }: { children?: ReactNode }) {
+export default function BranchStatusProvider({
+  children,
+}: {
+  children: ReactNode
+}) {
   return (
-    <GitBranchProvider>
+    <BranchQueryProvider>
       {(branchQuery) => (
-        <GitStatusProvider>
+        <StatusQueryProvider>
           {(statusQuery) => (
             <Column>
-              <Static id="BranchStatus">
-                <Column paddingBottom={1}>
-                  <Title>Status</Title>
-                  {isFeatureBranch(branchQuery.state?.current) ? (
+              <Static id="BranchStatusProvider">
+                {isFeatureBranch(branchQuery.state?.current) ? (
+                  <Column paddingBottom={1}>
+                    <Title>Feature</Title>
                     <Table.Info
                       data={{
                         issueId: (
@@ -48,7 +52,10 @@ export default function BranchStatus({ children }: { children?: ReactNode }) {
                         ),
                       }}
                     />
-                  ) : (
+                  </Column>
+                ) : (
+                  <Column paddingBottom={1}>
+                    <Title>Branch</Title>
                     <Table.Info
                       data={{
                         branch: (
@@ -60,14 +67,15 @@ export default function BranchStatus({ children }: { children?: ReactNode }) {
                         tracking: statusQuery.state?.tracking,
                       }}
                     />
-                  )}
-                </Column>
+                  </Column>
+                )}
               </Static>
+
               {children}
             </Column>
           )}
-        </GitStatusProvider>
+        </StatusQueryProvider>
       )}
-    </GitBranchProvider>
+    </BranchQueryProvider>
   )
 }

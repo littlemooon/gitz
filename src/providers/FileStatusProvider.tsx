@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { Color, ColorProps } from 'ink'
-import React, { useMemo } from 'react'
+import React, { ReactNode, useMemo } from 'react'
 import { FileStatusSumary } from 'simple-git/typings/response'
-import GitStatusProvider from '../providers/GitStatusProvider'
-import Column from './Column'
-import Row from './Row'
-import Static from './Static'
-import Table from './Table'
+import Column from '../components/Column'
+import Row from '../components/Row'
+import Static from '../components/Static'
+import Table from '../components/Table'
+import StatusQueryProvider from '../providers/StatusQueryProvider'
 
 const fileStatusMap: Record<
   'working_dir' | 'index',
@@ -63,12 +63,16 @@ function FileStatusList({
   )
 }
 
-export default function FileStatus() {
+export default function FileStatusProvider({
+  children,
+}: {
+  children: ReactNode
+}) {
   return (
-    <GitStatusProvider>
-      {function FileStatusComp(statusQuery) {
-        return (
-          <Static id="FileStatus">
+    <StatusQueryProvider>
+      {(statusQuery) => (
+        <Column>
+          <Static id="FileStatusProvider">
             <Column paddingBottom={1}>
               <Table.Info
                 data={{
@@ -88,8 +92,10 @@ export default function FileStatus() {
               />
             </Column>
           </Static>
-        )
-      }}
-    </GitStatusProvider>
+
+          {children}
+        </Column>
+      )}
+    </StatusQueryProvider>
   )
 }

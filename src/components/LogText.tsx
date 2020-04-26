@@ -6,7 +6,6 @@ import useCli from '../hooks/useCli'
 import useConstant from '../hooks/useConstant'
 import { join } from '../lib/string'
 import getUuid from '../lib/uuid'
-import Exit from './Exit'
 import { getLogColorProps, LogType } from './Log'
 import Row from './Row'
 import Static from './Static'
@@ -69,9 +68,8 @@ const LogText = {
   },
   Success({
     prefix,
-    exit,
     ...props
-  }: { prefix?: string; exit?: boolean } & Omit<LogTextProps, 'type'>) {
+  }: { prefix?: string } & Omit<LogTextProps, 'type'>) {
     return (
       <Row gap={1}>
         <LogTextBase type={LogType.success}>{figures.tick}</LogTextBase>
@@ -79,15 +77,10 @@ const LogText = {
           {prefix}
         </LogTextBase>
         <LogTextBase {...props} />
-        {exit ? <Exit /> : null}
       </Row>
     )
   },
-  Warn({
-    prefix,
-    exit,
-    ...props
-  }: { prefix?: string; exit?: boolean } & Omit<LogTextProps, 'type'>) {
+  Warn({ prefix, ...props }: { prefix?: string } & Omit<LogTextProps, 'type'>) {
     return (
       <Row gap={1}>
         <LogTextBase type={LogType.warn}>{figures.warning}</LogTextBase>
@@ -95,16 +88,14 @@ const LogText = {
           {prefix}
         </LogTextBase>
         <LogTextBase {...props} />
-        {exit ? <Exit /> : null}
       </Row>
     )
   },
   Error({
     prefix,
     children,
-    exit,
     ...props
-  }: { prefix?: string; exit?: boolean } & Omit<LogTextProps, 'type'>) {
+  }: { prefix?: string } & Omit<LogTextProps, 'type'>) {
     return (
       <Row gap={1}>
         <LogTextBase type={LogType.error}>{figures.cross}</LogTextBase>
@@ -114,7 +105,6 @@ const LogText = {
         <LogTextBase {...props}>
           {children?.toString().replace(/^error: /, '') ?? 'unknown'}
         </LogTextBase>
-        {exit ? <Exit /> : null}
       </Row>
     )
   },

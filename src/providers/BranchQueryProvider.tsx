@@ -4,7 +4,7 @@ import useGitQuery, { GitQueryResponse, GitStatus } from '../hooks/useGitQuery'
 import { queries } from '../lib/gitOperations'
 import { StoreKey } from '../lib/store'
 
-export default function GitBranchProvider({
+export default function BranchQueryProvider({
   children,
 }: {
   children: (branchQuery: GitQueryResponse<StoreKey.branches>) => ReactNode

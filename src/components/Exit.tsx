@@ -1,7 +1,8 @@
 import { useApp } from 'ink'
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
+import Static from './Static'
 
-export default function Exit() {
+function ExitNow() {
   const { exit } = useApp()
 
   useEffect(() => {
@@ -9,4 +10,12 @@ export default function Exit() {
   }, [exit])
 
   return null
+}
+
+export default function Exit() {
+  return (
+    <Static id="exit">
+      <ExitNow />
+    </Static>
+  )
 }

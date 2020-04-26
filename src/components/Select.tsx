@@ -5,6 +5,7 @@ import FocusProvider, { useFocus } from '../providers/FocusProvider'
 import Column from './Column'
 import LogText from './LogText'
 import SelectIndicator from './SelectIndicator'
+import Title from './Title'
 
 export type SelectItem<T extends object = {}> = T & {
   label?: string
@@ -14,6 +15,7 @@ export type SelectItem<T extends object = {}> = T & {
 }
 
 export interface SelectProps {
+  title?: string
   items: SelectItem[]
   initialIndex?: number
   limit?: number
@@ -107,6 +109,8 @@ export default function Select(props: SelectProps) {
 
   return (
     <Column>
+      {props.title && <Title>{props.title}</Title>}
+
       {items.map((item, index) => {
         const selected = index === state.selectedIndex
 
