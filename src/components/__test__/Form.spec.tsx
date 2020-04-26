@@ -7,9 +7,10 @@ test('renders', () => {
   const onSubmit = jest.fn()
   const a = render(
     <Form
+      title="Test form"
       fields={{
         test: createFormField({
-          label: 'Test Label',
+          label: 'Test label',
           validate: () => undefined,
           format: (x) => x,
         }),
@@ -18,11 +19,12 @@ test('renders', () => {
     />
   )
 
-  expect(a.lastFrame()).toContain('Test Label: ')
+  expect(a.lastFrame()).toContain('Test form')
+  expect(a.lastFrame()).toContain('Test label: ')
 
   a.stdin.write('a')
-  expect(a.lastFrame()).toContain('Test Label: a')
+  expect(a.lastFrame()).toContain('Test label: a')
 
   a.stdin.write('sd')
-  expect(a.lastFrame()).toContain('Test Label: asd')
+  expect(a.lastFrame()).toContain('Test label: asd')
 })

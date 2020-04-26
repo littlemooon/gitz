@@ -18,7 +18,7 @@ describe('StatusCommand', () => {
     )
   })
 
-  test('renders', async () => {
+  test.skip('renders', async () => {
     const a = render(<StatusCommand />)
     expect(a.lastFrame().includes('Branch status')).toBe(true)
   })
