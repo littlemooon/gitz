@@ -3,8 +3,6 @@ import { CliCommand, cliCommands } from './command'
 import env from './env'
 
 export const cliHelpText = `
-gitz - interactive git client for feature workflow
-
 Usage:
   gitz                      index of commands
   gitz status               (s) current branch status
