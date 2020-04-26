@@ -20,10 +20,10 @@ export default function BranchStatusProvider({
       {(branchQuery) => (
         <StatusQueryProvider>
           {(statusQuery) => (
-            <Column paddingTop={1}>
+            <Column>
               <Static id="BranchStatusProvider">
                 {isFeatureBranch(branchQuery.state?.current) ? (
-                  <Column paddingBottom={1}>
+                  <Column paddingTop={1} paddingBottom={1}>
                     <Title>Feature</Title>
                     <Table.Info
                       data={{
@@ -54,7 +54,7 @@ export default function BranchStatusProvider({
                     />
                   </Column>
                 ) : (
-                  <Column paddingBottom={1}>
+                  <Column paddingTop={1} paddingBottom={1}>
                     <Title>Branch</Title>
                     <Table.Info
                       data={{
