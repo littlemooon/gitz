@@ -20,7 +20,7 @@ export default function BranchStatusProvider({
       {(branchQuery) => (
         <StatusQueryProvider>
           {(statusQuery) => (
-            <Column>
+            <Column paddingTop={1}>
               <Static id="BranchStatusProvider">
                 {isFeatureBranch(branchQuery.state?.current) ? (
                   <Column paddingBottom={1}>
