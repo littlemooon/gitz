@@ -16,6 +16,8 @@ export default function useGitMutation<R, I>(
   mutation: GitMutation<I, R>,
   item?: I
 ): GitMutationResponse<R> {
+  // const [set, setSet] = useState(false)
+
   const { run, status, data, error, isInitial } = useAsync({
     deferFn: () => {
       if (item) {
@@ -36,10 +38,13 @@ export default function useGitMutation<R, I>(
   }, [item, run, isInitial])
 
   // useEffect(() => {
-  //   if (error) {
-  //     setError(error)
+  //   if (status === 'fulfilled' && item) {
+  //     if (mutation.set) {
+  //       mutation.set(item)
+  //     }
+  //     setSet(true)
   //   }
-  // }, [error, setError])
+  // }, [status, item, mutation])
 
   const gitStatus = useMemo(() => {
     switch (status) {
@@ -48,6 +53,7 @@ export default function useGitMutation<R, I>(
       case 'pending':
         return GitStatus.loading
       case 'fulfilled':
+        // return set ? GitStatus.success : GitStatus.loading
         return GitStatus.success
       default:
         return GitStatus.error

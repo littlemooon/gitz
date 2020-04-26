@@ -1,4 +1,4 @@
-import Conf from 'conf'
+import CacheConf from 'conf'
 import { Maybe } from '../types'
 import { GitStore } from './gitOperations'
 import getUuid, { Uuid } from './uuid'
@@ -30,7 +30,7 @@ const defaultStore: Store = {
   updated: Date.now(),
 }
 
-const store = new Conf({ defaults: defaultStore })
+const store = new CacheConf({ defaults: defaultStore })
 
 store.set('sessionId', sessionId)
 

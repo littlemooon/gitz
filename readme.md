@@ -1,11 +1,13 @@
 # gitz
 
-Git wrapper for feature flow with ticket numbers
+Interactive git client for feature workflow
 
-## Install
+## Run
 
 ```bash
 npm install --global gitz
+cd my-git-repo
+gitz
 ```
 
 ## CLI
@@ -13,13 +15,16 @@ npm install --global gitz
 ```
 $ gitz --help
 
-  Usage
-    $ gitz
+Usage:
+  gitz                      index of commands
+  gitz status               (s) current branch status
+  gitz branch <name?>       (b) create new feature branch
+  gitz checkout             (c) switch to feature branch
+  gitz commit <message?>    (m) commit with issueId
+  gitz update               (u) rebase current branch onto ${env.masterBranch}
 
-  Options
-    --name Your name
-
-  Examples
-    $ gitz --name=Jane
-    Hello, Jane
+Options:
+  --help        Show this screen
+  --version     Show version
+  -d --debug    Run with debug logs
 ```

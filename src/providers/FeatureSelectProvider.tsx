@@ -3,6 +3,7 @@ import React, { ReactNode } from 'react'
 import Column from '../components/Column'
 import LogText from '../components/LogText'
 import Static from '../components/Static'
+import { isFeatureBranch } from '../lib/branch'
 import BranchQueryProvider from '../providers/BranchQueryProvider'
 import BranchSelectProvider from '../providers/BranchSelectProvider'
 import FeatureCreateProvider from './FeatureCreateProvider'
@@ -15,10 +16,10 @@ export default function FeatureSelectProvider({
   return (
     <BranchQueryProvider>
       {(branchQuery) =>
-        branchQuery.state?.feature?.length ? (
+        branchQuery.state?.all.filter(isFeatureBranch)?.length ? (
           <BranchSelectProvider
             title="Switch feature branch"
-            branches={branchQuery.state?.feature}
+            branches={branchQuery.state?.all.filter(isFeatureBranch)}
             formatLabel={(x) => `${x.issueId}: ${x.description} (${x.label})`}
           >
             {children}

@@ -13,6 +13,7 @@ export interface Branch {
   label?: string
   description?: string
   issueId?: IssueId
+  checkoutCount: number
 }
 
 export interface FeatureBranch extends Branch {
@@ -71,6 +72,7 @@ export function createFeatureBranch(form: FeatureBranchForm): FeatureBranch {
       form.issueId.value,
       form.description.value?.toLowerCase(),
     ].join('-'),
+    checkoutCount: 1,
   }
 }
 

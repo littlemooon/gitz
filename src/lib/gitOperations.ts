@@ -6,10 +6,10 @@ import {
   StatusResult,
 } from 'simple-git/typings/response'
 import { filterArray } from './array'
-import { Branch, FeatureBranch, isFeatureBranch, parseBranch } from './branch'
+import { Branch, FeatureBranch, parseBranch } from './branch'
 import { Commit } from './commit'
 import env from './env'
-import { setStoreItem, StoreItem, StoreKey } from './store'
+import { getStoreItem, setStoreItem, StoreItem, StoreKey } from './store'
 
 export interface GitStore extends Partial<Record<StoreKey, StoreItem<any>>> {
   [StoreKey.status]?: StoreItem<StatusResult>
@@ -35,6 +35,7 @@ export interface GitQuery<K extends StoreKey, A, R> {
 export interface GitMutation<I, R> {
   getName: (item?: I) => GitOperationName
   run: (git: SimpleGit, item: I) => Promise<R>
+  set?: (item: I) => void
 }
 
 function createGitQuery<K extends StoreKey, I, R>(
@@ -60,12 +61,23 @@ export const queries = {
     key: StoreKey.branches,
     run: ({ git }) => git.branch(),
     set: (result?: BranchSummary) => {
+      const existing = getStoreItem(StoreKey.branches)
+
       const branches = filterArray(
-        Object.values(result?.branches ?? {}).map(parseBranch)
+        Object.values(result?.branches ?? {}).map((branch) => {
+          const existingBranch = existing?.all.find(
+            (x) => x.name === branch.name
+          )
+          return parseBranch({
+            ...existingBranch,
+            ...branch,
+            checkoutCount: existingBranch?.checkoutCount ?? 0,
+          })
+        })
       )
+
       return setStoreItem(StoreKey.branches, {
         all: branches,
-        feature: branches.filter(isFeatureBranch),
         current: branches.find((x) => x.current),
       })
     },
@@ -81,6 +93,20 @@ export const mutations = {
     run: (git, branch) => {
       return git.checkout(branch?.name)
     },
+    set: (branch) => {
+      const branches = getStoreItem(StoreKey.branches)
+
+      return setStoreItem(StoreKey.branches, {
+        all: branches?.all
+          .map((x) => {
+            return x.name === branch.name
+              ? { ...x, checkoutCount: x.checkoutCount + 1 }
+              : x
+          })
+          .sort((a, b) => (a.checkoutCount > b.checkoutCount ? 1 : -1)),
+        current: branch,
+      })
+    },
   }),
 
   checkoutBranch: createGitMutation<Branch, void>({
@@ -89,7 +115,7 @@ export const mutations = {
       suffix: branch?.name,
     }),
     run: (git, branch) => {
-      return git.checkoutBranch(branch?.name, `origin/${env.masterBranch}`)
+      return git.checkoutBranch(branch?.name, env.masterBranch)
     },
   }),
 

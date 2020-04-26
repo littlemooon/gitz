@@ -1,10 +1,12 @@
-import { CliCommand, cliCommands } from './command'
+import { CliCommand } from './command'
 
-const gitErrorMap = {
+const gitErrorMap: Record<
+  string,
+  { regex: RegExp; message: string; commands?: CliCommand[] }
+> = {
   localFiles: {
     regex: /Your local changes to the following files would be overwritten by checkout:/,
     message: 'Local files must be committed or stashed',
-    commands: [cliCommands.status, cliCommands.checkout, cliCommands.commit],
   },
 }
 
