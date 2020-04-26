@@ -3,11 +3,11 @@ import CommitCommand from '../commands/CommitCommand'
 import useGitMutation from '../hooks/useGitMutation'
 import { GitStatus } from '../hooks/useGitQuery'
 import { Branch } from '../lib/branch'
-import { mutations } from '../lib/git'
+import { mutations } from '../lib/gitOperations'
 import Column from './Column'
 import GitRouter from './GitRouter'
 import Select, { SelectItem } from './Select'
-import { Static } from './Static'
+import Static from './Static'
 import Title from './Title'
 
 export default function BranchSelect<B extends Branch>({
@@ -60,7 +60,7 @@ export default function BranchSelect<B extends Branch>({
         [GitStatus.error]: function BranchSelectError(errorMessage) {
           return (
             <Column>
-              <Static>{errorMessage}</Static>
+              <Static id="BranchSelect.Error">{errorMessage}</Static>
               <CommitCommand />
             </Column>
           )

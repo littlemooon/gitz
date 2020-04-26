@@ -4,6 +4,7 @@ import LogText from '../components/LogText'
 import Router from '../components/Router'
 import { GitMutationResponse } from '../hooks/useGitMutation'
 import { GitQueryResponse, GitStatus } from '../hooks/useGitQuery'
+import { parseGitError } from '../lib/gitError'
 import { StoreKey } from '../lib/store'
 import { Maybe } from '../types'
 import Exit from './Exit'
@@ -35,7 +36,7 @@ export default function GitRouter({
     ),
     [GitStatus.error]: (
       <LogText.Error prefix={response.name.prefix}>
-        {response.error?.message}
+        {parseGitError(response.error)}
       </LogText.Error>
     ),
   }

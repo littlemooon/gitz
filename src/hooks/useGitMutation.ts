@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import { useAsync } from 'react-async'
-import git, { GitMutation, GitOperationName } from '../lib/git'
+import git from '../lib/git'
+import { GitMutation, GitOperationName } from '../lib/gitOperations'
 import { GitStatus } from './useGitQuery'
 
 export interface GitMutationResponse<R> {

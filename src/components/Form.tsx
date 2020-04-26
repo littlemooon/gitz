@@ -3,9 +3,10 @@ import FocusProvider from '../providers/FocusProvider'
 import { Maybe } from '../types'
 import Column from './Column'
 import Input from './Input'
-import Log from './Log'
+import LogText from './LogText'
 import Row from './Row'
 import SelectIndicator from './SelectIndicator'
+import Title from './Title'
 
 export interface FormField {
   label: string
@@ -24,11 +25,13 @@ export type FormFields<T = Record<string, FormField>> = Record<
 >
 
 export interface FormProps<D> {
+  title: string
   fields: D
   onSubmit: (data: D) => void
 }
 
 export default function Form<D extends FormFields>({
+  title,
   fields,
   onSubmit,
 }: FormProps<D>) {
@@ -61,19 +64,21 @@ export default function Form<D extends FormFields>({
   const onSubmitNext = useCallback(
     (value: string) => {
       if (nextItem && (value || !nextItem?.required)) {
+        const formattedValue = nextItem.format(value)
+
         setData((form) => {
           const validationError = nextItem.validate({
             ...form[nextItem.id],
-            value,
+            value: formattedValue,
           })
 
           return {
             ...form,
             [nextItem.id]: {
               ...form[nextItem.id],
-              value,
+              value: formattedValue,
               validationError,
-              set: Boolean(validationError),
+              set: !validationError,
             },
           }
         })
@@ -84,6 +89,8 @@ export default function Form<D extends FormFields>({
 
   return (
     <Column>
+      <Title>{title}</Title>
+
       {Object.entries(readonlyForm).map(([id, item]) => (
         <FocusProvider key={id} focus={false}>
           <Row>
@@ -105,7 +112,9 @@ export default function Form<D extends FormFields>({
           </Row>
 
           {nextItem.validationError ? (
-            <Log.Error>{nextItem.validationError}</Log.Error>
+            <LogText.Error prefix="validation">
+              {nextItem.validationError}
+            </LogText.Error>
           ) : null}
         </Column>
       ) : null}

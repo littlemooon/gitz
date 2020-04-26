@@ -3,10 +3,13 @@ import { Color, ColorProps, Text } from 'ink'
 import Spinner from 'ink-spinner'
 import React, { ReactNode } from 'react'
 import useCli from '../hooks/useCli'
+import useConstant from '../hooks/useConstant'
+import { join } from '../lib/string'
+import getUuid from '../lib/uuid'
 import Exit from './Exit'
 import { getLogColorProps, LogType } from './Log'
 import Row from './Row'
-import { Static } from './Static'
+import Static from './Static'
 
 interface LogTextProps extends ColorProps {
   type?: LogType
@@ -28,9 +31,11 @@ const LogText = {
     return <LogTextBase {...props} />
   },
   Debug(props: Omit<LogTextProps, 'type'>) {
+    const id = useConstant(() => getUuid())
     const { flags } = useCli()
+
     return flags.debug ? (
-      <Static>
+      <Static id={join(['debug', id], '-')}>
         <LogTextBase type={LogType.debug} {...props} />
       </Static>
     ) : null
@@ -39,7 +44,7 @@ const LogText = {
     return (
       <Row gap={1}>
         <LogTextBase type={LogType.info}>{figures.info}</LogTextBase>
-        <LogTextBase type={LogType.info} {...props}>
+        <LogTextBase type={LogType.info} bold {...props}>
           {prefix}
         </LogTextBase>
         <LogTextBase {...props} />
@@ -70,7 +75,7 @@ const LogText = {
     return (
       <Row gap={1}>
         <LogTextBase type={LogType.success}>{figures.tick}</LogTextBase>
-        <LogTextBase type={LogType.success} {...props}>
+        <LogTextBase type={LogType.success} bold {...props}>
           {prefix}
         </LogTextBase>
         <LogTextBase {...props} />
@@ -86,7 +91,7 @@ const LogText = {
     return (
       <Row gap={1}>
         <LogTextBase type={LogType.warn}>{figures.warning}</LogTextBase>
-        <LogTextBase type={LogType.warn} {...props}>
+        <LogTextBase type={LogType.warn} bold {...props}>
           {prefix}
         </LogTextBase>
         <LogTextBase {...props} />
@@ -103,7 +108,7 @@ const LogText = {
     return (
       <Row gap={1}>
         <LogTextBase type={LogType.error}>{figures.cross}</LogTextBase>
-        <LogTextBase type={LogType.error} {...props}>
+        <LogTextBase type={LogType.error} bold {...props}>
           {prefix ?? 'Error'}
         </LogTextBase>
         <LogTextBase {...props}>

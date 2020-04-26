@@ -5,7 +5,7 @@ import Form from '../components/Form'
 import GitRouter from '../components/GitRouter'
 import LogText from '../components/LogText'
 import Panels from '../components/Panels'
-import { Static } from '../components/Static'
+import Static from '../components/Static'
 import useCli from '../hooks/useCli'
 import useGitMutation from '../hooks/useGitMutation'
 import { GitStatus } from '../hooks/useGitQuery'
@@ -17,7 +17,7 @@ import {
   createCommit,
   parseCommitArgs,
 } from '../lib/commit'
-import { mutations } from '../lib/git'
+import { mutations } from '../lib/gitOperations'
 import GitBranchProvider from '../providers/GitBranchProvider'
 import { Maybe } from '../types'
 import BranchCommand from './BranchCommand'
@@ -55,6 +55,7 @@ export default function CommitCommand() {
 
                 return (
                   <Form<CommitForm>
+                    title="Create commit message"
                     fields={{
                       ...commitForm,
                       issueId: {
@@ -76,7 +77,7 @@ export default function CommitCommand() {
           />
         ) : (
           <Column>
-            <Static>
+            <Static id="CommitCommand.Warn">
               <LogText.Warn prefix={commitMutation.name.prefix}>
                 Must be on a feature branch to commit
               </LogText.Warn>

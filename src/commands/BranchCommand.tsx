@@ -4,7 +4,6 @@ import { useError } from '../components/ErrorBoundary'
 import Form from '../components/Form'
 import GitRouter from '../components/GitRouter'
 import Table from '../components/Table'
-import Title from '../components/Title'
 import useCli from '../hooks/useCli'
 import useGitMutation from '../hooks/useGitMutation'
 import { GitStatus } from '../hooks/useGitQuery'
@@ -15,7 +14,7 @@ import {
   FeatureBranchForm,
   parseBranchArgs,
 } from '../lib/branch'
-import { mutations } from '../lib/git'
+import { mutations } from '../lib/gitOperations'
 import FocusProvider from '../providers/FocusProvider'
 import GitBranchProvider from '../providers/GitBranchProvider'
 
@@ -50,9 +49,9 @@ export default function BranchCommand() {
               return (
                 <Column>
                   <Table.Debug name="branch command" data={initialValues} />
-                  <Title>Create a new feature branch</Title>
                   <FocusProvider focus={!branch}>
                     <Form<FeatureBranchForm>
+                      title="Create new feature branch"
                       fields={{
                         ...featureBranchForm,
                         issueId: {

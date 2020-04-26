@@ -1,6 +1,6 @@
 import Conf from 'conf'
 import { Maybe } from '../types'
-import { GitStore } from './git'
+import { GitStore } from './gitOperations'
 import getUuid, { Uuid } from './uuid'
 
 export enum StoreKey {

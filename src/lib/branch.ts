@@ -35,11 +35,11 @@ export const featureBranchForm: FeatureBranchForm = {
     required: true,
     validate: (field: FormField) => {
       if (!field.value) {
-        return 'Issue ID required'
+        return 'required'
       }
 
       if (!env.issueRegex.exec(field.value)) {
-        return `Issue ID (${field.value}) must be of form: ${env.issueRegex}`
+        return `must be of form: ${env.issueRegex}`
       }
     },
     format: (value) => {
@@ -51,7 +51,7 @@ export const featureBranchForm: FeatureBranchForm = {
     required: true,
     validate: (field: FormField) => {
       if (!field.value) {
-        return 'Description required'
+        return 'required'
       }
     },
     format: (v?: string) => {

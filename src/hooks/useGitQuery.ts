@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useAsync } from 'react-async'
-import git, { GitOperationName, GitQuery, GitStore } from '../lib/git'
+import git from '../lib/git'
+import { GitOperationName, GitQuery, GitStore } from '../lib/gitOperations'
 import store, { getStoreItem, StoreKey } from '../lib/store'
 import { Maybe } from '../types'
 import useConstant from './useConstant'

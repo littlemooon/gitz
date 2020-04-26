@@ -23,6 +23,10 @@ export default class ErrorBoundary extends Component<
     errorInfo: undefined,
   }
 
+  static getDerivedStateFromError(error: Error) {
+    return { error }
+  }
+
   componentDidCatch(error: Error, errorInfo: any) {
     this.setState({ error, errorInfo })
   }

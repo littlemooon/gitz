@@ -1,6 +1,6 @@
 import { render } from 'ink-testing-library'
 import React from 'react'
-import App from '../src/App'
+import App from '../App'
 
 test.skip('renders', () => {
   const a = render(<App />)

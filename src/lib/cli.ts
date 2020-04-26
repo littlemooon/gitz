@@ -1,6 +1,6 @@
 import meow, { BooleanFlag, Result } from 'meow'
 
-export enum CliCommand {
+export enum CliCommandKey {
   'INDEX' = 'index',
   'STATUS' = 'status',
   'BRANCH' = 'branch',
@@ -8,15 +8,43 @@ export enum CliCommand {
   'COMMIT' = 'commit',
 }
 
-export const commandInputMap: Record<string, CliCommand> = {
-  status: CliCommand.STATUS,
-  s: CliCommand.STATUS,
-  branch: CliCommand.BRANCH,
-  b: CliCommand.BRANCH,
-  checkout: CliCommand.CHECKOUT,
-  c: CliCommand.CHECKOUT,
-  commit: CliCommand.COMMIT,
-  m: CliCommand.COMMIT,
+export interface CliCommand {
+  id: CliCommandKey
+  name: string
+  shortcut?: string
+  description: string
+}
+
+export const cliCommands: Record<CliCommandKey, CliCommand> = {
+  [CliCommandKey.INDEX]: {
+    id: CliCommandKey.INDEX,
+    name: 'index',
+    description: 'index of commands',
+  },
+  [CliCommandKey.STATUS]: {
+    id: CliCommandKey.STATUS,
+    name: 'status',
+    shortcut: 's',
+    description: 'current branch status',
+  },
+  [CliCommandKey.BRANCH]: {
+    id: CliCommandKey.BRANCH,
+    name: 'branch',
+    shortcut: 'b',
+    description: 'create new feature branch',
+  },
+  [CliCommandKey.CHECKOUT]: {
+    id: CliCommandKey.CHECKOUT,
+    name: 'checkout',
+    shortcut: 'c',
+    description: 'switch to feature branch',
+  },
+  [CliCommandKey.COMMIT]: {
+    id: CliCommandKey.COMMIT,
+    name: 'commit',
+    shortcut: 'm',
+    description: 'commit with issueId',
+  },
 }
 
 export const cliHelpText = `
@@ -57,18 +85,18 @@ export interface Cli {
 
 function parseCommand(command?: string): CliCommand {
   if (command) {
-    const c = commandInputMap[command]
+    const c = Object.values(cliCommands).find(
+      ({ name, shortcut }) => command === name || command === shortcut
+    )
     if (c) {
       return c
     } else {
       throw new Error(
-        `Unknown command: ${command} [${Object.keys(commandInputMap).join(
-          ', '
-        )}]`
+        `Unknown command: ${command} [${Object.keys(cliCommands).join(', ')}]`
       )
     }
   } else {
-    return CliCommand.INDEX
+    return cliCommands[CliCommandKey.INDEX]
   }
 }
 

@@ -31,12 +31,12 @@ function TableBase({ data, type }: TableProps) {
   const maxKey = useMemo(() => Math.max(...keys.map((x) => x.length)), [keys])
 
   return (
-    <Column>
+    <Column paddingLeft={2}>
       {Object.entries(data).map(([key, value]) => {
         const row = parseRow(value)
         return (
           <Row key={key} gap={1}>
-            <LogText.Default type={row.type ?? type} bold>
+            <LogText.Default type={row.type ?? type}>
               {key.padEnd(maxKey)}
             </LogText.Default>
             {row.node}

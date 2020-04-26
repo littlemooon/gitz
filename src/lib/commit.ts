@@ -21,7 +21,7 @@ export const commitForm: CommitForm = {
     required: true,
     validate: (field: FormField) => {
       if (!field.value) {
-        return 'Message required'
+        return 'required'
       }
     },
     format: (v?: string) => {
