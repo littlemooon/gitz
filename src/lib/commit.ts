@@ -25,7 +25,7 @@ export const commitForm: CommitForm = {
       }
     },
     format: (v?: string) => {
-      return v?.toLowerCase()
+      return v
     },
   }),
 }
