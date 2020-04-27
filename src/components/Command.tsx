@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react'
 import CommandSelect from '../components/CommandSelect'
 import { CliCommand, CliCommandKey, cliCommands } from '../lib/command'
+import BranchStatusProvider from '../providers/BranchStatusProvider'
 import CommitCreateProvider from '../providers/CommitCreateProvider'
 import FeatureCreateProvider from '../providers/FeatureCreateProvider'
 import FeatureSelectProvider from '../providers/FeatureSelectProvider'
@@ -16,7 +17,11 @@ export default function Command({
 }) {
   switch (command?.id) {
     case CliCommandKey.STATUS:
-      return <FileStatusProvider>{children}</FileStatusProvider>
+      return (
+        <BranchStatusProvider>
+          <FileStatusProvider>{children}</FileStatusProvider>
+        </BranchStatusProvider>
+      )
 
     case CliCommandKey.BRANCH:
       return <FeatureCreateProvider>{children}</FeatureCreateProvider>
@@ -32,9 +37,11 @@ export default function Command({
 
     default:
       return (
-        <CommandSelect commands={Object.values(cliCommands)}>
-          {children}
-        </CommandSelect>
+        <BranchStatusProvider>
+          <CommandSelect commands={Object.values(cliCommands)}>
+            {children}
+          </CommandSelect>
+        </BranchStatusProvider>
       )
   }
 }
