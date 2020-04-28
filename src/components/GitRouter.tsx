@@ -38,12 +38,9 @@ export default function GitRouter({
       </LogText.Loading>
     ),
     [GitStatus.success]: (
-      <Column>
-        <LogText.Success prefix={response.name.prefix}>
-          {response.name.suffix}
-        </LogText.Success>
-        {children}
-      </Column>
+      <LogText.Success prefix={response.name.prefix}>
+        {response.name.suffix}
+      </LogText.Success>
     ),
     [GitStatus.error]: (
       <LogText.Error prefix={response.name.prefix}>
@@ -55,7 +52,7 @@ export default function GitRouter({
   const id = join([response.name.prefix, response.status], '.')
 
   return (
-    <>
+    <Column>
       <Table.Debug
         name={join(['debug', id], '.')}
         data={{
@@ -108,6 +105,6 @@ export default function GitRouter({
           ),
         }}
       />
-    </>
+    </Column>
   )
 }

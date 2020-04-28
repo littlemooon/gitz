@@ -6,7 +6,8 @@ function ExitNow() {
   const { exit } = useApp()
 
   useEffect(() => {
-    exit()
+    const timer = setTimeout(exit, 0)
+    return () => clearTimeout(timer)
   }, [exit])
 
   return null

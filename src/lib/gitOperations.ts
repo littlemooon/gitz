@@ -9,7 +9,7 @@ import { filterArray } from './array'
 import { Branch, FeatureBranch, parseBranch } from './branch'
 import { Commit } from './commit'
 import env from './env'
-import { getStoreItem, setStoreItem, StoreItem, StoreKey } from './store'
+import store, { setStoreItem, StoreItem, StoreKey } from './store'
 
 export interface GitStore extends Partial<Record<StoreKey, StoreItem<any>>> {
   [StoreKey.status]?: StoreItem<StatusResult>
@@ -61,7 +61,7 @@ export const queries = {
     key: StoreKey.branches,
     run: ({ git }) => git.branch(),
     set: (result?: BranchSummary) => {
-      const existing = getStoreItem(StoreKey.branches)
+      const existing = store.get(StoreKey.branches)
 
       const branches = filterArray(
         Object.values(result?.branches ?? {}).map((branch) => {
@@ -71,7 +71,8 @@ export const queries = {
           return parseBranch({
             ...existingBranch,
             ...branch,
-            checkoutCount: existingBranch?.checkoutCount ?? 0,
+            created: existingBranch?.created ?? Date.now(),
+            lastCheckout: existingBranch?.lastCheckout ?? Date.now(),
           })
         })
       )
@@ -94,16 +95,12 @@ export const mutations = {
       return git.checkout(branch?.name)
     },
     set: (branch) => {
-      const branches = getStoreItem(StoreKey.branches)
+      const branches = store.get(StoreKey.branches)
 
       return setStoreItem(StoreKey.branches, {
-        all: branches?.all
-          .map((x) => {
-            return x.name === branch.name
-              ? { ...x, checkoutCount: x.checkoutCount + 1 }
-              : x
-          })
-          .sort((a, b) => (a.checkoutCount > b.checkoutCount ? 1 : -1)),
+        all: branches?.all.map((x) => {
+          return x.name === branch.name ? { ...x, lastCheckout: Date.now() } : x
+        }),
         current: branch,
       })
     },

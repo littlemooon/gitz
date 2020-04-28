@@ -1,7 +1,10 @@
 import React from 'react'
+import Column from './components/Column'
 import Command from './components/Command'
 import ErrorBoundary from './components/ErrorBoundary'
 import Exit from './components/Exit'
+import Table from './components/Table'
+import store from './lib/store'
 import CliProvider from './providers/CliProvider'
 import StaticProvider from './providers/StaticProvider'
 
@@ -11,9 +14,12 @@ export default function App() {
       <StaticProvider>
         <CliProvider>
           {(cli) => (
-            <Command command={cli.command}>
-              <Exit />
-            </Command>
+            <Column>
+              <Table.Debug name="store" data={{ path: store.path }} />
+              <Command command={cli.command}>
+                <Exit />
+              </Command>
+            </Column>
           )}
         </CliProvider>
       </StaticProvider>

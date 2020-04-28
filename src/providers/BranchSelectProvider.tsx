@@ -29,13 +29,25 @@ export default function BranchSelectProvider<B extends Branch>({
 
   const items: SelectItem[] = useMemo(() => {
     return (
-      branches.map((branch) => ({
-        label: formatLabel
-          ? formatLabel(branch)
-          : `${branch.name}: ${branch.label}`,
-        id: branch.name,
-        current: branch.current,
-      })) ?? []
+      branches
+        .sort((a, b) => {
+          if (a.lastCheckout === b.lastCheckout) {
+            if (a.created === b.created) {
+              return a.name > b.name ? 1 : -1
+            } else {
+              return a.created < b.created ? 1 : -1
+            }
+          } else {
+            return a.lastCheckout < b.lastCheckout ? 1 : -1
+          }
+        })
+        .map((branch) => ({
+          label: formatLabel
+            ? formatLabel(branch)
+            : `${branch.name}: ${branch.label}`,
+          id: branch.name,
+          current: branch.current,
+        })) ?? []
     )
   }, [branches, formatLabel])
 

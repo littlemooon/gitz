@@ -1,4 +1,5 @@
-import CacheConf from 'conf'
+/// <reference types="../declarations" />
+import CacheConf from 'cache-conf'
 import { Maybe } from '../types'
 import { GitStore } from './gitOperations'
 import getUuid, { Uuid } from './uuid'
