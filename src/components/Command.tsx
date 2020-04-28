@@ -5,8 +5,8 @@ import BranchStatusProvider from '../providers/BranchStatusProvider'
 import CommitCreateProvider from '../providers/CommitCreateProvider'
 import FeatureCreateProvider from '../providers/FeatureCreateProvider'
 import FeatureSelectProvider from '../providers/FeatureSelectProvider'
+import FeatureUpdateProvider from '../providers/FeatureUpdateProvider'
 import FileStatusProvider from '../providers/FileStatusProvider'
-import UpdateMasterProvider from '../providers/UpdateMasterProvider'
 
 export default function Command({
   command,
@@ -33,7 +33,7 @@ export default function Command({
       return <CommitCreateProvider>{children}</CommitCreateProvider>
 
     case CliCommandKey.UPDATE:
-      return <UpdateMasterProvider>{children}</UpdateMasterProvider>
+      return <FeatureUpdateProvider>{children}</FeatureUpdateProvider>
 
     default:
       return (

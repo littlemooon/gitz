@@ -39,17 +39,19 @@ export default function BranchStatusProvider({
                         ),
                         branch: branchQuery.state?.current.name,
                         commit: `${branchQuery.state?.current.label} (${branchQuery.state?.current.commit})`,
-                        tracking: statusQuery.state?.tracking,
-                        commitDiff: (
+                        diff: (
                           <Row gap={1}>
                             <Color
                               green
+                              bold
                             >{`+ ${statusQuery.state?.ahead}`}</Color>
                             <Color
                               red
+                              bold
                             >{`- ${statusQuery.state?.behind}`}</Color>
                           </Row>
                         ),
+                        tracking: statusQuery.state?.tracking,
                       }}
                     />
                   </Column>
@@ -64,6 +66,18 @@ export default function BranchStatusProvider({
                           </LogText.Default>
                         ),
                         commit: `${branchQuery.state?.current.label} (${branchQuery.state?.current.commit})`,
+                        diff: (
+                          <Row gap={1}>
+                            <Color
+                              green
+                              bold
+                            >{`+ ${statusQuery.state?.ahead}`}</Color>
+                            <Color
+                              red
+                              bold
+                            >{`- ${statusQuery.state?.behind}`}</Color>
+                          </Row>
+                        ),
                         tracking: statusQuery.state?.tracking,
                       }}
                     />

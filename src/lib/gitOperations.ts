@@ -135,4 +135,14 @@ export const mutations = {
       return git.pull('origin', branch?.name)
     },
   }),
+
+  rebase: createGitMutation<Branch, string>({
+    getName: (branch) => ({
+      prefix: 'Rebase',
+      suffix: branch?.name,
+    }),
+    run: (git, branch) => {
+      return git.rebase([branch.name])
+    },
+  }),
 }
