@@ -13,7 +13,7 @@ Usage:
 
 Options:
   -r --root                 Set the directory to run commands in
-  -e --exit                 Exit immediately after a command has run
+  -x --exit                 Exit immediately after a command has run
   -d --debug                Run with debug logs
   -v --version              Show version
   -h --help                 Show this screen
@@ -26,6 +26,16 @@ export type CliInputFlags = {
   help: BooleanFlag
   version: BooleanFlag
 }
+
+const cliInput = meow<CliInputFlags>(cliHelpText, {
+  flags: {
+    root: { type: 'string', default: process.env.PWD, alias: 'r' },
+    exit: { type: 'boolean', default: false, alias: 'x' },
+    debug: { type: 'boolean', default: false, alias: 'd' },
+    help: { type: 'boolean', default: false, alias: 'h' },
+    version: { type: 'boolean', default: false, alias: 'v' },
+  },
+})
 
 export type CliInput = Result<CliInputFlags>
 
@@ -71,16 +81,6 @@ function parseCliInput(cliInput: CliInput): Cli {
     showVersion: cliInput.showVersion,
   }
 }
-
-const cliInput = meow<CliInputFlags>(cliHelpText, {
-  flags: {
-    root: { type: 'string', default: process.env.PWD, alias: 'r' },
-    exit: { type: 'boolean', default: false, alias: 'e' },
-    debug: { type: 'boolean', default: false, alias: 'd' },
-    help: { type: 'boolean', default: false, alias: 'h' },
-    version: { type: 'boolean', default: false, alias: 'v' },
-  },
-})
 
 const cli = parseCliInput(cliInput)
 
