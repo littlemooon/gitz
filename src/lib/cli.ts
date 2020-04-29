@@ -1,4 +1,4 @@
-import meow, { BooleanFlag, Result } from 'meow'
+import meow, { BooleanFlag, Result, StringFlag } from 'meow'
 import { CliCommand, cliCommands } from './command'
 import env from './env'
 
@@ -12,12 +12,16 @@ Usage:
   gitz update               (u) Rebase current branch onto ${env.masterBranch}
 
 Options:
-  -h --help                 Show this screen
-  -v --version              Show version
+  -r --root                 Set the directory to run commands in
+  -e --exit                 Exit immediately after a command has run
   -d --debug                Run with debug logs
+  -v --version              Show version
+  -h --help                 Show this screen
 `
 
 export type CliInputFlags = {
+  root: StringFlag
+  exit: BooleanFlag
   debug: BooleanFlag
   help: BooleanFlag
   version: BooleanFlag
@@ -26,6 +30,8 @@ export type CliInputFlags = {
 export type CliInput = Result<CliInputFlags>
 
 export type CliFlags = {
+  root?: string
+  exit?: boolean
   debug?: boolean
   help?: boolean
   version?: boolean
@@ -34,11 +40,7 @@ export type CliFlags = {
 export interface Cli {
   command?: CliCommand
   args: string[]
-  flags: {
-    debug?: boolean
-    help?: boolean
-    version?: boolean
-  }
+  flags: CliFlags
   showHelp(exitCode?: number): void
   showVersion(): void
 }
@@ -72,6 +74,8 @@ function parseCliInput(cliInput: CliInput): Cli {
 
 const cliInput = meow<CliInputFlags>(cliHelpText, {
   flags: {
+    root: { type: 'string', default: process.env.PWD, alias: 'r' },
+    exit: { type: 'boolean', default: false, alias: 'e' },
     debug: { type: 'boolean', default: false, alias: 'd' },
     help: { type: 'boolean', default: false, alias: 'h' },
     version: { type: 'boolean', default: false, alias: 'v' },

@@ -3,6 +3,7 @@ import React, { ReactNode } from 'react'
 import { isFunction } from 'util'
 import LogText from '../components/LogText'
 import Router from '../components/Router'
+import useCli from '../hooks/useCli'
 import { GitMutationResponse } from '../hooks/useGitMutation'
 import { GitQueryResponse, GitStatus } from '../hooks/useGitQuery'
 import { parseGitError } from '../lib/gitError'
@@ -11,6 +12,7 @@ import { join } from '../lib/string'
 import { Maybe } from '../types'
 import Column from './Column'
 import CommandSelect from './CommandSelect'
+import Exit from './Exit'
 import Json from './Json'
 import Static from './Static'
 import Table from './Table'
@@ -28,6 +30,7 @@ export default function GitRouter({
   config: GitRouteConfig
   children?: ReactNode
 }) {
+  const { flags } = useCli()
   const error = parseGitError(response.error)
 
   const defaults = {
@@ -98,9 +101,13 @@ export default function GitRouter({
                 <Box paddingBottom={1}>{defaults[GitStatus.error]}</Box>
               </Static>
 
-              <CommandSelect commands={error?.commands}>
-                {children}
-              </CommandSelect>
+              {flags.exit ? (
+                <Exit />
+              ) : (
+                <CommandSelect commands={error?.commands}>
+                  {children}
+                </CommandSelect>
+              )}
             </Column>
           ),
         }}

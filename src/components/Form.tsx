@@ -1,4 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import useInit from '../hooks/useInit'
+import { filterArray } from '../lib/array'
 import FocusProvider from '../providers/FocusProvider'
 import { Maybe } from '../types'
 import Column from './Column'
@@ -35,6 +37,15 @@ export default function Form<D extends FormFields>({
   fields,
   onSubmit,
 }: FormProps<D>) {
+  useInit(() => {
+    const validationErrors = filterArray(
+      Object.values(fields).map((field) => field.validate(field))
+    )
+    if (!validationErrors.length) {
+      onSubmit(fields)
+    }
+  })
+
   const [data, setData] = useState<D>(fields)
 
   const nextItem = useMemo(() => {

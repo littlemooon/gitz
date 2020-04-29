@@ -19,9 +19,11 @@ export default function CommitCreateProvider({
 }: {
   children: ReactNode
 }) {
+  const { args } = useCli()
+  const argValues = useMemo(() => parseCommitArgs(args), [args])
+
   const { setError } = useError()
   const [commit, setCommit] = useState<Maybe<Commit>>()
-
   const onSubmit = useCallback(
     (form: CommitForm) => {
       try {
@@ -32,10 +34,6 @@ export default function CommitCreateProvider({
     },
     [setError]
   )
-
-  const { args } = useCli()
-
-  const intialValues = useMemo(() => parseCommitArgs(args), [args])
 
   return (
     <BranchQueryProvider>
@@ -53,11 +51,11 @@ export default function CommitCreateProvider({
                 issueId: {
                   ...commitForm.issueId,
                   value:
-                    intialValues.issueId ?? branchQuery.state?.current.issueId,
+                    argValues.issueId ?? branchQuery.state?.current.issueId,
                 },
                 message: {
                   ...commitForm.message,
-                  value: intialValues.message,
+                  value: argValues.message,
                 },
               }}
               onSubmit={onSubmit}

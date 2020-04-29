@@ -34,7 +34,7 @@ export default function FeatureCreateProvider({
   )
 
   const { args } = useCli()
-  const initialValues = useMemo(() => parseBranchArgs(args), [args])
+  const argValues = useMemo(() => parseBranchArgs(args), [args])
 
   return (
     <BranchQueryProvider>
@@ -45,7 +45,7 @@ export default function FeatureCreateProvider({
           </BranchMutationProvider>
         ) : (
           <Column>
-            <Table.Debug name="branch command" data={initialValues} />
+            <Table.Debug name="branch command" data={argValues} />
             <Form<FeatureBranchForm>
               title="Create new feature branch"
               fields={{
@@ -53,11 +53,11 @@ export default function FeatureCreateProvider({
                 issueId: {
                   ...featureBranchForm.issueId,
                   value:
-                    initialValues.issueId ?? branchQuery.state?.current.issueId,
+                    argValues.issueId ?? branchQuery.state?.current.issueId,
                 },
                 description: {
                   ...featureBranchForm.description,
-                  value: initialValues.description,
+                  value: argValues.description,
                 },
               }}
               onSubmit={onSubmit}

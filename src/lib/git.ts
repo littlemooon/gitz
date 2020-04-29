@@ -1,6 +1,6 @@
 import gitP from 'simple-git/promise'
-import env from './env'
+import cli from './cli'
 
-const git = gitP(env.rootDir)
+const git = gitP(cli.flags.root)
 
 export default git
