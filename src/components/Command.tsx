@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react'
 import CommandSelect from '../components/CommandSelect'
 import { CliCommand, CliCommandKey, cliCommands } from '../lib/command'
 import BranchStatusProvider from '../providers/BranchStatusProvider'
-import CommitCreateProvider from '../providers/CommitCreateProvider'
+import FeatureCommitProvider from '../providers/FeatureCommitProvider'
 import FeatureCreateProvider from '../providers/FeatureCreateProvider'
 import FeatureSelectProvider from '../providers/FeatureSelectProvider'
 import FeatureUpdateProvider from '../providers/FeatureUpdateProvider'
@@ -30,7 +30,7 @@ export default function Command({
       return <FeatureSelectProvider>{children}</FeatureSelectProvider>
 
     case CliCommandKey.COMMIT:
-      return <CommitCreateProvider>{children}</CommitCreateProvider>
+      return <FeatureCommitProvider>{children}</FeatureCommitProvider>
 
     case CliCommandKey.UPDATE:
       return <FeatureUpdateProvider>{children}</FeatureUpdateProvider>

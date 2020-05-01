@@ -1,6 +1,6 @@
 import { Box, useInput } from 'ink'
 import React, { ReactNode, useMemo, useState } from 'react'
-import { arrayRotate } from '../lib/array'
+import { arrayOfLength, arrayRotate } from '../lib/array'
 import FocusProvider, { useFocus } from '../providers/FocusProvider'
 import Column from './Column'
 import LogText from './LogText'
@@ -12,6 +12,7 @@ export type SelectItem<T extends object = {}> = T & {
   content?: ReactNode
   id: string
   current?: boolean
+  shortcut?: string
 }
 
 export interface SelectProps {
@@ -52,6 +53,18 @@ export default function Select(props: SelectProps) {
 
   useInput((input, key) => {
     if (focus) {
+      const shortcutItem = props.items.find((x) => x.shortcut === input)
+      if (shortcutItem && !key.ctrl) {
+        return props.onSelect(shortcutItem)
+      }
+
+      const shortcutIndex = arrayOfLength(props.items.length).find(
+        (x) => x + 1 === parseInt(input)
+      )
+      if (shortcutIndex) {
+        return props.onSelect(items[shortcutIndex])
+      }
+
       if (key.upArrow) {
         const lastIndex = (hasLimit ? limit : props.items.length) - 1
         const atFirstIndex = state.selectedIndex === 0
@@ -93,6 +106,7 @@ export default function Select(props: SelectProps) {
         const slicedItems = hasLimit
           ? arrayRotate(props.items, nextRotateIndex).slice(0, limit)
           : props.items
+
         if (props.onHighlight) {
           props.onHighlight(slicedItems[nextSelectedIndex])
         }
@@ -100,6 +114,7 @@ export default function Select(props: SelectProps) {
         const slicedItems = hasLimit
           ? arrayRotate(props.items, state.rotateIndex).slice(0, limit)
           : props.items
+
         if (props.onSelect) {
           props.onSelect(slicedItems[state.selectedIndex])
         }

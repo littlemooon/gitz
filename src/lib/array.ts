@@ -6,3 +6,7 @@ export function arrayRotate<T>(arr: T[], count: number) {
 export function filterArray<T>(arr: (T | undefined)[]): T[] {
   return arr.filter((x) => typeof x !== 'undefined' && x !== null) as T[]
 }
+
+export function arrayOfLength(length: number): number[] {
+  return Array.from({ length }, (_, i) => i)
+}

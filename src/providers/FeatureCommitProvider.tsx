@@ -14,7 +14,7 @@ import CommitMutationProvider from '../providers/CommitMutationProvider'
 import { Maybe } from '../types'
 import FeatureRequireProvider from './FeatureRequireProvider'
 
-export default function CommitCreateProvider({
+export default function FeatureCommitProvider({
   children,
 }: {
   children: ReactNode

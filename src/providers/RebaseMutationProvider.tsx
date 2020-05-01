@@ -12,7 +12,9 @@ export default function RebaseMutationProvider({
   children: ReactNode
 }) {
   const response = useGitMutation(mutations.rebase, branch)
-
+  if (response) {
+    throw new Error('asd')
+  }
   return (
     <GitRouter response={response} config={{}}>
       {children}

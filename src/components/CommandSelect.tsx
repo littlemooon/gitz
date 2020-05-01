@@ -36,6 +36,7 @@ export default function CommandSelect({
           command.description
         }`,
         id: command.id,
+        shortcut: command.shortcut,
       })) ?? []
     )
   }, [commands])
@@ -46,7 +47,7 @@ export default function CommandSelect({
     <Select
       title="Commands"
       onSelect={handleSelect}
-      items={[...items, { id: 'exit', label: 'exit' }]}
+      items={[...items, { id: 'exit', label: 'exit', shortcut: 'x' }]}
     />
   )
 }

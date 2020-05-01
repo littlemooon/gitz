@@ -22,6 +22,12 @@ export default function UpdateMasterProvider({
     return branchQuery.state?.current.name === masterBranch?.name
   }, [branchQuery.state, masterBranch])
 
+  console.log('-------------------- UpdateMasterProvider --> ', {
+    onMaster,
+    masterBranch,
+    current: branchQuery.state?.current,
+  })
+
   return onMaster ? (
     <PullMutationProvider branch={masterBranch}>
       {children}
