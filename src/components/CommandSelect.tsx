@@ -2,15 +2,27 @@ import { useApp } from 'ink'
 import React, { ReactNode, useCallback, useMemo, useState } from 'react'
 import Command from '../components/Command'
 import Select, { SelectItem } from '../components/Select'
-import { CliCommand, CliCommandKey, cliCommands } from '../lib/command'
+import useGitQuery from '../hooks/useGitQuery'
+import { filterArray } from '../lib/array'
+import {
+  CliCommand,
+  CliCommandKey,
+  cliCommands,
+  defaultCliCommands,
+} from '../lib/command'
+import { queries } from '../lib/queries'
+import { join } from '../lib/string'
+import GitRouter from './GitRouter'
 
 export default function CommandSelect({
-  commands = Object.values(cliCommands),
+  commands = defaultCliCommands,
   children,
 }: {
   children: ReactNode
   commands?: CliCommand[]
 }) {
+  const branchQuery = useGitQuery(queries.branch, undefined)
+
   const { exit } = useApp()
   const [command, setCommand] = useState<CliCommandKey | undefined>()
 
@@ -25,29 +37,33 @@ export default function CommandSelect({
     [setCommand, exit]
   )
 
+  const onFeature = branchQuery.state?.onFeature
+
   const items: SelectItem[] = useMemo(() => {
-    const maxName = Math.max(
-      ...Object.values(commands).map((x) => x.name.length)
+    return filterArray(
+      commands.map((command) =>
+        onFeature || !command.feature
+          ? {
+              label: join([command.name, command.description], ' - '),
+              id: command.id,
+              shortcut: command.shortcut,
+            }
+          : undefined
+      )
     )
+  }, [commands, onFeature])
 
-    return (
-      commands.map((command) => ({
-        label: `${command.name.padEnd(maxName)} (${command.shortcut}) ${
-          command.description
-        }`,
-        id: command.id,
-        shortcut: command.shortcut,
-      })) ?? []
-    )
-  }, [commands])
-
-  return command ? (
-    <Command command={cliCommands[command]}>{children}</Command>
-  ) : (
-    <Select
-      title="Commands"
-      onSelect={handleSelect}
-      items={[...items, { id: 'exit', label: 'exit', shortcut: 'x' }]}
-    />
+  return (
+    <GitRouter response={branchQuery}>
+      {command ? (
+        <Command command={cliCommands[command]}>{children}</Command>
+      ) : (
+        <Select
+          title="Commands"
+          onSelect={handleSelect}
+          items={[...items, { id: 'exit', label: 'exit', shortcut: 'x' }]}
+        />
+      )}
+    </GitRouter>
   )
 }

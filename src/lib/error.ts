@@ -7,6 +7,7 @@ const gitErrorMap: Record<
   localFiles: {
     regex: /Your local changes to the following files would be overwritten by checkout:/,
     message: 'Local files must be committed or stashed',
+    // commands: [cliCommands.commit, cliCommands.stash],
   },
 }
 

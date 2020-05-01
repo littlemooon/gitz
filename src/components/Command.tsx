@@ -7,6 +7,9 @@ import FeatureCreateProvider from '../providers/FeatureCreateProvider'
 import FeatureSelectProvider from '../providers/FeatureSelectProvider'
 import FeatureUpdateProvider from '../providers/FeatureUpdateProvider'
 import FileStatusProvider from '../providers/FileStatusProvider'
+import StashApplyMutationProvider from '../providers/StashApplyMutationProvider'
+import StashDropMutationProvider from '../providers/StashDropMutationProvider'
+import StashPushMutationProvider from '../providers/StashPushMutationProvider'
 import StashStatusProvider from '../providers/StashStatusProvider'
 
 export default function Command({
@@ -37,14 +40,33 @@ export default function Command({
       return <FeatureUpdateProvider>{children}</FeatureUpdateProvider>
 
     case CliCommandKey.STASH:
-      return <StashStatusProvider>{children}</StashStatusProvider>
+      return (
+        <StashStatusProvider>
+          <CommandSelect
+            commands={[
+              cliCommands[CliCommandKey.STASH_PUSH],
+              cliCommands[CliCommandKey.STASH_APPLY],
+              cliCommands[CliCommandKey.STASH_DROP],
+            ]}
+          >
+            {children}
+          </CommandSelect>
+        </StashStatusProvider>
+      )
+
+    case CliCommandKey.STASH_PUSH:
+      return <StashPushMutationProvider>{children}</StashPushMutationProvider>
+
+    case CliCommandKey.STASH_APPLY:
+      return <StashApplyMutationProvider>{children}</StashApplyMutationProvider>
+
+    case CliCommandKey.STASH_DROP:
+      return <StashDropMutationProvider>{children}</StashDropMutationProvider>
 
     default:
       return (
         <BranchStatusProvider>
-          <CommandSelect commands={Object.values(cliCommands)}>
-            {children}
-          </CommandSelect>
+          <CommandSelect>{children}</CommandSelect>
         </BranchStatusProvider>
       )
   }

@@ -18,10 +18,15 @@ export default function FeatureRequireProvider({
   branch?: Branch
 }) {
   const branchQuery = useGitQuery(queries.branch, undefined)
-
+  console.log(
+    '-------------------- FeatureRequireProvider --> ',
+    branchQuery.state
+  )
   return (
     <GitRouter response={branchQuery}>
-      {isFeatureBranch(branch ?? branchQuery.state?.current) ? (
+      {branch ? (
+        isFeatureBranch(branch)
+      ) : branchQuery.state?.onFeature ? (
         <>{children}</>
       ) : (
         <Column>

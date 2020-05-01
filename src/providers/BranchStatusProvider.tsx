@@ -8,7 +8,6 @@ import Static from '../components/Static'
 import Table from '../components/Table'
 import Title from '../components/Title'
 import useGitQuery from '../hooks/useGitQuery'
-import { isFeatureBranch } from '../lib/branch'
 import { queries } from '../lib/queries'
 
 export default function BranchStatusProvider({
@@ -24,23 +23,22 @@ export default function BranchStatusProvider({
       <GitRouter response={statusQuery}>
         <Column>
           <Static id="BranchStatusProvider">
-            {isFeatureBranch(branchQuery.state?.current) ? (
+            {branchQuery.state?.onFeature ? (
               <Column paddingTop={1} paddingBottom={1}>
                 <Title>Feature</Title>
                 <Table.Info
                   data={{
                     issueId: (
                       <LogText.Default bold>
-                        {branchQuery.state?.current.issueId}
+                        {branchQuery.state?.current?.issueId}
                       </LogText.Default>
                     ),
                     description: (
                       <LogText.Default bold>
-                        {branchQuery.state?.current.description}
+                        {branchQuery.state?.current?.description}
                       </LogText.Default>
                     ),
-                    branch: branchQuery.state?.current.name,
-                    commit: `${branchQuery.state?.current.label} (${branchQuery.state?.current.commit})`,
+                    branch: branchQuery.state?.current?.name,
                     diff: (
                       <Row gap={1}>
                         <Color
@@ -53,6 +51,7 @@ export default function BranchStatusProvider({
                         >{`- ${statusQuery.state?.behind}`}</Color>
                       </Row>
                     ),
+                    commit: `${branchQuery.state?.current?.label} (${branchQuery.state?.current?.commit})`,
                     tracking: statusQuery.state?.tracking,
                   }}
                 />
@@ -67,7 +66,6 @@ export default function BranchStatusProvider({
                         {branchQuery.state?.current.name}
                       </LogText.Default>
                     ),
-                    commit: `${branchQuery.state?.current.label} (${branchQuery.state?.current.commit})`,
                     diff: (
                       <Row gap={1}>
                         <Color
@@ -80,6 +78,7 @@ export default function BranchStatusProvider({
                         >{`- ${statusQuery.state?.behind}`}</Color>
                       </Row>
                     ),
+                    commit: `${branchQuery.state?.current.label} (${branchQuery.state?.current.commit})`,
                     tracking: statusQuery.state?.tracking,
                   }}
                 />

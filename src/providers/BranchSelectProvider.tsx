@@ -2,7 +2,7 @@ import React, { ReactNode, useCallback, useMemo, useState } from 'react'
 import Select, { SelectItem } from '../components/Select'
 import { Branch } from '../lib/branch'
 import { mutations } from '../lib/mutations'
-import CheckoutMutationProvider from '../providers/CheckoutMutationProvider'
+import CheckoutProvider from '../providers/CheckoutProvider'
 
 export default function BranchSelectProvider<B extends Branch>({
   title,
@@ -52,9 +52,7 @@ export default function BranchSelectProvider<B extends Branch>({
   }, [branches, formatLabel])
 
   return branch ? (
-    <CheckoutMutationProvider branch={branch}>
-      {children}
-    </CheckoutMutationProvider>
+    <CheckoutProvider branch={branch}>{children}</CheckoutProvider>
   ) : (
     <Select
       title={title ?? mutations.checkout.getName(branch).prefix}

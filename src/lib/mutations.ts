@@ -1,6 +1,6 @@
 import { SimpleGit } from 'simple-git/promise'
 import { CommitSummary, PullResult } from 'simple-git/typings/response'
-import { Branch } from './branch'
+import { Branch, isFeatureBranch } from './branch'
 import { Commit } from './commit'
 import env from './env'
 import { GitOperationName } from './queries'
@@ -38,6 +38,7 @@ export const mutations = {
             : { ...x, current: false }
         }),
         current: { ...branch, current: true },
+        onFeature: isFeatureBranch(branch),
       })
     },
   }),
@@ -88,6 +89,33 @@ export const mutations = {
     }),
     run: (git, branch) => {
       return git.rebase([branch.name])
+    },
+  }),
+
+  stashPush: createGitMutation<undefined, string>({
+    getName: () => ({
+      prefix: 'Stash push',
+    }),
+    run: (git) => {
+      return git.stash()
+    },
+  }),
+
+  stashApply: createGitMutation<undefined, string>({
+    getName: () => ({
+      prefix: 'Stash apply',
+    }),
+    run: (git) => {
+      return git.raw(['stash', 'apply'])
+    },
+  }),
+
+  stashDrop: createGitMutation<undefined, string>({
+    getName: () => ({
+      prefix: 'Stash drop',
+    }),
+    run: (git) => {
+      return git.raw(['stash', 'drop'])
     },
   }),
 }

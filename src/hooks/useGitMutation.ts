@@ -11,6 +11,7 @@ export interface GitMutationResponse<R> {
   state?: R
   status: GitStatus
   error?: Error
+  run: () => void
 }
 
 export default function useGitMutation<R, I>(
@@ -20,16 +21,11 @@ export default function useGitMutation<R, I>(
   const [set, setSet] = useState(false)
 
   const { run, status, data, error, isInitial } = useAsync({
-    deferFn: () => {
-      if (item) {
-        return mutation.run(
-          git.outputHandler(() => undefined),
-          item
-        )
-      } else {
-        return Promise.reject()
-      }
-    },
+    deferFn: () =>
+      mutation.run(
+        git.outputHandler(() => undefined),
+        item as I
+      ),
   })
 
   useEffect(() => {
@@ -39,14 +35,13 @@ export default function useGitMutation<R, I>(
   }, [item, run, isInitial])
 
   useEffect(() => {
-    if (status === 'fulfilled' && item && !set) {
-      if (mutation.set) {
+    if (status === 'fulfilled' && !set) {
+      if (mutation.set && item) {
         mutation.set(item)
       }
       setSet(true)
     }
   }, [set, status, item, mutation])
-
   const gitStatus = useMemo(() => {
     switch (status) {
       case 'initial':
@@ -75,5 +70,6 @@ export default function useGitMutation<R, I>(
     state: data,
     status: gitStatus,
     error,
+    run,
   }
 }

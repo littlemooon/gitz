@@ -1,6 +1,7 @@
 import { Box, useInput } from 'ink'
 import React, { ReactNode, useMemo, useState } from 'react'
 import { arrayOfLength, arrayRotate } from '../lib/array'
+import { join } from '../lib/string'
 import FocusProvider, { useFocus } from '../providers/FocusProvider'
 import Column from './Column'
 import LogText from './LogText'
@@ -136,7 +137,7 @@ export default function Select(props: SelectProps) {
               <Column>
                 {item.label ? (
                   <LogText.Default bold={item.current} cyan={focus && selected}>
-                    {item.label}
+                    {join([item.shortcut, item.label], ': ')}
                   </LogText.Default>
                 ) : null}
 

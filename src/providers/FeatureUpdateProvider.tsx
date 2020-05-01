@@ -4,7 +4,7 @@ import useFirst from '../hooks/useFirst'
 import useGitQuery from '../hooks/useGitQuery'
 import env from '../lib/env'
 import { queries } from '../lib/queries'
-import CheckoutMutationProvider from './CheckoutMutationProvider'
+import CheckoutProvider from './CheckoutProvider'
 import FeatureRequireProvider from './FeatureRequireProvider'
 import PullMutationProvider from './PullMutationProvider'
 import RebaseMutationProvider from './RebaseMutationProvider'
@@ -24,17 +24,17 @@ export default function FeatureUpdateProvider({
   return (
     <GitRouter response={branchQuery}>
       <FeatureRequireProvider branch={originalBranch}>
-        <CheckoutMutationProvider branch={masterBranch}>
+        <CheckoutProvider branch={masterBranch}>
           <PullMutationProvider branch={masterBranch}>
-            <CheckoutMutationProvider branch={originalBranch}>
+            <CheckoutProvider branch={originalBranch}>
               <RebaseMutationProvider branch={masterBranch}>
                 <PullMutationProvider branch={originalBranch}>
                   {children}
                 </PullMutationProvider>
               </RebaseMutationProvider>
-            </CheckoutMutationProvider>
+            </CheckoutProvider>
           </PullMutationProvider>
-        </CheckoutMutationProvider>
+        </CheckoutProvider>
       </FeatureRequireProvider>
     </GitRouter>
   )

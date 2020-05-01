@@ -6,7 +6,7 @@ import {
   StatusResult,
 } from 'simple-git/typings/response'
 import { filterArray } from './array'
-import { Branch, FeatureBranch, parseBranch } from './branch'
+import { Branch, FeatureBranch, isFeatureBranch, parseBranch } from './branch'
 import { File, parseFile } from './file'
 import { parseStash, Stash } from './stash'
 import store, { setStoreItem, StoreItem, StoreKey } from './store'
@@ -22,6 +22,7 @@ export interface GitStore extends Partial<Record<StoreKey, StoreItem<any>>> {
     all: Branch[]
     feature: FeatureBranch[]
     current?: Branch
+    onFeature: boolean
   }>
   [StoreKey.stash]?: StoreItem<{
     all: Stash[]
@@ -87,9 +88,12 @@ export const queries = {
         })
       )
 
+      const current = branches.find((x) => x.current)
+
       return setStoreItem(StoreKey.branches, {
         all: branches,
-        current: branches.find((x) => x.current),
+        current,
+        onFeature: isFeatureBranch(current),
       })
     },
   }),

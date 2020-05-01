@@ -14,6 +14,7 @@ Usage:
 Options:
   -r --root                 Set the directory to run commands in
   -x --exit                 Exit immediately after a command has run
+     --no-stash             Do not automatically stash
   -d --debug                Run with debug logs
   -v --version              Show version
   -h --help                 Show this screen
@@ -25,6 +26,7 @@ export type CliInputFlags = {
   debug: BooleanFlag
   help: BooleanFlag
   version: BooleanFlag
+  'no-stash': BooleanFlag
 }
 
 const cliInput = meow<CliInputFlags>(cliHelpText, {
@@ -34,6 +36,7 @@ const cliInput = meow<CliInputFlags>(cliHelpText, {
     debug: { type: 'boolean', default: false, alias: 'd' },
     help: { type: 'boolean', default: false, alias: 'h' },
     version: { type: 'boolean', default: false, alias: 'v' },
+    'no-stash': { type: 'boolean', default: false },
   },
 })
 
@@ -45,6 +48,7 @@ export type CliFlags = {
   debug?: boolean
   help?: boolean
   version?: boolean
+  noStash?: boolean
 }
 
 export interface Cli {
@@ -70,13 +74,17 @@ function parseCommand(command?: string): CliCommand | undefined {
   }
 }
 
+function parseFlags(flags: CliInput['flags']): CliFlags {
+  return { ...flags, noStash: Boolean(flags['no-stash']) } as CliFlags
+}
+
 function parseCliInput(cliInput: CliInput): Cli {
   const [command, ...args] = cliInput.input
 
   return {
     command: parseCommand(command),
     args,
-    flags: cliInput.flags,
+    flags: parseFlags(cliInput.flags),
     showHelp: cliInput.showHelp,
     showVersion: cliInput.showVersion,
   }

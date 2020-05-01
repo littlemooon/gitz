@@ -14,7 +14,7 @@ import {
   parseBranchArgs,
 } from '../lib/branch'
 import { queries } from '../lib/queries'
-import BranchMutationProvider from '../providers/BranchMutationProvider'
+import BranchProvider from '../providers/BranchProvider'
 
 export default function FeatureCreateProvider({
   children,
@@ -42,9 +42,7 @@ export default function FeatureCreateProvider({
   return (
     <GitRouter response={branchQuery}>
       {branch ? (
-        <BranchMutationProvider branch={branch}>
-          {children}
-        </BranchMutationProvider>
+        <BranchProvider branch={branch}>{children}</BranchProvider>
       ) : (
         <Column>
           <Table.Debug name="branch command" data={argValues} />
