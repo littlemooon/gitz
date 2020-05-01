@@ -3,14 +3,16 @@ import { Box, Color } from 'ink'
 import React from 'react'
 import { useFocus } from '../providers/FocusProvider'
 
-export default function SelectIndicator({ selected }: { selected?: boolean }) {
+export default function RadioIndicator({ selected }: { selected?: boolean }) {
   const focus = useFocus()
   return (
     <Box marginRight={1}>
-      {selected && focus ? (
+      {focus ? (
         <Color bold cyan>
-          {figures.pointerSmall}
+          {selected ? figures.circleFilled : figures.circle}
         </Color>
+      ) : selected ? (
+        figures.circleFilled
       ) : (
         ' '
       )}

@@ -5,8 +5,9 @@ import GitRouter from '../components/GitRouter'
 import LogText from '../components/LogText'
 import Static from '../components/Static'
 import Table from '../components/Table'
+import Title from '../components/Title'
 import useGitQuery from '../hooks/useGitQuery'
-import { FileStatusContext } from '../lib/file'
+import { FileStatusType } from '../lib/file'
 import { queries } from '../lib/queries'
 
 export default function FileStatusProvider({
@@ -19,10 +20,11 @@ export default function FileStatusProvider({
   return (
     <GitRouter response={statusQuery}>
       <Column>
-        <Static id="FileStatusProvider">
+        <Static id={'FileStatusProvider'}>
           <Column paddingBottom={1}>
+            <Title>Files</Title>
             <Table.Info
-              data={Object.values(FileStatusContext).reduce((acc, context) => {
+              data={Object.values(FileStatusType).reduce((acc, context) => {
                 return {
                   ...acc,
                   [context]: statusQuery.state?.files ? (

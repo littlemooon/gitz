@@ -7,7 +7,7 @@ export default function Title({
   ...props
 }: { children: ReactNode } & ColorProps) {
   return (
-    <LogText.Default bold underline {...props}>
+    <LogText.Default underline {...props}>
       {children}
     </LogText.Default>
   )

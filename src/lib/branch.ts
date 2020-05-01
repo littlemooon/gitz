@@ -1,3 +1,4 @@
+import chalk from 'chalk'
 import { FormField, FormFields } from '../components/Form'
 import env from './env'
 import { createFormField, throwValidationErrors } from './form'
@@ -78,6 +79,17 @@ export function createFeatureBranch(form: FeatureBranchForm): FeatureBranch {
   }
 }
 
+function parseBranchLabel(branch?: Branch) {
+  const aheadMatch = /[ahead (\d+)]/.exec(branch?.label ?? '')
+  const ahead = aheadMatch && aheadMatch[1]
+  const behindMatch = /[behind (\d+)]/.exec(branch?.label ?? '')
+  const behind = behindMatch && behindMatch[1]
+  console.log('-------------------- branch --> ', { aheadMatch, behindMatch })
+  return branch?.label
+    ?.replace(/[ahead (\d+)]/, chalk.green(`+ ${ahead}`))
+    .replace(/[behind (\d+)]/, chalk.green(`- ${behind}`))
+}
+
 export function parseBranch(
   branch?: Branch
 ): FeatureBranch | Branch | undefined {
@@ -86,13 +98,14 @@ export function parseBranch(
     if (featureBranch) {
       return {
         ...branch,
+        // label: parseBranchLabel(branch),
         issueId: featureBranch[1].toUpperCase(),
         description: capitalize(featureBranch[2].replace(/_/g, ' ')),
         name: featureBranch[0],
       }
     }
 
-    return branch
+    return { ...branch }
   }
 }
 

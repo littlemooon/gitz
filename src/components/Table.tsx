@@ -1,8 +1,7 @@
 import React, { ReactNode, useMemo } from 'react'
 import useCli from '../hooks/useCli'
 import Column from './Column'
-import { LogType } from './Log'
-import LogText from './LogText'
+import LogText, { LogType } from './LogText'
 import Row from './Row'
 import Static from './Static'
 

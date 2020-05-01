@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useState } from 'react'
+import React, { ReactNode, useCallback, useEffect, useState } from 'react'
 import ErrorBoundary from '../components/ErrorBoundary'
 import Json from '../components/Json'
 import Table from '../components/Table'
@@ -22,7 +22,12 @@ export default function CliProvider({
     }))
   }, [])
 
-  return (
+  useEffect(() => {
+    if (state.flags.help) state.showHelp()
+    if (state.flags.version) state.showVersion()
+  }, [state])
+
+  return state.flags.help || state.flags.version ? null : (
     <CliContext.Provider value={state}>
       <ErrorBoundary>
         <CliDispatchContext.Provider value={setCli}>

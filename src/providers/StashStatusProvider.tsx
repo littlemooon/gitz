@@ -23,14 +23,11 @@ export default function StashStatusProvider({
             {stashQuery.state?.all.length ? (
               stashQuery.state?.all.map((stash) => (
                 <Row gap={1} key={stash.hash}>
-                  <LogText.Default cyan>
-                    {join(
-                      [
-                        new Date(stash.date).toLocaleDateString(),
-                        new Date(stash.date).toLocaleTimeString(),
-                      ],
-                      ':'
-                    )}
+                  <LogText.Default>
+                    {new Date(stash.date).toLocaleDateString()}
+                  </LogText.Default>
+                  <LogText.Default magenta>
+                    {new Date(stash.date).toLocaleTimeString()}
                   </LogText.Default>
 
                   <LogText.Default>

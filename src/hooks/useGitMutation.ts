@@ -55,13 +55,13 @@ export default function useGitMutation<R, I>(
     }
   }, [set, status])
 
-  const { prefix, suffix } = mutation.getName(item)
+  const { title, content } = mutation.getName(item)
   const name = useMemo(
     () => ({
-      prefix,
-      suffix,
+      title,
+      content,
     }),
-    [prefix, suffix]
+    [title, content]
   )
 
   return {

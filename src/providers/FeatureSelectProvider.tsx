@@ -1,9 +1,6 @@
-import { Box } from 'ink'
 import React, { ReactNode } from 'react'
-import Column from '../components/Column'
 import GitRouter from '../components/GitRouter'
-import LogText from '../components/LogText'
-import Static from '../components/Static'
+import Warning from '../components/Warning'
 import useGitQuery from '../hooks/useGitQuery'
 import { isFeatureBranch } from '../lib/branch'
 import { queries } from '../lib/queries'
@@ -28,15 +25,9 @@ export default function FeatureSelectProvider({
           {children}
         </BranchSelectProvider>
       ) : (
-        <Column>
-          <Static id="FeatureSelectProvider.none">
-            <Box paddingBottom={1}>
-              <LogText.Warn prefix="No feature branches found" />
-            </Box>
-          </Static>
-
+        <Warning title="No feature branches found">
           <FeatureCreateProvider>{children}</FeatureCreateProvider>
-        </Column>
+        </Warning>
       )}
     </GitRouter>
   )

@@ -1,15 +1,16 @@
 import { Children, ReactNode, useEffect } from 'react'
 import useConstant from '../hooks/useConstant'
+import getUuid from '../lib/uuid'
 import { useStatic } from '../providers/StaticProvider'
 
 export default function Static({
   id,
   children,
 }: {
-  id: string
+  id?: string
   children: ReactNode
 }) {
-  const firstId = useConstant(() => id)
+  const firstId = useConstant(() => id ?? getUuid())
   const firstChildren = useConstant(() => children)
   const { addStatic } = useStatic()
 

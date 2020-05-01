@@ -2,8 +2,10 @@ import React, { ReactNode, useCallback, useMemo, useState } from 'react'
 import { useError } from '../components/ErrorBoundary'
 import Form from '../components/Form'
 import GitRouter from '../components/GitRouter'
+import Warning from '../components/Warning'
 import useCli from '../hooks/useCli'
 import useGitQuery from '../hooks/useGitQuery'
+import { CliCommandKey } from '../lib/command'
 import {
   Commit,
   commitForm,
@@ -12,6 +14,7 @@ import {
   parseCommitArgs,
 } from '../lib/commit'
 import { queries } from '../lib/queries'
+import CommandSelectProvider from '../providers/CommandSelectProvider'
 import CommitMutationProvider from '../providers/CommitMutationProvider'
 import { Maybe } from '../types'
 import FeatureRequireProvider from './FeatureRequireProvider'
@@ -22,6 +25,7 @@ export default function FeatureCommitProvider({
   children: ReactNode
 }) {
   const branchQuery = useGitQuery(queries.branch, undefined)
+  const statusQuery = useGitQuery(queries.status, undefined)
 
   const { args } = useCli()
   const argValues = useMemo(() => parseCommitArgs(args), [args])
@@ -41,29 +45,40 @@ export default function FeatureCommitProvider({
 
   return (
     <GitRouter response={branchQuery}>
-      <FeatureRequireProvider>
-        {commit ? (
-          <CommitMutationProvider commit={commit}>
-            {children}
-          </CommitMutationProvider>
-        ) : (
-          <Form<CommitForm>
-            title="Create commit message"
-            fields={{
-              ...commitForm,
-              issueId: {
-                ...commitForm.issueId,
-                value: argValues.issueId ?? branchQuery.state?.current?.issueId,
-              },
-              message: {
-                ...commitForm.message,
-                value: argValues.message,
-              },
-            }}
-            onSubmit={onSubmit}
-          />
-        )}
-      </FeatureRequireProvider>
+      <GitRouter response={statusQuery}>
+        <FeatureRequireProvider>
+          {commit ? (
+            <CommitMutationProvider commit={commit}>
+              {children}
+            </CommitMutationProvider>
+          ) : statusQuery.state?.hasStagedChanges ? (
+            <Form<CommitForm>
+              title="Create commit message"
+              fields={{
+                ...commitForm,
+                issueId: {
+                  ...commitForm.issueId,
+                  value:
+                    argValues.issueId ?? branchQuery.state?.current?.issueId,
+                },
+                message: {
+                  ...commitForm.message,
+                  value: argValues.message,
+                },
+              }}
+              onSubmit={onSubmit}
+            />
+          ) : (
+            <Warning title="No staged files">
+              <CommandSelectProvider
+                keys={[CliCommandKey.add, CliCommandKey.addAll]}
+              >
+                {children}
+              </CommandSelectProvider>
+            </Warning>
+          )}
+        </FeatureRequireProvider>
+      </GitRouter>
     </GitRouter>
   )
 }

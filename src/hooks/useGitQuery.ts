@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useAsync } from 'react-async'
 import git from '../lib/git'
 import { GitOperationName, GitQuery, GitStore } from '../lib/queries'
@@ -19,6 +19,7 @@ export interface GitQueryResponse<K extends StoreKey> {
   state?: GitStore[K]
   status: GitStatus
   error?: Error
+  run: () => void
 }
 
 export default function useGitQuery<K extends StoreKey, A, R>(
@@ -33,11 +34,21 @@ export default function useGitQuery<K extends StoreKey, A, R>(
     return unsubscribe
   }, [query.key])
 
-  const { data, error, status } = useAsync({
-    [state ? 'deferFn' : 'promiseFn']: query.run,
-    git,
-    ...args,
-  })
+  const { data, error, status, run } = useAsync(
+    state
+      ? {
+          deferFn: () =>
+            query.run({
+              git: git.outputHandler(() => undefined),
+              ...args,
+            }),
+        }
+      : {
+          promiseFn: query.run,
+          git,
+          ...args,
+        }
+  )
 
   useEffect(() => {
     if (data) {
@@ -64,11 +75,18 @@ export default function useGitQuery<K extends StoreKey, A, R>(
     }
   }, [status, state])
 
+  const runAgain = useCallback(() => {
+    if (![GitStatus.initial, GitStatus.loading].includes(gitStatus)) {
+      run()
+    }
+  }, [run, gitStatus])
+
   return {
     type: 'query',
     name: query.getName(args),
     state,
     status: gitStatus,
     error,
+    run: runAgain,
   }
 }

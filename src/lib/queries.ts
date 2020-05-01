@@ -17,6 +17,8 @@ export interface GitStore extends Partial<Record<StoreKey, StoreItem<any>>> {
     ahead: number
     behind: number
     tracking?: string
+    hasWorkingChanges: boolean
+    hasStagedChanges: boolean
   }>
   [StoreKey.branches]?: StoreItem<{
     all: Branch[]
@@ -32,8 +34,8 @@ export interface GitStore extends Partial<Record<StoreKey, StoreItem<any>>> {
 }
 
 export interface GitOperationName {
-  prefix: string
-  suffix?: string
+  title: string
+  content?: Array<string | undefined>
 }
 
 export interface GitQuery<K extends StoreKey, A, R> {
@@ -52,7 +54,7 @@ function createGitQuery<K extends StoreKey, I, R>(
 
 export const queries = {
   status: createGitQuery({
-    getName: () => ({ prefix: 'Current status' }),
+    getName: () => ({ title: 'Current status' }),
     key: StoreKey.status,
     run: ({ git }) => git.status(),
     set: (result?: StatusResult) => {
@@ -63,12 +65,14 @@ export const queries = {
         ahead: result?.ahead ?? 0,
         behind: result?.behind ?? 0,
         tracking: result?.tracking,
+        hasWorkingChanges: Boolean(files.find((x) => x.working?.key)),
+        hasStagedChanges: Boolean(files.find((x) => x.staged?.key)),
       })
     },
   }),
 
   branch: createGitQuery({
-    getName: () => ({ prefix: 'Branch status' }),
+    getName: () => ({ title: 'Branch status' }),
     key: StoreKey.branches,
     run: ({ git }) => git.branch(),
     set: (result?: BranchSummary) => {
@@ -99,7 +103,7 @@ export const queries = {
   }),
 
   stash: createGitQuery({
-    getName: () => ({ prefix: 'Stash' }),
+    getName: () => ({ title: 'Stash' }),
     key: StoreKey.stash,
     run: ({ git }) => git.stashList(),
     set: (result?: ListLogSummary<DefaultLogFields>) => {

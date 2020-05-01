@@ -9,9 +9,9 @@ import { parseGitError } from '../lib/error'
 import { isFunction } from '../lib/function'
 import { StoreKey } from '../lib/store'
 import { join } from '../lib/string'
+import CommandSelectProvider from '../providers/CommandSelectProvider'
 import { Maybe } from '../types'
 import Column from './Column'
-import CommandSelect from './CommandSelect'
 import Exit from './Exit'
 import Json from './Json'
 import Static from './Static'
@@ -36,24 +36,24 @@ export default function GitRouter({
   const defaults = {
     [GitStatus.initial]: null,
     [GitStatus.loading]: (
-      <LogText.Loading prefix={response.name.prefix}>
-        {response.name.suffix}
+      <LogText.Loading prefix={response.name.title}>
+        <Column>{response.name.content}</Column>
       </LogText.Loading>
     ),
     [GitStatus.success]: (
-      <LogText.Success prefix={response.name.prefix}>
-        {response.name.suffix}
+      <LogText.Success prefix={response.name.title}>
+        <Column>{response.name.content}</Column>
       </LogText.Success>
     ),
     [GitStatus.error]: (
-      <LogText.Error prefix={response.name.prefix}>
+      <LogText.Error prefix={response.name.title}>
         {error?.message}
       </LogText.Error>
     ),
   }
 
   const id = join(
-    [response.name.prefix, response.name.suffix, response.status],
+    [response.name.title, ...(response.name.content ?? []), response.status],
     '.'
   )
 
@@ -105,9 +105,9 @@ export default function GitRouter({
               {flags.exit ? (
                 <Exit />
               ) : (
-                <CommandSelect commands={error?.commands}>
+                <CommandSelectProvider keys={error?.commands}>
                   {children}
-                </CommandSelect>
+                </CommandSelectProvider>
               )}
             </Column>
           ),

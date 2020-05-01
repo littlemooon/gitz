@@ -1,15 +1,18 @@
 import meow, { BooleanFlag, Result, StringFlag } from 'meow'
 import { CliCommand, cliCommands } from './command'
-import env from './env'
 
 export const cliHelpText = `
 Usage:
-  gitz                      Index of commands
-  gitz status               (s) Current branch status
-  gitz branch <name?>       (b) Create new feature branch
-  gitz checkout             (c) Switch to feature branch
-  gitz commit <message?>    (m) Commit with issueId
-  gitz update               (u) Rebase current branch onto ${env.masterBranch}
+  gitz                          Index of commands
+  gitz (a) add                  Stage files for commit
+  gitz (m) commit <message?>    Commit with issueId
+  gitz (r) reset                Move staged files back to working
+  gitz (c) checkout             Switch to feature branch
+  gitz (b) branch <name?>       Create new feature branch
+  gitz (u) update               Rebase current branch onto master
+  gitz (p) push                 Push commits to origin
+  gitz (t) stash                List stashed items
+
 
 Options:
   -r --root                 Set the directory to run commands in
@@ -62,7 +65,7 @@ export interface Cli {
 function parseCommand(command?: string): CliCommand | undefined {
   if (command) {
     const c = Object.values(cliCommands).find(
-      ({ name, shortcut }) => command === name || command === shortcut
+      ({ key, shortcut }) => command === key || command === shortcut
     )
     if (c) {
       return c

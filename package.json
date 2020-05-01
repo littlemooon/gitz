@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "node ./dist/src/index.js",
-    "dev": "npx ts-node ./src/index.ts",
+    "dev": "npx ts-node ./src/index.ts  --trace-warning ",
     "build": "run-s clean build:ts build:assets",
     "build:ts": "npx tsc",
     "build:dev": "npm run build -- --watch",

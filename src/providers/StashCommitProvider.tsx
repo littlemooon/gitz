@@ -6,9 +6,10 @@ import useGitQuery from '../hooks/useGitQuery'
 import { Branch } from '../lib/branch'
 import { queries } from '../lib/queries'
 import FeatureCommitProvider from './FeatureCommitProvider'
+import FileStatusProvider from './FileStatusProvider'
 import StashApplyMutationProvider from './StashApplyMutationProvider'
 import StashDropMutationProvider from './StashDropMutationProvider'
-import StashPushMutationProvider from './StashPushMutationProvider'
+import StashPutMutationProvider from './StashPutMutationProvider'
 
 export default function StashCommitProvider({
   children,
@@ -24,14 +25,13 @@ export default function StashCommitProvider({
   const branchQuery = useGitQuery(queries.branch, undefined)
   const statusQuery = useGitQuery(queries.status, undefined)
 
-  const hasChanges = Boolean(statusQuery.state?.files.length)
-
   return (
     <GitRouter response={branchQuery}>
       <GitRouter response={statusQuery}>
-        {hasChanges ? (
+        {statusQuery.state?.hasStagedChanges ||
+        statusQuery.state?.hasWorkingChanges ? (
           select?.id === 'stash' || flags.noStash ? (
-            <StashPushMutationProvider>
+            <StashPutMutationProvider>
               <Provider>
                 <StashApplyMutationProvider>
                   <StashDropMutationProvider>
@@ -39,19 +39,21 @@ export default function StashCommitProvider({
                   </StashDropMutationProvider>
                 </StashApplyMutationProvider>
               </Provider>
-            </StashPushMutationProvider>
+            </StashPutMutationProvider>
           ) : branchQuery.state?.onFeature && select?.id === 'commit' ? (
             <FeatureCommitProvider>
               <Provider>{children}</Provider>
             </FeatureCommitProvider>
           ) : (
-            <Select
-              items={[
-                { id: 'stash', label: 'Stash changes', shortcut: 's' },
-                { id: 'commit', label: 'Commit changes', shortcut: 'c' },
-              ]}
-              onSelect={setSelect}
-            />
+            <FileStatusProvider>
+              <Select
+                items={[
+                  { id: 'stash', label: 'Stash changes', shortcut: 's' },
+                  { id: 'commit', label: 'Commit changes', shortcut: 'c' },
+                ]}
+                onSelect={setSelect}
+              />
+            </FileStatusProvider>
           )
         ) : (
           <Provider>{children}</Provider>

@@ -12,3 +12,7 @@ export function join(arr: Maybe<string>[], joinString = '') {
 export function reduceWhitespace(s?: string) {
   return s ? s.replace(/  +/g, ' ').trim() : ''
 }
+
+export function getMaxLength(arr: string[]): number {
+  return Math.max(...arr.map((s) => s.length))
+}

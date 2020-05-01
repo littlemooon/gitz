@@ -1,5 +1,7 @@
 import { SimpleGit } from 'simple-git/promise'
 import { CommitSummary, PullResult } from 'simple-git/typings/response'
+import { Maybe } from '../types'
+import { toArray } from './array'
 import { Branch, isFeatureBranch } from './branch'
 import { Commit } from './commit'
 import env from './env'
@@ -22,8 +24,8 @@ function createGitMutation<I, R>(
 export const mutations = {
   checkout: createGitMutation<Branch, void>({
     getName: (branch) => ({
-      prefix: 'Switch branch',
-      suffix: branch?.name,
+      title: 'Switch branch',
+      content: [branch?.name],
     }),
     run: (git, branch) => {
       return git.checkout(branch?.name)
@@ -45,8 +47,8 @@ export const mutations = {
 
   checkoutBranch: createGitMutation<Branch, string>({
     getName: (branch) => ({
-      prefix: 'Create branch',
-      suffix: branch?.name,
+      title: 'Create branch',
+      content: [branch?.name],
     }),
     run: (git, branch) => {
       return git.raw([
@@ -64,18 +66,28 @@ export const mutations = {
 
   commit: createGitMutation<Commit, CommitSummary>({
     getName: (commit) => ({
-      prefix: 'Commit',
-      suffix: commit?.message,
+      title: 'Commit',
+      content: [commit?.message],
     }),
     run: (git, commit) => {
       return git.commit(commit.message)
     },
   }),
 
+  push: createGitMutation<Maybe<string>, void>({
+    getName: (arg) => ({
+      title: 'Push',
+      content: [`origin ${arg}`],
+    }),
+    run: (git, arg) => {
+      return git.push('origin', arg)
+    },
+  }),
+
   pull: createGitMutation<Branch, PullResult>({
     getName: (branch) => ({
-      prefix: 'Pull',
-      suffix: branch?.name,
+      title: 'Pull',
+      content: [branch?.name],
     }),
     run: (git, branch) => {
       return git.pull('origin', branch?.name)
@@ -84,17 +96,37 @@ export const mutations = {
 
   rebase: createGitMutation<Branch, string>({
     getName: (branch) => ({
-      prefix: 'Rebase',
-      suffix: branch?.name,
+      title: 'Rebase',
+      content: [branch?.name],
     }),
     run: (git, branch) => {
       return git.rebase([branch.name])
     },
   }),
 
-  stashPush: createGitMutation<undefined, string>({
+  add: createGitMutation<string | string[], void>({
+    getName: (paths) => ({
+      title: 'Add',
+      content: paths === '.' ? ['all files'] : toArray(paths),
+    }),
+    run: (git, paths) => {
+      return git.add(paths)
+    },
+  }),
+
+  reset: createGitMutation<string | string[], string>({
+    getName: (paths) => ({
+      title: 'Reset',
+      content: paths === '.' ? ['all files'] : toArray(paths),
+    }),
+    run: (git, paths) => {
+      return git.raw(['reset', ...toArray(paths)])
+    },
+  }),
+
+  stashPut: createGitMutation<undefined, string>({
     getName: () => ({
-      prefix: 'Stash push',
+      title: 'Stash push',
     }),
     run: (git) => {
       return git.stash()
@@ -103,7 +135,7 @@ export const mutations = {
 
   stashApply: createGitMutation<undefined, string>({
     getName: () => ({
-      prefix: 'Stash apply',
+      title: 'Stash apply',
     }),
     run: (git) => {
       return git.raw(['stash', 'apply'])
@@ -112,7 +144,7 @@ export const mutations = {
 
   stashDrop: createGitMutation<undefined, string>({
     getName: () => ({
-      prefix: 'Stash drop',
+      title: 'Stash drop',
     }),
     run: (git) => {
       return git.raw(['stash', 'drop'])

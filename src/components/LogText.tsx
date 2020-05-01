@@ -6,9 +6,30 @@ import useCli from '../hooks/useCli'
 import useConstant from '../hooks/useConstant'
 import { join } from '../lib/string'
 import getUuid from '../lib/uuid'
-import { getLogColorProps, LogType } from './Log'
 import Row from './Row'
 import Static from './Static'
+
+export enum LogType {
+  debug = 'debug',
+  loading = 'loading',
+  info = 'info',
+  success = 'success',
+  warn = 'warn',
+  error = 'error',
+}
+
+const logColorProps: Record<LogType, ColorProps> = {
+  [LogType.debug]: { cyan: true },
+  [LogType.loading]: { cyan: true },
+  [LogType.info]: { blue: true },
+  [LogType.success]: { green: true },
+  [LogType.warn]: { yellow: true },
+  [LogType.error]: { red: true },
+}
+
+export function getLogColorProps(type?: LogType) {
+  return type ? logColorProps[type] : undefined
+}
 
 interface LogTextProps extends ColorProps {
   type?: LogType

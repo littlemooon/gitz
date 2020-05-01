@@ -1,14 +1,11 @@
-import { Box } from 'ink'
 import React, { ReactNode } from 'react'
-import Column from '../components/Column'
-import CommandSelect from '../components/CommandSelect'
 import GitRouter from '../components/GitRouter'
-import LogText from '../components/LogText'
-import Static from '../components/Static'
+import Warning from '../components/Warning'
 import useGitQuery from '../hooks/useGitQuery'
 import { Branch, isFeatureBranch } from '../lib/branch'
-import { cliCommands } from '../lib/command'
+import { CliCommandKey } from '../lib/command'
 import { queries } from '../lib/queries'
+import CommandSelectProvider from '../providers/CommandSelectProvider'
 
 export default function FeatureRequireProvider({
   children,
@@ -18,10 +15,7 @@ export default function FeatureRequireProvider({
   branch?: Branch
 }) {
   const branchQuery = useGitQuery(queries.branch, undefined)
-  console.log(
-    '-------------------- FeatureRequireProvider --> ',
-    branchQuery.state
-  )
+
   return (
     <GitRouter response={branchQuery}>
       {branch ? (
@@ -29,17 +23,13 @@ export default function FeatureRequireProvider({
       ) : branchQuery.state?.onFeature ? (
         <>{children}</>
       ) : (
-        <Column>
-          <Static id="FeatureRequire">
-            <Box paddingBottom={1}>
-              <LogText.Warn prefix="Must be on a feature branch" />
-            </Box>
-          </Static>
-
-          <CommandSelect commands={[cliCommands.branch, cliCommands.checkout]}>
+        <Warning title="Must be on a feature branch">
+          <CommandSelectProvider
+            keys={[CliCommandKey.checkout, CliCommandKey.branch]}
+          >
             {children}
-          </CommandSelect>
-        </Column>
+          </CommandSelectProvider>
+        </Warning>
       )}
     </GitRouter>
   )

@@ -2,7 +2,7 @@ import { Color } from 'ink'
 import React from 'react'
 import Row from '../components/Row'
 import { filterArray } from '../lib/array'
-import { File, FileStatusContext, getFileStatusCount } from '../lib/file'
+import { File, FileStatusType, getFileStatusCount } from '../lib/file'
 import LogText from './LogText'
 
 export default function FileStatusCount({
@@ -10,7 +10,7 @@ export default function FileStatusCount({
   context,
 }: {
   files: File[]
-  context: FileStatusContext
+  context: FileStatusType
 }) {
   const count = getFileStatusCount(context, files)
   return (

@@ -10,3 +10,7 @@ export function filterArray<T>(arr: (T | undefined)[]): T[] {
 export function arrayOfLength(length: number): number[] {
   return Array.from({ length }, (_, i) => i)
 }
+
+export function toArray(obj?: any) {
+  return Array.isArray(obj) ? obj : [obj]
+}

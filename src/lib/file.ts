@@ -19,15 +19,14 @@ export interface FileStatus {
   color: ColorProps
 }
 
-export enum FileStatusContext {
+export enum FileStatusType {
   'staged' = 'staged',
   'working' = 'working',
 }
 
-export const fileStatusContexts = Object.values(FileStatusContext)
+export const fileStatusContexts = Object.values(FileStatusType)
 
-export interface File
-  extends Record<FileStatusContext, FileStatus | undefined> {
+export interface File extends Record<FileStatusType, FileStatus | undefined> {
   path: string
 }
 
@@ -70,7 +69,7 @@ export type FileStatusCount = Record<
 >
 
 export function getFileStatusCount(
-  context: FileStatusContext,
+  context: FileStatusType,
   files: File[]
 ): FileStatusCount {
   return files.reduce((acc, file) => {

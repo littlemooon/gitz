@@ -55,7 +55,7 @@ export default function BranchSelectProvider<B extends Branch>({
     <CheckoutProvider branch={branch}>{children}</CheckoutProvider>
   ) : (
     <Select
-      title={title ?? mutations.checkout.getName(branch).prefix}
+      title={title ?? mutations.checkout.getName(branch).title}
       onSelect={handleSelect}
       items={items}
     />

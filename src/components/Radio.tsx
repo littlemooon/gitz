@@ -1,14 +1,13 @@
 import { Box, useInput } from 'ink'
 import React, { ReactNode, useMemo, useState } from 'react'
-import { arrayOfLength, arrayRotate } from '../lib/array'
-import { join } from '../lib/string'
+import { arrayRotate } from '../lib/array'
 import FocusProvider, { useFocus } from '../providers/FocusProvider'
 import Column from './Column'
 import LogText from './LogText'
-import SelectIndicator from './SelectIndicator'
+import RadioIndicator from './RadioIndicator'
 import Title from './Title'
 
-export type SelectItem<T extends object = {}> = T & {
+export type RadioItem<T extends object = {}> = T & {
   label?: string
   content?: ReactNode
   id: string
@@ -16,37 +15,29 @@ export type SelectItem<T extends object = {}> = T & {
   shortcut?: string
 }
 
-export interface SelectGap extends SelectItem {
-  type: 'gap'
-}
-
-export const selectGap: SelectGap = { type: 'gap', id: 'gap' }
-
-function isSelectGap(item: SelectItem | SelectGap): item is SelectGap {
-  return (item as any).type === 'gap'
-}
-
-export interface SelectProps {
+export interface RadioProps {
   title?: string
-  items: Array<SelectItem | SelectGap>
+  items: RadioItem[]
   initialIndex?: number
   limit?: number
-  onSelect: (item: SelectItem) => void
-  onHighlight?: (item: SelectItem) => void
+  onSelect: (items: RadioItem[]) => void
+  onHighlight?: (item: RadioItem) => void
 }
 
-export interface SelectState {
+export interface RadioState {
   rotateIndex: number
   focusIndex: number
 }
 
-export default function Select(props: SelectProps) {
+export default function Select(props: RadioProps) {
   const focus = useFocus()
 
-  const [state, setState] = useState<SelectState>({
+  const [state, setState] = useState<RadioState>({
     rotateIndex: 0,
     focusIndex: props.initialIndex ?? 0,
   })
+  const [selected, setSelected] = useState<RadioItem[]>([])
+
   const hasLimit =
     typeof props.limit === 'number' && props.items.length > props.limit
 
@@ -64,16 +55,13 @@ export default function Select(props: SelectProps) {
 
   useInput((input, key) => {
     if (focus) {
-      const shortcutItem = props.items.find((x) => x.shortcut === input)
-      if (shortcutItem && !key.ctrl) {
-        return props.onSelect(shortcutItem)
-      }
-
-      const shortcutIndex = arrayOfLength(props.items.length).find(
-        (x) => x + 1 === parseInt(input)
-      )
-      if (shortcutIndex) {
-        return props.onSelect(items[shortcutIndex])
+      if (input === ' ') {
+        const item = items[state.focusIndex]
+        setSelected((selected) =>
+          selected.find((x) => x.id === item.id)
+            ? selected.filter((x) => x.id !== item.id)
+            : [...selected, item]
+        )
       }
 
       if (key.upArrow) {
@@ -118,12 +106,8 @@ export default function Select(props: SelectProps) {
           props.onHighlight(slicedItems[nextFocusIndex])
         }
       } else if (key.return) {
-        const slicedItems = hasLimit
-          ? arrayRotate(props.items, state.rotateIndex).slice(0, limit)
-          : props.items
-
         if (props.onSelect) {
-          props.onSelect(slicedItems[state.focusIndex])
+          props.onSelect(selected)
         }
       }
     }
@@ -135,15 +119,16 @@ export default function Select(props: SelectProps) {
 
       {items.map((item, index) => {
         const focussed = index === state.focusIndex
-
         return (
           <FocusProvider key={item.id} focus={focussed}>
             <Box>
-              <SelectIndicator selected={focussed} />
+              <RadioIndicator
+                selected={Boolean(selected.find((x) => x.id === item.id))}
+              />
               <Column>
                 {item.label ? (
                   <LogText.Default bold={item.current} cyan={focus && focussed}>
-                    {join([item.shortcut, item.label], ': ')}
+                    {item.label}
                   </LogText.Default>
                 ) : null}
 

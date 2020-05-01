@@ -1,27 +1,24 @@
-import { Color } from 'ink'
 import React, { useMemo } from 'react'
 import Column from '../components/Column'
-import Row from '../components/Row'
-import { File, FileStatusContext, fileStatusKeys } from '../lib/file'
+import { File, fileStatusKeys, FileStatusType } from '../lib/file'
+import FileStatus from './FileStatus'
 
 export default function FileStatusList({
   files,
   context,
 }: {
   files: File[]
-  context: FileStatusContext
+  context: FileStatusType
 }) {
-  const mappedFiles = useMemo(() => {
+  const sorted = useMemo(() => {
     return files
-      .map((file) => ({
-        path: file.path,
-        status: file[context],
-      }))
-      .filter((file) => Boolean(file.status))
+      .filter((file) => Boolean(file[context]))
       .sort((a, b) => {
-        return a.status && b.status
-          ? fileStatusKeys.indexOf(a.status.key) >
-            fileStatusKeys.indexOf(b.status.key)
+        const astatus = a[context]
+        const bstatus = b[context]
+        return astatus && bstatus
+          ? fileStatusKeys.indexOf(astatus.key) >
+            fileStatusKeys.indexOf(bstatus.key)
             ? 1
             : -1
           : 0
@@ -30,11 +27,8 @@ export default function FileStatusList({
 
   return (
     <Column>
-      {mappedFiles.map(({ path, status }) => (
-        <Row gap={1} key={path}>
-          <Color {...status?.color}>{status?.key}</Color>
-          {path}
-        </Row>
+      {sorted.map((file) => (
+        <FileStatus key={file.path} file={file} context={context} />
       ))}
     </Column>
   )
