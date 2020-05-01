@@ -46,9 +46,9 @@ export interface GitQuery<K extends StoreKey, A, R> {
   set: (result?: R) => GitStore[K]
 }
 
-function createGitQuery<K extends StoreKey, I, R>(
-  input: Omit<GitQuery<K, I, R>, 'type'>
-): GitQuery<K, I, R> {
+function createGitQuery<K extends StoreKey, A, R>(
+  input: Omit<GitQuery<K, A, R>, 'type'>
+): GitQuery<K, A, R> {
   return { type: 'query', ...input }
 }
 
@@ -114,4 +114,13 @@ export const queries = {
       })
     },
   }),
+}
+
+export async function updateQuery<K extends StoreKey, A, R>(
+  query: GitQuery<K, A, R>,
+  args: A & { git: SimpleGit }
+) {
+  const result = await query.run(args)
+  query.set(result)
+  return result
 }

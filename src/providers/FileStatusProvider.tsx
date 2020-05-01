@@ -20,7 +20,7 @@ export default function FileStatusProvider({
   return (
     <GitRouter response={statusQuery}>
       <Column>
-        <Static id={'FileStatusProvider'}>
+        <Static>
           <Column paddingBottom={1}>
             <Title>Files</Title>
             <Table.Info

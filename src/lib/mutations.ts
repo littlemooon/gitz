@@ -5,7 +5,7 @@ import { toArray } from './array'
 import { Branch, isFeatureBranch } from './branch'
 import { Commit } from './commit'
 import env from './env'
-import { GitOperationName } from './queries'
+import { GitOperationName, queries, updateQuery } from './queries'
 import store, { setStoreItem, StoreKey } from './store'
 
 export interface GitMutation<I, R> {
@@ -27,8 +27,9 @@ export const mutations = {
       title: 'Switch branch',
       content: [branch?.name],
     }),
-    run: (git, branch) => {
-      return git.checkout(branch?.name)
+    run: async (git, branch) => {
+      await git.checkout(branch?.name)
+      await updateQuery(queries.branch, { git })
     },
     set: (branch) => {
       const branches = store.get(StoreKey.branches)
@@ -45,13 +46,13 @@ export const mutations = {
     },
   }),
 
-  checkoutBranch: createGitMutation<Branch, string>({
+  checkoutBranch: createGitMutation<Branch, void>({
     getName: (branch) => ({
       title: 'Create branch',
       content: [branch?.name],
     }),
-    run: (git, branch) => {
-      return git.raw([
+    run: async (git, branch) => {
+      await git.raw([
         'checkout',
         '-b',
         branch?.name,
@@ -61,6 +62,8 @@ export const mutations = {
       // .then(() => {
       //   git.raw(['branch', '--set-upstream-to', `origin/${branch?.name}`])
       // })
+
+      await updateQuery(queries.branch, { git })
     },
   }),
 
@@ -69,8 +72,10 @@ export const mutations = {
       title: 'Commit',
       content: [commit?.message],
     }),
-    run: (git, commit) => {
-      return git.commit(commit.message)
+    run: async (git, commit) => {
+      const result = await git.commit(commit.message)
+      await updateQuery(queries.status, { git })
+      return result
     },
   }),
 
@@ -109,18 +114,20 @@ export const mutations = {
       title: 'Add',
       content: paths === '.' ? ['all files'] : toArray(paths),
     }),
-    run: (git, paths) => {
-      return git.add(paths)
+    run: async (git, paths) => {
+      await git.add(paths)
+      await updateQuery(queries.status, { git })
     },
   }),
 
-  reset: createGitMutation<string | string[], string>({
+  reset: createGitMutation<string | string[], void>({
     getName: (paths) => ({
       title: 'Reset',
       content: paths === '.' ? ['all files'] : toArray(paths),
     }),
-    run: (git, paths) => {
-      return git.raw(['reset', ...toArray(paths)])
+    run: async (git, paths) => {
+      await git.raw(['reset', ...toArray(paths)])
+      await updateQuery(queries.status, { git })
     },
   }),
 
