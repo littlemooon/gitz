@@ -5,9 +5,9 @@ import { GitStore } from './queries'
 import getUuid, { Uuid } from './uuid'
 
 export enum StoreKey {
+  stash = 'stash',
   status = 'status',
   branches = 'branches',
-  checkout = 'checkout',
 }
 
 export type StoreItem<T extends object> = T & {

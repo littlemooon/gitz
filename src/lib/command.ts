@@ -6,6 +6,7 @@ export enum CliCommandKey {
   'CHECKOUT' = 'checkout',
   'COMMIT' = 'commit',
   'UPDATE' = 'update',
+  'STASH' = 'stash',
 }
 
 export interface CliCommand {
@@ -45,5 +46,11 @@ export const cliCommands: Record<CliCommandKey, CliCommand> = {
     name: 'update',
     shortcut: 'u',
     description: `rebase current branch onto ${env.masterBranch}`,
+  },
+  [CliCommandKey.STASH]: {
+    id: CliCommandKey.STASH,
+    name: 'stash',
+    shortcut: 't',
+    description: `stash status`,
   },
 }

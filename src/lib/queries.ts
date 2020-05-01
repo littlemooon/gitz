@@ -1,8 +1,14 @@
 import { SimpleGit } from 'simple-git/promise'
-import { BranchSummary, StatusResult } from 'simple-git/typings/response'
+import {
+  BranchSummary,
+  DefaultLogFields,
+  ListLogSummary,
+  StatusResult,
+} from 'simple-git/typings/response'
 import { filterArray } from './array'
 import { Branch, FeatureBranch, parseBranch } from './branch'
 import { File, parseFile } from './file'
+import { parseStash, Stash } from './stash'
 import store, { setStoreItem, StoreItem, StoreKey } from './store'
 
 export interface GitStore extends Partial<Record<StoreKey, StoreItem<any>>> {
@@ -16,6 +22,11 @@ export interface GitStore extends Partial<Record<StoreKey, StoreItem<any>>> {
     all: Branch[]
     feature: FeatureBranch[]
     current?: Branch
+  }>
+  [StoreKey.stash]?: StoreItem<{
+    all: Stash[]
+    total: number
+    latest?: Stash
   }>
 }
 
@@ -79,6 +90,19 @@ export const queries = {
       return setStoreItem(StoreKey.branches, {
         all: branches,
         current: branches.find((x) => x.current),
+      })
+    },
+  }),
+
+  stash: createGitQuery({
+    getName: () => ({ prefix: 'Stash' }),
+    key: StoreKey.stash,
+    run: ({ git }) => git.stashList(),
+    set: (result?: ListLogSummary<DefaultLogFields>) => {
+      return setStoreItem(StoreKey.stash, {
+        all: result?.all.map(parseStash) ?? [],
+        total: result?.total,
+        latest: result?.latest ? parseStash(result?.latest) : undefined,
       })
     },
   }),

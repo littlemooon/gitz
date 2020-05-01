@@ -7,6 +7,7 @@ import FeatureCreateProvider from '../providers/FeatureCreateProvider'
 import FeatureSelectProvider from '../providers/FeatureSelectProvider'
 import FeatureUpdateProvider from '../providers/FeatureUpdateProvider'
 import FileStatusProvider from '../providers/FileStatusProvider'
+import StashStatusProvider from '../providers/StashStatusProvider'
 
 export default function Command({
   command,
@@ -34,6 +35,9 @@ export default function Command({
 
     case CliCommandKey.UPDATE:
       return <FeatureUpdateProvider>{children}</FeatureUpdateProvider>
+
+    case CliCommandKey.STASH:
+      return <StashStatusProvider>{children}</StashStatusProvider>
 
     default:
       return (
