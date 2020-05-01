@@ -1,12 +1,12 @@
 import { Box } from 'ink'
 import React, { ReactNode } from 'react'
-import { isFunction } from 'util'
 import LogText from '../components/LogText'
 import Router from '../components/Router'
 import useCli from '../hooks/useCli'
 import { GitMutationResponse } from '../hooks/useGitMutation'
 import { GitQueryResponse, GitStatus } from '../hooks/useGitQuery'
-import { parseGitError } from '../lib/gitError'
+import { parseGitError } from '../lib/error'
+import { isFunction } from '../lib/function'
 import { StoreKey } from '../lib/store'
 import { join } from '../lib/string'
 import { Maybe } from '../types'
@@ -27,7 +27,7 @@ export default function GitRouter({
   children,
 }: {
   response: GitQueryResponse<StoreKey> | GitMutationResponse<any>
-  config: GitRouteConfig
+  config?: GitRouteConfig
   children?: ReactNode
 }) {
   const { flags } = useCli()
@@ -52,7 +52,18 @@ export default function GitRouter({
     ),
   }
 
-  const id = join([response.name.prefix, response.status], '.')
+  const id = join(
+    [response.name.prefix, response.name.suffix, response.status],
+    '.'
+  )
+
+  function getConfig(status: GitStatus, defaultRender?: ReactNode) {
+    if (config && isFunction(config[status])) {
+      return (config[status] as GetGitRoute)(defaults[status])
+    } else {
+      return defaultRender ?? defaults[status]
+    }
+  }
 
   return (
     <Column>
@@ -67,35 +78,25 @@ export default function GitRouter({
       <Router
         path={response.status}
         config={{
-          [GitStatus.initial]: isFunction(config[GitStatus.initial])
-            ? (config[GitStatus.initial] as GetGitRoute)(
-                defaults[GitStatus.initial]
-              )
-            : defaults[GitStatus.initial],
+          [GitStatus.initial]: getConfig(GitStatus.initial),
 
-          [GitStatus.loading]: isFunction(config[GitStatus.loading])
-            ? (config[GitStatus.loading] as GetGitRoute)(
-                defaults[GitStatus.loading]
-              )
-            : defaults[GitStatus.loading],
+          [GitStatus.loading]: getConfig(GitStatus.loading),
 
-          [GitStatus.success]: isFunction(config[GitStatus.success]) ? (
-            (config[GitStatus.success] as GetGitRoute)(
-              defaults[GitStatus.success]
-            )
-          ) : (
+          [GitStatus.success]: getConfig(
+            GitStatus.success,
             <Column>
-              <Static id={id}>
-                <Box paddingBottom={1}>{defaults[GitStatus.success]}</Box>
-              </Static>
+              {response.type === 'mutation' ? (
+                <Static id={id}>
+                  <Box paddingBottom={1}>{defaults[GitStatus.success]}</Box>
+                </Static>
+              ) : null}
 
               {children}
             </Column>
           ),
 
-          [GitStatus.error]: isFunction(config[GitStatus.error]) ? (
-            (config[GitStatus.error] as GetGitRoute)(defaults[GitStatus.error])
-          ) : (
+          [GitStatus.error]: getConfig(
+            GitStatus.error,
             <Column>
               <Static id={id}>
                 <Box paddingBottom={1}>{defaults[GitStatus.error]}</Box>

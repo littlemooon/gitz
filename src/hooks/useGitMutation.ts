@@ -1,15 +1,16 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useAsync } from 'react-async'
 import git from '../lib/git'
-import { GitMutation, GitOperationName } from '../lib/gitOperations'
+import { GitMutation } from '../lib/mutations'
+import { GitOperationName } from '../lib/queries'
 import { GitStatus } from './useGitQuery'
 
 export interface GitMutationResponse<R> {
+  type: 'mutation'
   name: GitOperationName
   state?: R
   status: GitStatus
   error?: Error
-  run: () => void
 }
 
 export default function useGitMutation<R, I>(
@@ -38,13 +39,13 @@ export default function useGitMutation<R, I>(
   }, [item, run, isInitial])
 
   useEffect(() => {
-    if (status === 'fulfilled' && item) {
+    if (status === 'fulfilled' && item && !set) {
       if (mutation.set) {
         mutation.set(item)
       }
       setSet(true)
     }
-  }, [status, item, mutation])
+  }, [set, status, item, mutation])
 
   const gitStatus = useMemo(() => {
     switch (status) {
@@ -59,11 +60,20 @@ export default function useGitMutation<R, I>(
     }
   }, [set, status])
 
+  const { prefix, suffix } = mutation.getName(item)
+  const name = useMemo(
+    () => ({
+      prefix,
+      suffix,
+    }),
+    [prefix, suffix]
+  )
+
   return {
-    name: mutation.getName(item),
+    type: 'mutation',
+    name,
     state: data,
     status: gitStatus,
-    run: run,
     error,
   }
 }

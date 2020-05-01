@@ -1,7 +1,9 @@
 import React, { ReactNode, useCallback, useMemo, useState } from 'react'
 import { useError } from '../components/ErrorBoundary'
 import Form from '../components/Form'
+import GitRouter from '../components/GitRouter'
 import useCli from '../hooks/useCli'
+import useGitQuery from '../hooks/useGitQuery'
 import {
   Commit,
   commitForm,
@@ -9,7 +11,7 @@ import {
   createCommit,
   parseCommitArgs,
 } from '../lib/commit'
-import BranchQueryProvider from '../providers/BranchQueryProvider'
+import { queries } from '../lib/queries'
 import CommitMutationProvider from '../providers/CommitMutationProvider'
 import { Maybe } from '../types'
 import FeatureRequireProvider from './FeatureRequireProvider'
@@ -19,6 +21,8 @@ export default function FeatureCommitProvider({
 }: {
   children: ReactNode
 }) {
+  const branchQuery = useGitQuery(queries.branch, undefined)
+
   const { args } = useCli()
   const argValues = useMemo(() => parseCommitArgs(args), [args])
 
@@ -36,33 +40,30 @@ export default function FeatureCommitProvider({
   )
 
   return (
-    <BranchQueryProvider>
-      {(branchQuery) => (
-        <FeatureRequireProvider>
-          {commit ? (
-            <CommitMutationProvider commit={commit}>
-              {children}
-            </CommitMutationProvider>
-          ) : (
-            <Form<CommitForm>
-              title="Create commit message"
-              fields={{
-                ...commitForm,
-                issueId: {
-                  ...commitForm.issueId,
-                  value:
-                    argValues.issueId ?? branchQuery.state?.current.issueId,
-                },
-                message: {
-                  ...commitForm.message,
-                  value: argValues.message,
-                },
-              }}
-              onSubmit={onSubmit}
-            />
-          )}
-        </FeatureRequireProvider>
-      )}
-    </BranchQueryProvider>
+    <GitRouter response={branchQuery}>
+      <FeatureRequireProvider>
+        {commit ? (
+          <CommitMutationProvider commit={commit}>
+            {children}
+          </CommitMutationProvider>
+        ) : (
+          <Form<CommitForm>
+            title="Create commit message"
+            fields={{
+              ...commitForm,
+              issueId: {
+                ...commitForm.issueId,
+                value: argValues.issueId ?? branchQuery.state?.current?.issueId,
+              },
+              message: {
+                ...commitForm.message,
+                value: argValues.message,
+              },
+            }}
+            onSubmit={onSubmit}
+          />
+        )}
+      </FeatureRequireProvider>
+    </GitRouter>
   )
 }

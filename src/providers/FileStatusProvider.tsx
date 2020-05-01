@@ -1,101 +1,46 @@
-/* eslint-disable @typescript-eslint/camelcase */
-import { Color, ColorProps } from 'ink'
-import React, { ReactNode, useMemo } from 'react'
-import { FileStatusSumary } from 'simple-git/typings/response'
+import React, { ReactNode } from 'react'
 import Column from '../components/Column'
-import Row from '../components/Row'
+import FileStatusList from '../components/FileStatusList'
+import GitRouter from '../components/GitRouter'
+import LogText from '../components/LogText'
 import Static from '../components/Static'
 import Table from '../components/Table'
-import StatusQueryProvider from '../providers/StatusQueryProvider'
-
-const fileStatusMap: Record<
-  'working_dir' | 'index',
-  Record<string, ColorProps & { children: string }>
-> = {
-  index: {
-    R: { children: 'R', green: true },
-    M: { children: 'M', cyan: true },
-    D: { children: 'D', red: true },
-    A: { children: 'A', green: true },
-  },
-  working_dir: {
-    R: { children: 'R', green: true },
-    M: { children: 'M', cyan: true },
-    D: { children: 'D', red: true },
-    '?': { children: 'U', green: true },
-  },
-}
-
-function FileStatusList({
-  files,
-  property,
-}: {
-  files: FileStatusSumary[]
-  property: 'working_dir' | 'index'
-}) {
-  const mappedFiles = useMemo(() => {
-    const keys = Object.values(fileStatusMap[property]).map(
-      ({ children }) => children
-    )
-
-    return files
-      .map((file) => ({
-        path: file.path,
-        status: fileStatusMap[property][file[property]],
-      }))
-      .filter((file) => Boolean(file.status))
-      .sort((a, b) => {
-        return keys.indexOf(a.status.children) > keys.indexOf(b.status.children)
-          ? 1
-          : -1
-      })
-  }, [files, property])
-
-  return (
-    <Column>
-      {mappedFiles.map(({ path, status }) => (
-        <Row gap={1} key={path}>
-          <Color {...status} />
-          {path}
-        </Row>
-      ))}
-    </Column>
-  )
-}
+import useGitQuery from '../hooks/useGitQuery'
+import { FileStatusContext } from '../lib/file'
+import { queries } from '../lib/queries'
 
 export default function FileStatusProvider({
   children,
 }: {
   children: ReactNode
 }) {
-  return (
-    <StatusQueryProvider>
-      {(statusQuery) => (
-        <Column>
-          <Static id="FileStatusProvider">
-            <Column paddingBottom={1}>
-              <Table.Info
-                data={{
-                  staged: (
-                    <FileStatusList
-                      files={statusQuery.state?.files ?? []}
-                      property="index"
-                    />
-                  ),
-                  local: (
-                    <FileStatusList
-                      files={statusQuery.state?.files ?? []}
-                      property="working_dir"
-                    />
-                  ),
-                }}
-              />
-            </Column>
-          </Static>
+  const statusQuery = useGitQuery(queries.status, undefined)
 
-          {children}
-        </Column>
-      )}
-    </StatusQueryProvider>
+  return (
+    <GitRouter response={statusQuery}>
+      <Column>
+        <Static id="FileStatusProvider">
+          <Column paddingBottom={1}>
+            <Table.Info
+              data={Object.values(FileStatusContext).reduce((acc, context) => {
+                return {
+                  ...acc,
+                  [context]: statusQuery.state?.files ? (
+                    <FileStatusList
+                      files={statusQuery.state?.files}
+                      context={context}
+                    />
+                  ) : (
+                    <LogText.Info>No {context} files</LogText.Info>
+                  ),
+                }
+              }, {})}
+            />
+          </Column>
+        </Static>
+
+        {children}
+      </Column>
+    </GitRouter>
   )
 }

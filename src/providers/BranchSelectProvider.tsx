@@ -1,7 +1,7 @@
 import React, { ReactNode, useCallback, useMemo, useState } from 'react'
 import Select, { SelectItem } from '../components/Select'
 import { Branch } from '../lib/branch'
-import { mutations } from '../lib/gitOperations'
+import { mutations } from '../lib/mutations'
 import CheckoutMutationProvider from '../providers/CheckoutMutationProvider'
 
 export default function BranchSelectProvider<B extends Branch>({

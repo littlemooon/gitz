@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react'
 import GitRouter from '../components/GitRouter'
 import useGitMutation from '../hooks/useGitMutation'
 import { Branch } from '../lib/branch'
-import { mutations } from '../lib/gitOperations'
+import { mutations } from '../lib/mutations'
 
 export default function RebaseMutationProvider({
   branch,
@@ -12,12 +12,6 @@ export default function RebaseMutationProvider({
   children: ReactNode
 }) {
   const response = useGitMutation(mutations.rebase, branch)
-  if (response) {
-    throw new Error('asd')
-  }
-  return (
-    <GitRouter response={response} config={{}}>
-      {children}
-    </GitRouter>
-  )
+
+  return <GitRouter response={response}>{children}</GitRouter>
 }

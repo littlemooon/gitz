@@ -1,7 +1,7 @@
 /// <reference types="../declarations" />
 import CacheConf from 'cache-conf'
 import { Maybe } from '../types'
-import { GitStore } from './gitOperations'
+import { GitStore } from './queries'
 import getUuid, { Uuid } from './uuid'
 
 export enum StoreKey {
