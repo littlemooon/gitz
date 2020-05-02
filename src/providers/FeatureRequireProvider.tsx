@@ -17,9 +17,7 @@ export default function FeatureRequireProvider({
 
   return (
     <GitRouter response={branchQuery}>
-      {branch ? (
-        isFeatureBranch(branch)
-      ) : branchQuery.state?.onFeature ? (
+      {(branch ? isFeatureBranch(branch) : branchQuery.state?.onFeature) ? (
         <>{children}</>
       ) : (
         <Warning

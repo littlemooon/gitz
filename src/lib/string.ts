@@ -16,3 +16,7 @@ export function reduceWhitespace(s?: string) {
 export function getMaxLength(arr: string[]): number {
   return Math.max(...arr.map((s) => s.length))
 }
+
+export function startsWith(s?: string, x?: string) {
+  return s ? s.startsWith(x ?? '') : false
+}

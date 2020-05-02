@@ -2,7 +2,6 @@ import React, { ReactNode } from 'react'
 import GitRouter from '../components/GitRouter'
 import useFirst from '../hooks/useFirst'
 import useGitQuery from '../hooks/useGitQuery'
-import env from '../lib/env'
 import { queries } from '../lib/queries'
 import CheckoutProvider from './CheckoutProvider'
 import FeatureRequireProvider from './FeatureRequireProvider'
@@ -17,18 +16,16 @@ export default function FeatureUpdateProvider({
   const branchQuery = useGitQuery(queries.branch, undefined)
   const originalBranch = useFirst(() => branchQuery.state?.current)
 
-  const masterBranch = branchQuery.state?.all.find(
-    (x) => x.name === env.masterBranch
-  )
-
   return (
     <GitRouter response={branchQuery}>
       <FeatureRequireProvider branch={originalBranch}>
-        <CheckoutProvider branch={masterBranch}>
-          <PullMutationProvider branch={masterBranch}>
+        <CheckoutProvider branch={branchQuery.state?.master}>
+          <PullMutationProvider arg={branchQuery.state?.master?.name}>
             <CheckoutProvider branch={originalBranch}>
-              <RebaseMutationProvider branch={masterBranch}>
-                <PullMutationProvider branch={originalBranch}>
+              <RebaseMutationProvider
+                arg={`origin/${branchQuery.state?.master?.name}`}
+              >
+                <PullMutationProvider arg={originalBranch?.name}>
                   {children}
                 </PullMutationProvider>
               </RebaseMutationProvider>

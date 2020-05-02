@@ -7,7 +7,9 @@ import BranchStatusProvider from '../providers/BranchStatusProvider'
 import CommandSelectProvider from '../providers/CommandSelectProvider'
 import FeatureCommitProvider from '../providers/FeatureCommitProvider'
 import FeatureCreateProvider from '../providers/FeatureCreateProvider'
+import FeaturePullProvider from '../providers/FeaturePullProvider'
 import FeaturePushProvider from '../providers/FeaturePushProvider'
+import FeatureRebaseProvider from '../providers/FeatureRebaseProvider'
 import FeatureSelectProvider from '../providers/FeatureSelectProvider'
 import FeatureUpdateProvider from '../providers/FeatureUpdateProvider'
 import FileStatusProvider from '../providers/FileStatusProvider'
@@ -45,6 +47,16 @@ export default function Command({
 
     case CliCommandKey.update:
       return <FeatureUpdateProvider>{children}</FeatureUpdateProvider>
+
+    case CliCommandKey.rebase:
+      return (
+        <FeatureRebaseProvider arg={`origin/${env.masterBranch}`}>
+          {children}
+        </FeatureRebaseProvider>
+      )
+
+    case CliCommandKey.pull:
+      return <FeaturePullProvider arg="HEAD">{children}</FeaturePullProvider>
 
     case CliCommandKey.push:
       return <FeaturePushProvider arg="HEAD">{children}</FeaturePushProvider>

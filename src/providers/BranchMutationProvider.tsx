@@ -1,10 +1,12 @@
 import React, { ReactNode } from 'react'
 import GitRouter from '../components/GitRouter'
+import Warning from '../components/Warning'
 import useGitMutation from '../hooks/useGitMutation'
-import useGitQuery from '../hooks/useGitQuery'
+import useGitQuery, { GitStatus } from '../hooks/useGitQuery'
 import { Branch } from '../lib/branch'
 import { mutations } from '../lib/mutations'
 import { queries } from '../lib/queries'
+import FeatureCreateProvider from './FeatureCreateProvider'
 
 export default function BranchMutationProvider({
   branch,
@@ -22,5 +24,20 @@ export default function BranchMutationProvider({
     hasBranch ? undefined : branch
   )
 
-  return <GitRouter response={checkoutBranchMutation}>{children}</GitRouter>
+  return (
+    <GitRouter
+      response={checkoutBranchMutation}
+      config={{
+        [GitStatus.initial]: function BranchMutationIgnore() {
+          return hasBranch ? (
+            <Warning text="Branch already exists" content={[branch?.name]}>
+              <FeatureCreateProvider>{children}</FeatureCreateProvider>
+            </Warning>
+          ) : null
+        },
+      }}
+    >
+      {children}
+    </GitRouter>
+  )
 }

@@ -1,5 +1,5 @@
 import env from './env'
-import { capitalize, getMaxLength, join } from './string'
+import { capitalize, getMaxLength, join, startsWith } from './string'
 
 export enum CliCommandKey {
   'status' = 'status',
@@ -11,6 +11,8 @@ export enum CliCommandKey {
   'checkout' = 'checkout',
   'branch' = 'branch',
   'update' = 'update',
+  'rebase' = 'rebase',
+  'pull' = 'pull',
   'push' = 'push',
   'pushOrigin' = 'push-origin',
   'pushOriginMaster' = 'push-origin-master',
@@ -32,6 +34,7 @@ export interface CliCommand {
     working?: boolean
     staged?: boolean
     ahead?: boolean
+    behind?: boolean
   }
 }
 
@@ -55,19 +58,18 @@ export const cliCommands: Record<CliCommandKey, CliCommand> = {
     exposed: true,
     require: { feature: true, working: true },
   },
+  [CliCommandKey.addAll]: {
+    key: CliCommandKey.addAll,
+    shortcut: 'd',
+    description: `stage all files for commit`,
+    require: { working: true, feature: true },
+  },
   [CliCommandKey.commit]: {
     key: CliCommandKey.commit,
     shortcut: 'm',
     argString: '<message?>',
     description: 'commit with issueId',
     require: { feature: true, staged: true },
-    exposed: true,
-  },
-  [CliCommandKey.reset]: {
-    key: CliCommandKey.reset,
-    shortcut: 'r',
-    description: `move staged files back to working`,
-    require: { staged: true },
     exposed: true,
   },
   [CliCommandKey.checkout]: {
@@ -86,7 +88,13 @@ export const cliCommands: Record<CliCommandKey, CliCommand> = {
   [CliCommandKey.update]: {
     key: CliCommandKey.update,
     shortcut: 'u',
-    description: `rebase current branch onto ${env.masterBranch}`,
+    description: `update current branch to ${env.masterBranch}`,
+    require: { feature: true },
+  },
+  [CliCommandKey.rebase]: {
+    key: CliCommandKey.rebase,
+    shortcut: 'u',
+    description: `rebase current branch onto origin ${env.masterBranch}`,
     require: { feature: true },
     exposed: true,
   },
@@ -107,11 +115,19 @@ export const cliCommands: Record<CliCommandKey, CliCommand> = {
     description: `push using remote branch name (git push origin HEAD:master)`,
     require: { feature: true, ahead: true },
   },
-  [CliCommandKey.addAll]: {
-    key: CliCommandKey.addAll,
-    shortcut: 'd',
-    description: `stage all files for commit`,
-    require: { working: true, feature: true },
+  [CliCommandKey.pull]: {
+    key: CliCommandKey.pull,
+    shortcut: 'l',
+    description: `pull commits from origin`,
+    require: { feature: true, behind: true },
+    exposed: true,
+  },
+  [CliCommandKey.reset]: {
+    key: CliCommandKey.reset,
+    shortcut: 'r',
+    description: `move staged files back to working`,
+    require: { staged: true },
+    exposed: true,
   },
   [CliCommandKey.resetAll]: {
     key: CliCommandKey.resetAll,
@@ -141,6 +157,10 @@ export const cliCommands: Record<CliCommandKey, CliCommand> = {
 
 export const exposedCliCommands = Object.values(cliCommands).filter(
   (command) => command.exposed
+)
+
+export const stashCliCommands = Object.values(cliCommands).filter((x) =>
+  startsWith(x.key, 'stash-')
 )
 
 export function getCommandHelpText(): { text: string; maxLength: number } {

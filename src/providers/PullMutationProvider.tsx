@@ -1,17 +1,16 @@
 import React, { ReactNode } from 'react'
 import GitRouter from '../components/GitRouter'
 import useGitMutation from '../hooks/useGitMutation'
-import { Branch } from '../lib/branch'
 import { mutations } from '../lib/mutations'
 
 export default function PullMutationProvider({
   children,
-  branch,
+  arg,
 }: {
   children: ReactNode
-  branch?: Branch
+  arg?: string
 }) {
-  const response = useGitMutation(mutations.pull, branch)
+  const response = useGitMutation(mutations.pull, arg)
 
   return <GitRouter response={response}>{children}</GitRouter>
 }

@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react'
 import GitRouter from '../components/GitRouter'
+import useFirst from '../hooks/useFirst'
 import useGitMutation from '../hooks/useGitMutation'
 import useGitQuery, { GitStatus } from '../hooks/useGitQuery'
 import useInit from '../hooks/useInit'
@@ -19,11 +20,13 @@ export default function StashDropMutationProvider({
   const stashQuery = useGitQuery(queries.stash, undefined)
   const stashDropMutation = useGitMutation(mutations.stashDrop, undefined)
 
-  const shouldRun =
-    run &&
-    (stash
-      ? stashQuery.state?.latest?.hash === stash.hash
-      : stashQuery.state?.latest)
+  const shouldRun = useFirst(
+    () =>
+      run &&
+      (stash
+        ? stashQuery.state?.latest?.hash === stash.hash
+        : stashQuery.state?.latest)
+  )
 
   useInit(() => {
     if (shouldRun) {

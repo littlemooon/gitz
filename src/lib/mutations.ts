@@ -4,7 +4,12 @@ import { toArray } from './array'
 import { Branch, isFeatureBranch } from './branch'
 import { Commit } from './commit'
 import env from './env'
-import { GitOperationName, queries, updateQuery } from './queries'
+import {
+  GitOperationName,
+  queries,
+  updateQueries,
+  updateQuery,
+} from './queries'
 import { getStoreItem, setStoreItem, StoreKey } from './store'
 
 export interface GitMutation<I, R> {
@@ -27,7 +32,7 @@ export const mutations = {
     }),
     run: async (git, branch) => {
       await git.checkout(branch?.name)
-      await updateQuery(queries.branch, { git })
+      await updateQueries(git)
 
       const branches = getStoreItem(StoreKey.branches)
 
@@ -60,7 +65,7 @@ export const mutations = {
       //   git.raw(['branch', '--set-upstream-to', `origin/${branch?.name}`])
       // })
 
-      await updateQuery(queries.branch, { git })
+      await updateQueries(git)
     },
   }),
 
@@ -71,7 +76,7 @@ export const mutations = {
     }),
     run: async (git, commit) => {
       await git.commit(commit.message)
-      await updateQuery(queries.status, { git })
+      await updateQueries(git)
     },
   }),
 
@@ -82,29 +87,29 @@ export const mutations = {
     }),
     run: async (git, arg) => {
       await git.push('origin', arg)
-      await updateQuery(queries.status, { git })
+      await updateQueries(git)
     },
   }),
 
-  pull: createGitMutation<Branch>({
-    getName: (branch) => ({
+  pull: createGitMutation<Maybe<string>>({
+    getName: (arg) => ({
       title: 'Pull',
-      content: [branch?.name],
+      content: [arg],
     }),
-    run: async (git, branch) => {
-      await git.pull('origin', branch?.name)
-      await updateQuery(queries.status, { git })
+    run: async (git, arg) => {
+      await git.pull(arg)
+      await updateQueries(git)
     },
   }),
 
-  rebase: createGitMutation<Branch>({
-    getName: (branch) => ({
+  rebase: createGitMutation<string>({
+    getName: (arg) => ({
       title: 'Rebase',
-      content: [branch?.name],
+      content: [arg],
     }),
-    run: async (git, branch) => {
-      await git.rebase([branch.name])
-      await updateQuery(queries.status, { git })
+    run: async (git, arg) => {
+      await git.rebase([arg])
+      await updateQueries(git)
     },
   }),
 
@@ -115,8 +120,7 @@ export const mutations = {
     }),
     run: async (git, paths) => {
       await git.add(paths)
-      await updateQuery(queries.status, { git })
-      return
+      await updateQueries(git)
     },
   }),
 
@@ -127,8 +131,7 @@ export const mutations = {
     }),
     run: async (git, paths) => {
       await git.raw(['reset', ...toArray(paths)])
-      await updateQuery(queries.status, { git })
-      return
+      await updateQueries(git)
     },
   }),
 
@@ -138,9 +141,8 @@ export const mutations = {
     }),
     run: async (git) => {
       await git.stash()
-      await updateQuery(queries.status, { git })
+      await updateQueries(git)
       await updateQuery(queries.stash, { git })
-      return
     },
   }),
 
@@ -150,8 +152,8 @@ export const mutations = {
     }),
     run: async (git) => {
       await git.stash(['apply'])
-      await updateQuery(queries.status, { git })
-      return
+      await updateQueries(git)
+      await updateQuery(queries.stash, { git })
     },
   }),
 
@@ -161,9 +163,8 @@ export const mutations = {
     }),
     run: async (git) => {
       await git.stash(['pop'])
-      await updateQuery(queries.status, { git })
+      await updateQueries(git)
       await updateQuery(queries.stash, { git })
-      return
     },
   }),
 
@@ -174,7 +175,6 @@ export const mutations = {
     run: async (git) => {
       await git.stash(['drop'])
       await updateQuery(queries.stash, { git })
-      return
     },
   }),
 }

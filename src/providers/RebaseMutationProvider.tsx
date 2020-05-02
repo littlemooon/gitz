@@ -1,17 +1,16 @@
 import React, { ReactNode } from 'react'
 import GitRouter from '../components/GitRouter'
 import useGitMutation from '../hooks/useGitMutation'
-import { Branch } from '../lib/branch'
 import { mutations } from '../lib/mutations'
 
 export default function RebaseMutationProvider({
-  branch,
+  arg,
   children,
 }: {
-  branch?: Branch
+  arg?: string
   children: ReactNode
 }) {
-  const response = useGitMutation(mutations.rebase, branch)
+  const rebaseMutation = useGitMutation(mutations.rebase, arg)
 
-  return <GitRouter response={response}>{children}</GitRouter>
+  return <GitRouter response={rebaseMutation}>{children}</GitRouter>
 }

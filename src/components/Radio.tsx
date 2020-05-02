@@ -11,7 +11,6 @@ export type RadioItem<T extends object = {}> = T & {
   label?: string
   content?: ReactNode
   id: string
-  current?: boolean
   shortcut?: string
 }
 
@@ -46,11 +45,9 @@ export default function Select(props: RadioProps) {
     : props.items.length
 
   const items = useMemo(() => {
-    const slicedItems = hasLimit
+    return hasLimit
       ? arrayRotate(props.items, state.rotateIndex).slice(0, limit)
       : props.items
-
-    return slicedItems.sort((x) => (x.current ? -1 : 1))
   }, [props.items, state.rotateIndex, limit, hasLimit])
 
   useInput((input, key) => {
@@ -127,7 +124,10 @@ export default function Select(props: RadioProps) {
               />
               <Column>
                 {item.label ? (
-                  <LogText.Default bold={item.current} cyan={focus && focussed}>
+                  <LogText.Default
+                    bold={focus && focussed}
+                    cyan={focus && focussed}
+                  >
                     {item.label}
                   </LogText.Default>
                 ) : null}

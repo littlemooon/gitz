@@ -7,6 +7,7 @@ import {
 } from 'simple-git/typings/response'
 import { filterArray } from './array'
 import { Branch, FeatureBranch, isFeatureBranch, parseBranch } from './branch'
+import env from './env'
 import { File, parseFile } from './file'
 import { parseStash, Stash } from './stash'
 import store, { setStoreItem, StoreItem, StoreKey } from './store'
@@ -24,6 +25,7 @@ export interface GitStore extends Partial<Record<StoreKey, StoreItem<any>>> {
     all: Branch[]
     feature: FeatureBranch[]
     current?: Branch
+    master?: Branch
     onFeature: boolean
   }>
   [StoreKey.stash]?: StoreItem<{
@@ -97,6 +99,7 @@ export const queries = {
       return setStoreItem(StoreKey.branches, {
         all: branches,
         current,
+        master: branches.find((x) => x.name === env.masterBranch),
         onFeature: isFeatureBranch(current),
       })
     },
@@ -123,4 +126,11 @@ export async function updateQuery<K extends StoreKey, A, R>(
   const result = await query.run(args)
   query.set(result)
   return result
+}
+
+export async function updateQueries(git: SimpleGit) {
+  await Promise.all([
+    updateQuery(queries.branch, { git }),
+    updateQuery(queries.status, { git }),
+  ])
 }

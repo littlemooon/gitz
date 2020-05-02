@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react'
 import GitRouter from '../components/GitRouter'
 import useGitMutation from '../hooks/useGitMutation'
-import useGitQuery from '../hooks/useGitQuery'
+import useGitQuery, { GitStatus } from '../hooks/useGitQuery'
 import { Branch } from '../lib/branch'
 import { mutations } from '../lib/mutations'
 import { queries } from '../lib/queries'
@@ -21,5 +21,12 @@ export default function CheckoutMutationProvider({
     onBranch ? undefined : branch
   )
 
-  return <GitRouter response={checkoutMutation}>{children}</GitRouter>
+  return (
+    <GitRouter
+      response={checkoutMutation}
+      config={{ [GitStatus.initial]: () => (onBranch ? children : null) }}
+    >
+      {children}
+    </GitRouter>
+  )
 }

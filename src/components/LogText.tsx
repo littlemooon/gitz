@@ -85,7 +85,7 @@ const LogText = {
       <Row gap={1} paddingTop={1}>
         <LogTextBase type={LogType.loading}>{figures.bullet}</LogTextBase>
         <LogTextBase type={LogType.loading} {...props}>
-          {prefix}...
+          {prefix}
         </LogTextBase>
         <LogTextBase {...props} />
       </Row>
