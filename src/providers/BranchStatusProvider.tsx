@@ -21,9 +21,9 @@ export default function BranchStatusProvider({
     <GitRouter response={branchQuery}>
       <GitRouter response={statusQuery}>
         <Column>
-          {branchQuery.state?.onFeature ? (
+          {branchQuery.state?.current ? (
             <Column paddingBottom={1}>
-              <Title>Feature</Title>
+              <Title>Branch</Title>
               <Table.Info
                 data={{
                   issueId: (
@@ -47,30 +47,6 @@ export default function BranchStatusProvider({
                     </Row>
                   ),
                   commit: `${branchQuery.state?.current?.label} (${branchQuery.state?.current?.commit})`,
-                  tracking: statusQuery.state?.tracking,
-                }}
-              />
-            </Column>
-          ) : branchQuery.state?.current ? (
-            <Column paddingBottom={1}>
-              <Title>Branch</Title>
-              <Table.Info
-                data={{
-                  branch: (
-                    <LogText.Default bold>
-                      {branchQuery.state?.current.name}
-                    </LogText.Default>
-                  ),
-                  diff: (
-                    <Row gap={1}>
-                      <Color
-                        green
-                        bold
-                      >{`+ ${statusQuery.state?.ahead}`}</Color>
-                      <Color red bold>{`- ${statusQuery.state?.behind}`}</Color>
-                    </Row>
-                  ),
-                  commit: `${branchQuery.state?.current.label} (${branchQuery.state?.current.commit})`,
                   tracking: statusQuery.state?.tracking,
                 }}
               />
