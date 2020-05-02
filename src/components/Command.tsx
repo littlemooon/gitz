@@ -1,6 +1,5 @@
 import React, { ReactNode } from 'react'
 import { CliCommand, CliCommandKey } from '../lib/command'
-import env from '../lib/env'
 import AddMutationProvider from '../providers/AddMutationProvider'
 import AddSelectProvider from '../providers/AddSelectProvider'
 import BranchStatusProvider from '../providers/BranchStatusProvider'
@@ -9,7 +8,6 @@ import FeatureCommitProvider from '../providers/FeatureCommitProvider'
 import FeatureCreateProvider from '../providers/FeatureCreateProvider'
 import FeaturePullProvider from '../providers/FeaturePullProvider'
 import FeaturePushProvider from '../providers/FeaturePushProvider'
-import FeatureRebaseProvider from '../providers/FeatureRebaseProvider'
 import FeatureSelectProvider from '../providers/FeatureSelectProvider'
 import FeatureUpdateProvider from '../providers/FeatureUpdateProvider'
 import FileStatusProvider from '../providers/FileStatusProvider'
@@ -43,45 +41,72 @@ export default function Command({
       return <FeatureSelectProvider>{children}</FeatureSelectProvider>
 
     case CliCommandKey.commit:
-      return <FeatureCommitProvider>{children}</FeatureCommitProvider>
+      return (
+        <FeatureCommitProvider>
+          <CommandSelectProvider keys={[CliCommandKey.update]}>
+            {children}
+          </CommandSelectProvider>
+        </FeatureCommitProvider>
+      )
 
     case CliCommandKey.update:
-      return <FeatureUpdateProvider>{children}</FeatureUpdateProvider>
-
-    case CliCommandKey.rebase:
       return (
-        <FeatureRebaseProvider arg={`origin/${env.masterBranch}`}>
-          {children}
-        </FeatureRebaseProvider>
+        <FeatureUpdateProvider>
+          <CommandSelectProvider
+            keys={[CliCommandKey.pull, CliCommandKey.push]}
+          >
+            {children}
+          </CommandSelectProvider>
+        </FeatureUpdateProvider>
       )
 
     case CliCommandKey.pull:
-      return <FeaturePullProvider arg="HEAD">{children}</FeaturePullProvider>
-
-    case CliCommandKey.push:
-      return <FeaturePushProvider arg="HEAD">{children}</FeaturePushProvider>
-
-    case CliCommandKey.pushOrigin:
-      return <FeaturePushProvider arg="HEAD">{children}</FeaturePushProvider>
-
-    case CliCommandKey.pushOriginMaster:
       return (
-        <FeaturePushProvider arg={`HEAD:${env.masterBranch}`}>
-          {children}
-        </FeaturePushProvider>
+        <FeaturePullProvider>
+          <CommandSelectProvider keys={[CliCommandKey.push]}>
+            {children}
+          </CommandSelectProvider>
+        </FeaturePullProvider>
       )
 
+    case CliCommandKey.push:
+      return <FeaturePushProvider>{children}</FeaturePushProvider>
+
     case CliCommandKey.add:
-      return <AddSelectProvider>{children}</AddSelectProvider>
+      return (
+        <AddSelectProvider>
+          <CommandSelectProvider keys={[CliCommandKey.commit]}>
+            {children}
+          </CommandSelectProvider>
+        </AddSelectProvider>
+      )
 
     case CliCommandKey.addAll:
-      return <AddMutationProvider paths=".">{children}</AddMutationProvider>
+      return (
+        <AddMutationProvider paths=".">
+          <CommandSelectProvider keys={[CliCommandKey.commit]}>
+            {children}
+          </CommandSelectProvider>
+        </AddMutationProvider>
+      )
 
     case CliCommandKey.reset:
-      return <ResetSelectProvider>{children}</ResetSelectProvider>
+      return (
+        <ResetSelectProvider>
+          <CommandSelectProvider keys={[CliCommandKey.commit]}>
+            {children}
+          </CommandSelectProvider>
+        </ResetSelectProvider>
+      )
 
     case CliCommandKey.resetAll:
-      return <ResetMutationProvider paths=".">{children}</ResetMutationProvider>
+      return (
+        <ResetMutationProvider paths=".">
+          <CommandSelectProvider keys={[CliCommandKey.commit]}>
+            {children}
+          </CommandSelectProvider>
+        </ResetMutationProvider>
+      )
 
     case CliCommandKey.stash:
       return (
@@ -99,10 +124,22 @@ export default function Command({
       )
 
     case CliCommandKey.stashPut:
-      return <StashPutMutationProvider>{children}</StashPutMutationProvider>
+      return (
+        <StashPutMutationProvider>
+          <CommandSelectProvider keys={[CliCommandKey.checkout]}>
+            {children}
+          </CommandSelectProvider>
+        </StashPutMutationProvider>
+      )
 
     case CliCommandKey.stashApply:
-      return <StashApplyMutationProvider>{children}</StashApplyMutationProvider>
+      return (
+        <StashApplyMutationProvider>
+          <CommandSelectProvider keys={[CliCommandKey.stashDrop]}>
+            {children}
+          </CommandSelectProvider>
+        </StashApplyMutationProvider>
+      )
 
     case CliCommandKey.stashDrop:
       return <StashDropMutationProvider>{children}</StashDropMutationProvider>

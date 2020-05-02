@@ -51,6 +51,21 @@ export default function BranchStatusProvider({
                 }}
               />
             </Column>
+          ) : branchQuery.state?.all.length ? (
+            <Column paddingBottom={1}>
+              <LogText.Warn prefix="Merge conflicts">
+                <Column>
+                  <LogText.Default>Manually fix conflicts</LogText.Default>
+                  <LogText.Default>Add fixed files: `gitx d`</LogText.Default>
+                  <LogText.Default>
+                    Continue the rebase: `git rebase --continue`
+                  </LogText.Default>
+                  <LogText.Default>
+                    Or abort the rebase: `git rebase --abort`
+                  </LogText.Default>
+                </Column>
+              </LogText.Warn>
+            </Column>
           ) : (
             <Column paddingBottom={1}>
               <LogText.Warn prefix="No branches configured yet" />

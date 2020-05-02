@@ -22,16 +22,18 @@ export default function AddSelectProvider({
   const items = useMemo(
     () =>
       filterArray(
-        statusQuery.state?.files.map((file) =>
-          file.working
-            ? {
-                id: file.path,
-                content: (
-                  <FileStatus file={file} context={FileStatusType.working} />
-                ),
-              }
-            : undefined
-        ) ?? []
+        statusQuery.state?.files
+          .sort((a, b) => (a.path < b.path ? -1 : 1))
+          .map((file) =>
+            file.working
+              ? {
+                  id: file.path,
+                  content: (
+                    <FileStatus file={file} context={FileStatusType.working} />
+                  ),
+                }
+              : undefined
+          ) ?? []
       ),
     [statusQuery.state]
   )

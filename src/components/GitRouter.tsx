@@ -103,7 +103,7 @@ export default function GitRouter({
             <Column>
               {defaults[GitStatus.error]}
 
-              {flags.exit ? (
+              {flags.exit || error?.exit ? (
                 <Exit reason={join([response.name.title, 'error'], ' ')} />
               ) : (
                 <CommandSelectProvider keys={error?.commands}>

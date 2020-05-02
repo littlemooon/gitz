@@ -11,11 +11,10 @@ export enum CliCommandKey {
   'checkout' = 'checkout',
   'branch' = 'branch',
   'update' = 'update',
-  'rebase' = 'rebase',
+  'rebaseContinue' = 'rebase-continue',
+  'rebaseAbort' = 'rebase-abort',
   'pull' = 'pull',
   'push' = 'push',
-  'pushOrigin' = 'push-origin',
-  'pushOriginMaster' = 'push-origin-master',
   'stash' = 'stash',
   'stashPut' = 'stash-put',
   'stashApply' = 'stash-apply',
@@ -35,6 +34,7 @@ export interface CliCommand {
     staged?: boolean
     ahead?: boolean
     behind?: boolean
+    current?: boolean
   }
 }
 
@@ -50,6 +50,7 @@ export const cliCommands: Record<CliCommandKey, CliCommand> = {
     key: CliCommandKey.status,
     shortcut: 's',
     description: 'current branch status',
+    require: { current: true },
   },
   [CliCommandKey.add]: {
     key: CliCommandKey.add,
@@ -69,7 +70,7 @@ export const cliCommands: Record<CliCommandKey, CliCommand> = {
     shortcut: 'm',
     argString: '<message?>',
     description: 'commit with issueId',
-    require: { feature: true, staged: true },
+    require: { feature: true, staged: true, current: true },
     exposed: true,
   },
   [CliCommandKey.checkout]: {
@@ -77,80 +78,79 @@ export const cliCommands: Record<CliCommandKey, CliCommand> = {
     shortcut: 'c',
     description: 'switch to feature branch',
     exposed: true,
+    require: { current: true },
   },
   [CliCommandKey.branch]: {
     key: CliCommandKey.branch,
     shortcut: 'b',
     argString: '<name?>',
     description: 'create new feature branch',
+    require: { current: true },
     exposed: true,
   },
   [CliCommandKey.update]: {
     key: CliCommandKey.update,
     shortcut: 'u',
-    description: `update current branch to ${env.masterBranch}`,
-    require: { feature: true },
-  },
-  [CliCommandKey.rebase]: {
-    key: CliCommandKey.rebase,
-    shortcut: 'u',
-    description: `rebase current branch onto origin ${env.masterBranch}`,
-    require: { feature: true },
+    description: `update to ${env.remoteOrigin} ${env.masterBranch}`,
+    require: { feature: true, current: true },
     exposed: true,
   },
   [CliCommandKey.push]: {
     key: CliCommandKey.push,
     shortcut: 'p',
-    description: `push commits to origin`,
-    require: { feature: true, ahead: true },
+    description: `push commits to ${env.remoteOrigin}`,
+    require: { feature: true, ahead: true, current: true },
     exposed: true,
-  },
-  [CliCommandKey.pushOrigin]: {
-    key: CliCommandKey.pushOrigin,
-    description: `push using local branch name (git push origin HEAD)`,
-    require: { feature: true, ahead: true },
-  },
-  [CliCommandKey.pushOriginMaster]: {
-    key: CliCommandKey.pushOriginMaster,
-    description: `push using remote branch name (git push origin HEAD:master)`,
-    require: { feature: true, ahead: true },
   },
   [CliCommandKey.pull]: {
     key: CliCommandKey.pull,
     shortcut: 'l',
-    description: `pull commits from origin`,
-    require: { feature: true, behind: true },
+    description: `pull commits from ${env.remoteOrigin}`,
+    require: { feature: true, behind: true, current: true },
     exposed: true,
+  },
+  [CliCommandKey.rebaseContinue]: {
+    key: CliCommandKey.rebaseContinue,
+    description: `continue the rebase after adding files`,
+    require: {},
+  },
+  [CliCommandKey.rebaseAbort]: {
+    key: CliCommandKey.rebaseAbort,
+    description: `abort the rebase`,
+    require: {},
   },
   [CliCommandKey.reset]: {
     key: CliCommandKey.reset,
     shortcut: 'r',
     description: `move staged files back to working`,
-    require: { staged: true },
+    require: { staged: true, current: true },
     exposed: true,
   },
   [CliCommandKey.resetAll]: {
     key: CliCommandKey.resetAll,
     description: `move all staged files back to working`,
-    require: { staged: true },
+    require: { staged: true, current: true },
   },
   [CliCommandKey.stash]: {
     key: CliCommandKey.stash,
     shortcut: 't',
     description: `manage stashed items`,
+    require: { current: true },
   },
   [CliCommandKey.stashPut]: {
     key: CliCommandKey.stashPut,
     description: `put changes onto stash`,
-    require: { staged: true },
+    require: { staged: true, current: true },
   },
   [CliCommandKey.stashApply]: {
     key: CliCommandKey.stashApply,
     description: `apply latest stash item`,
+    require: { current: true },
   },
   [CliCommandKey.stashDrop]: {
     key: CliCommandKey.stashDrop,
     description: `remove latest stash item`,
+    require: { current: true },
   },
   [CliCommandKey.unknown]: createUnknownCommand(''),
 }
@@ -161,6 +161,10 @@ export const exposedCliCommands = Object.values(cliCommands).filter(
 
 export const stashCliCommands = Object.values(cliCommands).filter((x) =>
   startsWith(x.key, 'stash-')
+)
+
+export const conflictCliCommands = Object.values(cliCommands).filter(
+  (x) => !x.require?.current
 )
 
 export function getCommandHelpText(): { text: string; maxLength: number } {

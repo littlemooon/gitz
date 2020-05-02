@@ -56,11 +56,27 @@ export default function CommandSelectProvider({
     const selectedKeys = stashStatusContext
       ? [
           ...(keys ?? []),
-          ...stashCliCommands
-            .filter((x) => !keys?.includes(x.key))
-            .map((x) => x.key),
+          ...(stashStatusContext
+            ? stashCliCommands
+                .filter((x) => !keys?.includes(x.key))
+                .map((x) => x.key)
+            : []),
+          // ...(branchQuery.state?.current
+          //   ? []
+          //   : conflictCliCommands
+          //       .filter((x) => !selectedKeys?.includes(x.key))
+          //       .map((x) => x.key)),
         ]
       : keys
+
+    // const selectedKeys = branchQuery.state?.current
+    //   ? stashedKeys
+    //   : [
+    //       ...(stashedKeys ?? []),
+    //       ...conflictCliCommands
+    //         .filter((x) => !stashedKeys?.includes(x.key))
+    //         .map((x) => x.key),
+    // ]
 
     const selected = selectedKeys
       ? Object.values(cliCommands).filter((x) => selectedKeys.includes(x.key))
@@ -77,6 +93,7 @@ export default function CommandSelectProvider({
         x.require?.working ? statusQuery.state?.hasWorkingChanges : true,
         x.require?.ahead ? statusQuery.state?.ahead : true,
         x.require?.behind ? statusQuery.state?.behind : true,
+        x.require?.current ? branchQuery.state?.current : true,
       ].every(Boolean)
     })
 

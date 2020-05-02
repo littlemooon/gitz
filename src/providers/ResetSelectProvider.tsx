@@ -22,16 +22,18 @@ export default function ResetSelectProvider({
   const items = useMemo(
     () =>
       filterArray(
-        statusQuery.state?.files.map((file) =>
-          file.staged
-            ? {
-                id: file.path,
-                content: (
-                  <FileStatus file={file} context={FileStatusType.staged} />
-                ),
-              }
-            : undefined
-        ) ?? []
+        statusQuery.state?.files
+          .sort((a, b) => (a.path < b.path ? -1 : 1))
+          .map((file) =>
+            file.staged
+              ? {
+                  id: file.path,
+                  content: (
+                    <FileStatus file={file} context={FileStatusType.staged} />
+                  ),
+                }
+              : undefined
+          ) ?? []
       ),
     [statusQuery.state]
   )

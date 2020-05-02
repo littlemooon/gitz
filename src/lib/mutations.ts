@@ -1,5 +1,4 @@
 import { SimpleGit } from 'simple-git/promise'
-import { Maybe } from '../types'
 import { toArray } from './array'
 import { Branch, isFeatureBranch } from './branch'
 import { Commit } from './commit'
@@ -11,6 +10,7 @@ import {
   updateQuery,
 } from './queries'
 import { getStoreItem, setStoreItem, StoreKey } from './store'
+import { join } from './string'
 
 export interface GitMutation<I, R> {
   type: 'mutation'
@@ -59,11 +59,8 @@ export const mutations = {
         '-b',
         branch?.name,
         '--track',
-        `origin/${env.masterBranch}`,
+        `${env.remoteOrigin}/${env.masterBranch}`,
       ])
-      // .then(() => {
-      //   git.raw(['branch', '--set-upstream-to', `origin/${branch?.name}`])
-      // })
 
       await updateQueries(git)
     },
@@ -80,35 +77,27 @@ export const mutations = {
     },
   }),
 
-  push: createGitMutation<Maybe<string>>({
-    getName: (arg) => ({
+  push: createGitMutation<Branch>({
+    getName: (branch) => ({
       title: 'Push',
-      content: [`origin ${arg}`],
+      content: [join([env.remoteOrigin, branch?.name], ' ')],
     }),
-    run: async (git, arg) => {
-      await git.push('origin', arg)
+    run: async (git, branch) => {
+      await git.push(env.remoteOrigin, branch?.name, {
+        '--follow-tags': true,
+        '-u': true,
+      })
       await updateQueries(git)
     },
   }),
 
-  pull: createGitMutation<Maybe<string>>({
-    getName: (arg) => ({
+  pull: createGitMutation<Branch>({
+    getName: (branch) => ({
       title: 'Pull',
-      content: [arg],
+      content: [join([env.remoteOrigin, branch?.name], ' ')],
     }),
-    run: async (git, arg) => {
-      await git.pull(arg)
-      await updateQueries(git)
-    },
-  }),
-
-  rebase: createGitMutation<string>({
-    getName: (arg) => ({
-      title: 'Rebase',
-      content: [arg],
-    }),
-    run: async (git, arg) => {
-      await git.rebase([arg])
+    run: async (git, branch) => {
+      await git.pull(env.remoteOrigin, branch?.name, { '--rebase': true })
       await updateQueries(git)
     },
   }),
