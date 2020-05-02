@@ -14,7 +14,6 @@ import {
   parseCommitArgs,
 } from '../lib/commit'
 import { queries } from '../lib/queries'
-import CommandSelectProvider from '../providers/CommandSelectProvider'
 import CommitMutationProvider from '../providers/CommitMutationProvider'
 import { Maybe } from '../types'
 import FeatureRequireProvider from './FeatureRequireProvider'
@@ -69,13 +68,10 @@ export default function FeatureCommitProvider({
               onSubmit={onSubmit}
             />
           ) : (
-            <Warning title="No staged files">
-              <CommandSelectProvider
-                keys={[CliCommandKey.add, CliCommandKey.addAll]}
-              >
-                {children}
-              </CommandSelectProvider>
-            </Warning>
+            <Warning
+              text="No staged files"
+              commands={[CliCommandKey.add, CliCommandKey.addAll]}
+            />
           )}
         </FeatureRequireProvider>
       </GitRouter>

@@ -5,7 +5,6 @@ import useGitQuery from '../hooks/useGitQuery'
 import { Branch, isFeatureBranch } from '../lib/branch'
 import { CliCommandKey } from '../lib/command'
 import { queries } from '../lib/queries'
-import CommandSelectProvider from '../providers/CommandSelectProvider'
 
 export default function FeatureRequireProvider({
   children,
@@ -23,13 +22,10 @@ export default function FeatureRequireProvider({
       ) : branchQuery.state?.onFeature ? (
         <>{children}</>
       ) : (
-        <Warning title="Must be on a feature branch">
-          <CommandSelectProvider
-            keys={[CliCommandKey.checkout, CliCommandKey.branch]}
-          >
-            {children}
-          </CommandSelectProvider>
-        </Warning>
+        <Warning
+          text="Must be on a feature branch"
+          commands={[CliCommandKey.checkout, CliCommandKey.branch]}
+        />
       )}
     </GitRouter>
   )

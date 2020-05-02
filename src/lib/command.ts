@@ -118,7 +118,7 @@ export const cliCommands: Record<CliCommandKey, CliCommand> = {
     key: CliCommandKey.addAll,
     shortcut: 'd',
     description: `stage all files for commit`,
-    require: { working: true },
+    require: { working: true, feature: true },
   },
   [CliCommandKey.resetAll]: {
     key: CliCommandKey.resetAll,

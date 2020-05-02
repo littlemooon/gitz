@@ -36,7 +36,7 @@ export default function StaticProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (exiting) {
-      const timer = setTimeout(exit, 0)
+      const timer = setTimeout(() => exit(), 0)
       return () => clearTimeout(timer)
     }
   }, [exit, exiting, state])

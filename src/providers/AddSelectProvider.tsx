@@ -9,7 +9,6 @@ import { CliCommandKey } from '../lib/command'
 import { FileStatusType } from '../lib/file'
 import { queries } from '../lib/queries'
 import AddMutationProvider from './AddMutationProvider'
-import CommandSelectProvider from './CommandSelectProvider'
 
 export default function AddSelectProvider({
   children,
@@ -50,13 +49,15 @@ export default function AddSelectProvider({
           onSelect={setSelected}
         />
       ) : (
-        <Warning title="No changed files to add">
-          <CommandSelectProvider
-            keys={[CliCommandKey.commit, CliCommandKey.push]}
-          >
-            {children}
-          </CommandSelectProvider>
-        </Warning>
+        <Warning
+          text="No changed files to add"
+          commands={[
+            CliCommandKey.commit,
+            CliCommandKey.push,
+            CliCommandKey.reset,
+            CliCommandKey.resetAll,
+          ]}
+        />
       )}
     </GitRouter>
   )

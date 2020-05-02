@@ -3,9 +3,9 @@ import GitRouter from '../components/GitRouter'
 import Warning from '../components/Warning'
 import useGitQuery from '../hooks/useGitQuery'
 import { isFeatureBranch } from '../lib/branch'
+import { CliCommandKey } from '../lib/command'
 import { queries } from '../lib/queries'
 import BranchSelectProvider from '../providers/BranchSelectProvider'
-import FeatureCreateProvider from './FeatureCreateProvider'
 
 export default function FeatureSelectProvider({
   children,
@@ -25,9 +25,10 @@ export default function FeatureSelectProvider({
           {children}
         </BranchSelectProvider>
       ) : (
-        <Warning title="No feature branches found">
-          <FeatureCreateProvider>{children}</FeatureCreateProvider>
-        </Warning>
+        <Warning
+          text="No feature branches found"
+          commands={[CliCommandKey.branch]}
+        />
       )}
     </GitRouter>
   )

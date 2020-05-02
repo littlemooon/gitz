@@ -1,26 +1,25 @@
-import { Box } from 'ink'
-import React, { ReactNode } from 'react'
+import React from 'react'
+import { CliCommandKey } from '../lib/command'
+import CommandSelectProvider from '../providers/CommandSelectProvider'
 import Column from './Column'
 import LogText from './LogText'
 
 export default function Warning({
-  children,
-  title,
+  text,
   content,
+  commands,
 }: {
-  children: ReactNode
-  title: string
+  text: string
   content?: string[]
+  commands?: CliCommandKey[]
 }) {
   return (
     <Column>
-      <Box paddingBottom={1}>
-        <LogText.Warn prefix={title}>
-          {content ? <Column>{content}</Column> : null}
-        </LogText.Warn>
-      </Box>
+      <LogText.Warn prefix={text}>
+        {content ? <Column>{content}</Column> : null}
+      </LogText.Warn>
 
-      {children}
+      <CommandSelectProvider keys={commands} />
     </Column>
   )
 }

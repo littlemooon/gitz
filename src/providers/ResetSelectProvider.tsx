@@ -8,7 +8,6 @@ import { filterArray } from '../lib/array'
 import { CliCommandKey } from '../lib/command'
 import { FileStatusType } from '../lib/file'
 import { queries } from '../lib/queries'
-import CommandSelectProvider from './CommandSelectProvider'
 import ResetMutationProvider from './ResetMutationProvider'
 
 export default function ResetSelectProvider({
@@ -50,13 +49,10 @@ export default function ResetSelectProvider({
           onSelect={setSelected}
         />
       ) : (
-        <Warning title="No staged files to reset">
-          <CommandSelectProvider
-            keys={[CliCommandKey.add, CliCommandKey.addAll]}
-          >
-            {children}
-          </CommandSelectProvider>
-        </Warning>
+        <Warning
+          text="No staged files to reset"
+          commands={[CliCommandKey.add, CliCommandKey.addAll]}
+        />
       )}
     </GitRouter>
   )

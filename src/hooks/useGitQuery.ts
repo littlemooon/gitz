@@ -29,8 +29,14 @@ export default function useGitQuery<K extends StoreKey, A, R>(
   const [state, setState] = useState<Maybe<GitStore[K]>>(initialState)
 
   useEffect(() => {
-    const unsubscribe = subscribeStore(query.key, setState)
-    return unsubscribe
+    let timer: NodeJS.Timeout
+    const unsubscribe = subscribeStore(query.key, (item) => {
+      timer = setTimeout(() => setState(item), 0)
+    })
+    return () => {
+      timer && clearTimeout(timer)
+      unsubscribe()
+    }
   }, [query.key])
 
   const { data, error, status } = useAsync(
