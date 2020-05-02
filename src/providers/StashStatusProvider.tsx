@@ -16,7 +16,7 @@ export default function StashStatusProvider({
 
   return (
     <GitRouter response={stashQuery}>
-      <Column>
+      <Column paddingTop={1}>
         <Column>
           <Title>Stash</Title>
           <Table.Info

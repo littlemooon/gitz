@@ -107,13 +107,6 @@ export const cliCommands: Record<CliCommandKey, CliCommand> = {
     description: `push using remote branch name (git push origin HEAD:master)`,
     require: { feature: true, ahead: true },
   },
-  [CliCommandKey.stash]: {
-    key: CliCommandKey.stash,
-    shortcut: 't',
-    description: `manage stashed items`,
-    exposed: true,
-  },
-
   [CliCommandKey.addAll]: {
     key: CliCommandKey.addAll,
     shortcut: 'd',
@@ -124,6 +117,11 @@ export const cliCommands: Record<CliCommandKey, CliCommand> = {
     key: CliCommandKey.resetAll,
     description: `move all staged files back to working`,
     require: { staged: true },
+  },
+  [CliCommandKey.stash]: {
+    key: CliCommandKey.stash,
+    shortcut: 't',
+    description: `manage stashed items`,
   },
   [CliCommandKey.stashPut]: {
     key: CliCommandKey.stashPut,

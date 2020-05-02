@@ -1,7 +1,7 @@
 import React, { ReactNode, useCallback } from 'react'
 import { Branch } from '../lib/branch'
 import CheckoutMutationProvider from './CheckoutMutationProvider'
-import StashCommitProvider from './StashCommitProvider'
+import StashProvider from './StashProvider'
 
 export default function CheckoutProvider({
   branch,
@@ -17,7 +17,5 @@ export default function CheckoutProvider({
     [branch]
   )
 
-  return (
-    <StashCommitProvider Provider={provider}>{children}</StashCommitProvider>
-  )
+  return <StashProvider Provider={provider}>{children}</StashProvider>
 }

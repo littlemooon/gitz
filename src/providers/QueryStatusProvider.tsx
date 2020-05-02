@@ -1,7 +1,6 @@
 import React, { ReactNode } from 'react'
 import BranchStatusProvider from './BranchStatusProvider'
 import FileStatusProvider from './FileStatusProvider'
-import StashStatusProvider from './StashStatusProvider'
 
 export default function QueryStatusProvider({
   children,
@@ -10,9 +9,7 @@ export default function QueryStatusProvider({
 }) {
   return (
     <BranchStatusProvider>
-      <FileStatusProvider>
-        <StashStatusProvider>{children}</StashStatusProvider>
-      </FileStatusProvider>
+      <FileStatusProvider>{children}</FileStatusProvider>
     </BranchStatusProvider>
   )
 }

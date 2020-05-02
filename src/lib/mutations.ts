@@ -1,5 +1,4 @@
 import { SimpleGit } from 'simple-git/promise'
-import { CommitSummary, PullResult } from 'simple-git/typings/response'
 import { Maybe } from '../types'
 import { toArray } from './array'
 import { Branch, isFeatureBranch } from './branch'
@@ -41,7 +40,6 @@ export const mutations = {
         current: { ...branch, current: true },
         onFeature: isFeatureBranch(branch),
       })
-      return
     },
   }),
 
@@ -63,19 +61,17 @@ export const mutations = {
       // })
 
       await updateQuery(queries.branch, { git })
-      return
     },
   }),
 
-  commit: createGitMutation<Commit, CommitSummary>({
+  commit: createGitMutation<Commit>({
     getName: (commit) => ({
       title: 'Commit',
       content: [commit?.message],
     }),
     run: async (git, commit) => {
-      const r = await git.commit(commit.message)
+      await git.commit(commit.message)
       await updateQuery(queries.status, { git })
-      return r
     },
   }),
 
@@ -84,28 +80,31 @@ export const mutations = {
       title: 'Push',
       content: [`origin ${arg}`],
     }),
-    run: (git, arg) => {
-      return git.push('origin', arg)
+    run: async (git, arg) => {
+      await git.push('origin', arg)
+      await updateQuery(queries.status, { git })
     },
   }),
 
-  pull: createGitMutation<Branch, PullResult>({
+  pull: createGitMutation<Branch>({
     getName: (branch) => ({
       title: 'Pull',
       content: [branch?.name],
     }),
-    run: (git, branch) => {
-      return git.pull('origin', branch?.name)
+    run: async (git, branch) => {
+      await git.pull('origin', branch?.name)
+      await updateQuery(queries.status, { git })
     },
   }),
 
-  rebase: createGitMutation<Branch, string>({
+  rebase: createGitMutation<Branch>({
     getName: (branch) => ({
       title: 'Rebase',
       content: [branch?.name],
     }),
-    run: (git, branch) => {
-      return git.rebase([branch.name])
+    run: async (git, branch) => {
+      await git.rebase([branch.name])
+      await updateQuery(queries.status, { git })
     },
   }),
 

@@ -19,7 +19,7 @@ export default function FileStatusProvider({
   return (
     <GitRouter response={statusQuery}>
       <Column>
-        <Column paddingBottom={1}>
+        <Column>
           <Title>Files</Title>
           <Table.Info
             data={Object.values(FileStatusType).reduce((acc, context) => {

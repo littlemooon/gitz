@@ -16,6 +16,7 @@ import ResetSelectProvider from '../providers/ResetSelectProvider'
 import StashApplyMutationProvider from '../providers/StashApplyMutationProvider'
 import StashDropMutationProvider from '../providers/StashDropMutationProvider'
 import StashPutMutationProvider from '../providers/StashPutMutationProvider'
+import StashStatusProvider from '../providers/StashStatusProvider'
 import UnknownCommandProvider from '../providers/UnknownCommandProvider'
 
 export default function Command({
@@ -72,15 +73,17 @@ export default function Command({
 
     case CliCommandKey.stash:
       return (
-        <CommandSelectProvider
-          keys={[
-            CliCommandKey.stashPut,
-            CliCommandKey.stashApply,
-            CliCommandKey.stashDrop,
-          ]}
-        >
-          {children}
-        </CommandSelectProvider>
+        <StashStatusProvider>
+          <CommandSelectProvider
+            keys={[
+              CliCommandKey.stashPut,
+              CliCommandKey.stashApply,
+              CliCommandKey.stashDrop,
+            ]}
+          >
+            {children}
+          </CommandSelectProvider>
+        </StashStatusProvider>
       )
 
     case CliCommandKey.stashPut:
