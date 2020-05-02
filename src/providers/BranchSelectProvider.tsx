@@ -31,7 +31,9 @@ export default function BranchSelectProvider<B extends Branch>({
     return (
       branches
         .sort((a, b) => {
-          if (a.lastCheckout === b.lastCheckout) {
+          if (a.current) {
+            return -1
+          } else if (a.lastCheckout === b.lastCheckout) {
             if (a.created === b.created) {
               return a.name > b.name ? 1 : -1
             } else {

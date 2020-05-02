@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useAsync } from 'react-async'
 import git from '../lib/git'
 import { GitMutation } from '../lib/mutations'
 import { GitOperationName } from '../lib/queries'
+import { useStatic } from '../providers/StaticProvider'
 import { GitStatus } from './useGitQuery'
 
 export interface GitMutationResponse<R> {
@@ -14,33 +15,20 @@ export interface GitMutationResponse<R> {
   run: () => void
 }
 
-export default function useGitMutation<R, I>(
-  mutation: GitMutation<I, R>,
-  item?: I
+export default function useGitMutation<R, A>(
+  mutation: GitMutation<A, R>,
+  arg?: A
 ): GitMutationResponse<R> {
-  const [set, setSet] = useState(false)
-
+  const { addStatic } = useStatic()
   const { run, status, data, error, isInitial } = useAsync({
-    deferFn: () =>
-      mutation.run(
-        git.outputHandler(() => undefined),
-        item as I
-      ),
+    deferFn: () => mutation.run(git, arg as A),
   })
 
   useEffect(() => {
-    if (item && isInitial) {
+    if (arg && isInitial) {
       run()
     }
-  }, [item, run, isInitial])
-
-  useEffect(() => {
-    if (status === 'fulfilled' && !set) {
-      if (mutation.set && item) {
-        mutation.set(git, item).then(() => setSet(true))
-      }
-    }
-  }, [set, status, item, mutation])
+  }, [arg, run, isInitial])
 
   const gitStatus = useMemo(() => {
     switch (status) {
@@ -49,13 +37,13 @@ export default function useGitMutation<R, I>(
       case 'pending':
         return GitStatus.loading
       case 'fulfilled':
-        return set ? GitStatus.success : GitStatus.loading
+        return GitStatus.success
       default:
         return GitStatus.error
     }
-  }, [set, status])
+  }, [status])
 
-  const { title, content } = mutation.getName(item)
+  const { title, content } = mutation.getName(arg)
   const name = useMemo(
     () => ({
       title,
@@ -64,12 +52,27 @@ export default function useGitMutation<R, I>(
     [title, content]
   )
 
+  const runCallback = useCallback(() => {
+    run()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // useDebug('useGitMutation', {
+  //   type: 'mutation',
+  //   name,
+  //   state: data,
+  //   status: gitStatus,
+  //   error,
+  //   run: runCallback,
+  //   arg,
+  // })
+
   return {
     type: 'mutation',
     name,
     state: data,
     status: gitStatus,
     error,
-    run,
+    run: runCallback,
   }
 }

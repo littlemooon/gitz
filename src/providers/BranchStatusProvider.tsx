@@ -22,7 +22,7 @@ export default function BranchStatusProvider({
       <GitRouter response={statusQuery}>
         <Column>
           {branchQuery.state?.onFeature ? (
-            <Column paddingTop={1} paddingBottom={1}>
+            <Column paddingBottom={1}>
               <Title>Feature</Title>
               <Table.Info
                 data={{
@@ -52,7 +52,7 @@ export default function BranchStatusProvider({
               />
             </Column>
           ) : branchQuery.state?.current ? (
-            <Column paddingTop={1} paddingBottom={1}>
+            <Column paddingBottom={1}>
               <Title>Branch</Title>
               <Table.Info
                 data={{
@@ -76,7 +76,7 @@ export default function BranchStatusProvider({
               />
             </Column>
           ) : (
-            <Column paddingTop={1} paddingBottom={1}>
+            <Column paddingBottom={1}>
               <LogText.Warn prefix="No branches configured yet" />
             </Column>
           )}

@@ -52,7 +52,7 @@ const Table = {
     const { flags } = useCli()
     return flags.debug ? (
       <Static id={name}>
-        <Column>
+        <Column paddingTop={1}>
           <LogText.Default yellow>{name}</LogText.Default>
           <TableBase type={LogType.debug} {...props} />
         </Column>

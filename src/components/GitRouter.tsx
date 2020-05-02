@@ -5,10 +5,11 @@ import Router from '../components/Router'
 import useCli from '../hooks/useCli'
 import { GitMutationResponse } from '../hooks/useGitMutation'
 import { GitQueryResponse, GitStatus } from '../hooks/useGitQuery'
+import useUuid from '../hooks/useUuid'
 import { parseGitError } from '../lib/error'
 import { isFunction } from '../lib/function'
 import { StoreKey } from '../lib/store'
-import { join } from '../lib/string'
+import { join, reduceWhitespace } from '../lib/string'
 import CommandSelectProvider from '../providers/CommandSelectProvider'
 import { Maybe } from '../types'
 import Column from './Column'
@@ -29,6 +30,7 @@ export default function GitRouter({
   config?: GitRouteConfig
   children?: ReactNode
 }) {
+  const uuid = useUuid('gitrouter')
   const { flags } = useCli()
   const error = parseGitError(response.error)
 
@@ -51,11 +53,6 @@ export default function GitRouter({
     ),
   }
 
-  const id = join(
-    [response.name.title, ...(response.name.content ?? []), response.status],
-    '.'
-  )
-
   function getConfig(status: GitStatus, defaultRender?: ReactNode) {
     if (config && isFunction(config[status])) {
       return (config[status] as GetGitRoute)(defaults[status])
@@ -67,7 +64,14 @@ export default function GitRouter({
   return (
     <Column>
       <Table.Debug
-        name={join(['debug', id], '.')}
+        name={join(
+          [
+            reduceWhitespace(response.name.title),
+            ...(response.name.content ?? []),
+            response.status,
+          ],
+          '.'
+        )}
         data={{
           status: response.status,
           ...(response.state && { state: <Json>{response.state}</Json> }),
@@ -98,7 +102,7 @@ export default function GitRouter({
               <Box paddingBottom={1}>{defaults[GitStatus.error]}</Box>
 
               {flags.exit ? (
-                <Exit />
+                <Exit reason={join([response.name.title, 'error'], ' ')} />
               ) : (
                 <CommandSelectProvider keys={error?.commands}>
                   {children}

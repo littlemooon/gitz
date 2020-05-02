@@ -86,7 +86,7 @@ export default function CommandSelectProvider({
   ])
 
   return flags.exit ? (
-    <Exit />
+    <Exit reason="commandselect" />
   ) : (
     <GitRouter response={branchQuery}>
       <GitRouter response={statusQuery}>

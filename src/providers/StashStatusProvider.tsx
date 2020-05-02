@@ -17,7 +17,7 @@ export default function StashStatusProvider({
   return (
     <GitRouter response={stashQuery}>
       <Column>
-        <Column paddingTop={1} paddingBottom={1}>
+        <Column paddingBottom={1}>
           {stashQuery.state?.all.length ? (
             stashQuery.state?.all.map((stash) => (
               <Row gap={1} key={stash.hash}>

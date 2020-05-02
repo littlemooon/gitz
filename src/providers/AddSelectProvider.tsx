@@ -10,7 +10,6 @@ import { FileStatusType } from '../lib/file'
 import { queries } from '../lib/queries'
 import AddMutationProvider from './AddMutationProvider'
 import CommandSelectProvider from './CommandSelectProvider'
-import FileStatusProvider from './FileStatusProvider'
 
 export default function AddSelectProvider({
   children,
@@ -42,19 +41,17 @@ export default function AddSelectProvider({
     <GitRouter response={statusQuery}>
       {selected.length ? (
         <AddMutationProvider paths={selectedPaths}>
-          <FileStatusProvider>{children}</FileStatusProvider>
+          {children}
         </AddMutationProvider>
       ) : items.length ? (
         <Radio items={items} onSelect={setSelected} />
       ) : (
         <Warning title="No changed files to add">
-          <FileStatusProvider>
-            <CommandSelectProvider
-              keys={[CliCommandKey.commit, CliCommandKey.push]}
-            >
-              {children}
-            </CommandSelectProvider>
-          </FileStatusProvider>
+          <CommandSelectProvider
+            keys={[CliCommandKey.commit, CliCommandKey.push]}
+          >
+            {children}
+          </CommandSelectProvider>
         </Warning>
       )}
     </GitRouter>

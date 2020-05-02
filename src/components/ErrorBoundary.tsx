@@ -43,18 +43,17 @@ export default class ErrorBoundary extends Component<
       <ErrorContext.Provider value={{ setError: this.setError }}>
         {error ? (
           <Column>
-            <LogText.Error prefix={error.name}>
-              {error.message}
-              <LogText.Debug>{'error exit'}</LogText.Debug>
-              <Exit />
-            </LogText.Error>
-
             {errorInfo ? (
               <Table.Debug
                 name="error boundary"
                 data={{ componentStack: errorInfo.componentStack?.trim() }}
               />
             ) : null}
+
+            <LogText.Error prefix={error.name}>
+              {error.message}
+              <Exit reason="errorboundary" />
+            </LogText.Error>
           </Column>
         ) : (
           <>{this.props.children}</>

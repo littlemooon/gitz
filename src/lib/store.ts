@@ -60,4 +60,35 @@ export function setStoreItem<K extends keyof GitStore>(
   return getStoreItem(key)
 }
 
+export type StoreHandler<K extends StoreKey> = (item: Store[K]) => void
+
+const handlers: Record<StoreKey, StoreHandler<any>[]> = {
+  [StoreKey.branches]: [],
+  [StoreKey.status]: [],
+  [StoreKey.stash]: [],
+}
+
+export function subscribeStore<K extends StoreKey>(
+  key: K,
+  handler: StoreHandler<K>
+) {
+  handlers[key] = [...handlers[key], handler]
+
+  return () => {
+    handlers[key] = handlers[key].filter((x) => x !== handler)
+  }
+}
+
+function subscribeStores<K extends StoreKey>(key: K) {
+  store.onDidChange(key, (item) => {
+    handlers[key].forEach((handler) => {
+      handler(item)
+    })
+  })
+}
+
+Object.values(StoreKey).forEach((key) => {
+  subscribeStores(key)
+})
+
 export default store

@@ -17,7 +17,7 @@ export default function App() {
             <Column>
               <Table.Debug name="store" data={{ path: store.path }} />
               <Command command={cli.command}>
-                <Exit />
+                <Exit reason="finished" />
               </Command>
             </Column>
           )}

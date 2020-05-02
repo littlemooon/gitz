@@ -9,7 +9,6 @@ import { CliCommandKey } from '../lib/command'
 import { FileStatusType } from '../lib/file'
 import { queries } from '../lib/queries'
 import CommandSelectProvider from './CommandSelectProvider'
-import FileStatusProvider from './FileStatusProvider'
 import ResetMutationProvider from './ResetMutationProvider'
 
 export default function ResetSelectProvider({
@@ -42,19 +41,17 @@ export default function ResetSelectProvider({
     <GitRouter response={statusQuery}>
       {selected.length ? (
         <ResetMutationProvider paths={selectedPaths}>
-          <FileStatusProvider>{children}</FileStatusProvider>
+          {children}
         </ResetMutationProvider>
       ) : items.length ? (
         <Radio items={items} onSelect={setSelected} />
       ) : (
         <Warning title="No staged files to reset">
-          <FileStatusProvider>
-            <CommandSelectProvider
-              keys={[CliCommandKey.add, CliCommandKey.addAll]}
-            >
-              {children}
-            </CommandSelectProvider>
-          </FileStatusProvider>
+          <CommandSelectProvider
+            keys={[CliCommandKey.add, CliCommandKey.addAll]}
+          >
+            {children}
+          </CommandSelectProvider>
         </Warning>
       )}
     </GitRouter>

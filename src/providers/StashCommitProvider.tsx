@@ -6,7 +6,6 @@ import useGitQuery from '../hooks/useGitQuery'
 import { Branch } from '../lib/branch'
 import { queries } from '../lib/queries'
 import FeatureCommitProvider from './FeatureCommitProvider'
-import FileStatusProvider from './FileStatusProvider'
 import StashApplyMutationProvider from './StashApplyMutationProvider'
 import StashDropMutationProvider from './StashDropMutationProvider'
 import StashPutMutationProvider from './StashPutMutationProvider'
@@ -45,15 +44,13 @@ export default function StashCommitProvider({
               <Provider>{children}</Provider>
             </FeatureCommitProvider>
           ) : (
-            <FileStatusProvider>
-              <Select
-                items={[
-                  { id: 'stash', label: 'Stash changes', shortcut: 's' },
-                  { id: 'commit', label: 'Commit changes', shortcut: 'c' },
-                ]}
-                onSelect={setSelect}
-              />
-            </FileStatusProvider>
+            <Select
+              items={[
+                { id: 'stash', label: 'Stash changes', shortcut: 's' },
+                { id: 'commit', label: 'Commit changes', shortcut: 'c' },
+              ]}
+              onSelect={setSelect}
+            />
           )
         ) : (
           <Provider>{children}</Provider>

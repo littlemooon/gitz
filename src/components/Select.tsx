@@ -55,11 +55,9 @@ export default function Select(props: SelectProps) {
     : props.items.length
 
   const items = useMemo(() => {
-    const slicedItems = hasLimit
+    return hasLimit
       ? arrayRotate(props.items, state.rotateIndex).slice(0, limit)
       : props.items
-
-    return slicedItems.sort((x) => (x.bold ? -1 : 1))
   }, [props.items, state.rotateIndex, limit, hasLimit])
 
   useInput((input, key) => {

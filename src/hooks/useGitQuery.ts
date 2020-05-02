@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useAsync } from 'react-async'
 import git from '../lib/git'
 import { GitOperationName, GitQuery, GitStore } from '../lib/queries'
-import store, { getStoreItem, StoreKey } from '../lib/store'
+import { getStoreItem, StoreKey, subscribeStore } from '../lib/store'
 import { Maybe } from '../types'
 import useConstant from './useConstant'
 
@@ -29,7 +29,7 @@ export default function useGitQuery<K extends StoreKey, A, R>(
   const [state, setState] = useState<Maybe<GitStore[K]>>(initialState)
 
   useEffect(() => {
-    const unsubscribe = store.onDidChange(query.key, setState)
+    const unsubscribe = subscribeStore(query.key, setState)
     return unsubscribe
   }, [query.key])
 
@@ -74,9 +74,18 @@ export default function useGitQuery<K extends StoreKey, A, R>(
     }
   }, [status, state])
 
+  const { title, content } = query.getName(args)
+  const name = useMemo(
+    () => ({
+      title,
+      content,
+    }),
+    [title, content]
+  )
+
   return {
     type: 'query',
-    name: query.getName(args),
+    name,
     state,
     status: gitStatus,
     error,

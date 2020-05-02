@@ -9,7 +9,7 @@ export default function RadioIndicator({ selected }: { selected?: boolean }) {
     <Box marginRight={1}>
       {focus ? (
         <Color bold cyan>
-          {selected ? figures.circleFilled : figures.circle}
+          {selected ? figures.radioOn : figures.radioOff}
         </Color>
       ) : selected ? (
         figures.circleFilled

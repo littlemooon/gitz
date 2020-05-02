@@ -6,13 +6,12 @@ import { Branch, isFeatureBranch } from './branch'
 import { Commit } from './commit'
 import env from './env'
 import { GitOperationName, queries, updateQuery } from './queries'
-import store, { setStoreItem, StoreKey } from './store'
+import { getStoreItem, setStoreItem, StoreKey } from './store'
 
 export interface GitMutation<I, R> {
   type: 'mutation'
   getName: (item?: I) => GitOperationName
   run: (git: SimpleGit, item: I) => Promise<R>
-  set?: (git: SimpleGit, item: I) => Promise<void>
 }
 
 function createGitMutation<I, R = void>(
@@ -30,7 +29,8 @@ export const mutations = {
     run: async (git, branch) => {
       await git.checkout(branch?.name)
       await updateQuery(queries.branch, { git })
-      const branches = store.get(StoreKey.branches)
+
+      const branches = getStoreItem(StoreKey.branches)
 
       setStoreItem(StoreKey.branches, {
         all: branches?.all.map((x) => {
@@ -41,6 +41,7 @@ export const mutations = {
         current: { ...branch, current: true },
         onFeature: isFeatureBranch(branch),
       })
+      return
     },
   }),
 
@@ -62,6 +63,7 @@ export const mutations = {
       // })
 
       await updateQuery(queries.branch, { git })
+      return
     },
   }),
 
@@ -115,6 +117,7 @@ export const mutations = {
     run: async (git, paths) => {
       await git.add(paths)
       await updateQuery(queries.status, { git })
+      return
     },
   }),
 
@@ -126,6 +129,7 @@ export const mutations = {
     run: async (git, paths) => {
       await git.raw(['reset', ...toArray(paths)])
       await updateQuery(queries.status, { git })
+      return
     },
   }),
 
@@ -137,6 +141,7 @@ export const mutations = {
       await git.stash()
       await updateQuery(queries.status, { git })
       await updateQuery(queries.stash, { git })
+      return
     },
   }),
 
@@ -146,6 +151,7 @@ export const mutations = {
     }),
     run: async (git) => {
       await git.raw(['stash', 'apply'])
+      return
     },
   }),
 
@@ -156,6 +162,7 @@ export const mutations = {
     run: async (git) => {
       await git.raw(['stash', 'drop'])
       await updateQuery(queries.stash, { git })
+      return
     },
   }),
 }

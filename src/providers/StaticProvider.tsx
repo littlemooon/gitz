@@ -1,4 +1,4 @@
-import { Box, useApp } from 'ink'
+import { Box, Static, useApp } from 'ink'
 import React, {
   createContext,
   ReactNode,
@@ -8,8 +8,7 @@ import React, {
   useState,
 } from 'react'
 import Column from '../components/Column'
-import LogText from '../components/LogText'
-import useCli from '../hooks/useCli'
+import RenderTimes from '../components/RenderTimes'
 import { ExitContext } from './ExitProvider'
 
 const StaticContext = createContext<{
@@ -22,7 +21,6 @@ const StaticContext = createContext<{
 
 export default function StaticProvider({ children }: { children: ReactNode }) {
   const { exit } = useApp()
-  const { flags } = useCli()
   const [exiting, setExiting] = useState(false)
   const [state, setState] = useState<Record<string, ReactNode>>({})
 
@@ -46,16 +44,19 @@ export default function StaticProvider({ children }: { children: ReactNode }) {
   return (
     <ExitContext.Provider value={{ exit: onExit }}>
       <StaticContext.Provider value={{ addStatic }}>
-        {Object.entries(state).map(([id, node]) => {
-          return (
-            <Column key={id} paddingBottom={1}>
-              {flags.debug ? <LogText.Default>{id}</LogText.Default> : null}
-              <Box>{node}</Box>
-            </Column>
-          )
-        })}
+        <Static>
+          {Object.entries(state).map(([id, node]) => {
+            return (
+              <RenderTimes key={id} count={1}>
+                <Column>
+                  <Box>{node}</Box>
+                </Column>
+              </RenderTimes>
+            )
+          })}
+        </Static>
 
-        {children}
+        <Box paddingTop={1}>{children}</Box>
       </StaticContext.Provider>
     </ExitContext.Provider>
   )
