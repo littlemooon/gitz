@@ -23,7 +23,7 @@ export default function CliProvider({
   }, [])
 
   useEffect(() => {
-    if (state.flags.help) state.showHelp()
+    if (state.flags.help) state.showHelp(0)
     if (state.flags.version) state.showVersion()
   }, [state])
 
