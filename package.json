@@ -1,7 +1,7 @@
 {
   "name": "gitz",
   "description": "Interactive git client for feature workflow",
-  "version": "0.8.3",
+  "version": "0.8.4",
   "license": "MIT",
   "bin": {
     "gitz": "./src/index.js"
