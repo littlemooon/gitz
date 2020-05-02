@@ -19,7 +19,6 @@ export default function App() {
               <Table.Debug name="store" data={{ path: store.path }} />
               <QueryStatusProvider>
                 <Command command={cli.command}>
-                  {/* <Exit reason="finished" /> */}
                   <CommandSelectProvider />
                 </Command>
               </QueryStatusProvider>

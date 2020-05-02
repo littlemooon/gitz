@@ -15,7 +15,7 @@ export default function FileStatusProvider({
   children: ReactNode
 }) {
   const statusQuery = useGitQuery(queries.status, undefined)
-  // useDebug('FileStatusProvider', statusQuery)
+
   return (
     <GitRouter response={statusQuery}>
       <Column>

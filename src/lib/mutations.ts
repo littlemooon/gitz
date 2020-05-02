@@ -150,7 +150,20 @@ export const mutations = {
       title: 'Stash apply',
     }),
     run: async (git) => {
-      await git.raw(['stash', 'apply'])
+      await git.stash(['apply'])
+      await updateQuery(queries.status, { git })
+      return
+    },
+  }),
+
+  stashPop: createGitMutation<undefined>({
+    getName: () => ({
+      title: 'Stash pop',
+    }),
+    run: async (git) => {
+      await git.stash(['pop'])
+      await updateQuery(queries.status, { git })
+      await updateQuery(queries.stash, { git })
       return
     },
   }),
@@ -160,7 +173,7 @@ export const mutations = {
       title: 'Stash drop',
     }),
     run: async (git) => {
-      await git.raw(['stash', 'drop'])
+      await git.stash(['drop'])
       await updateQuery(queries.stash, { git })
       return
     },

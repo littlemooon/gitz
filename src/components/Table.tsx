@@ -27,7 +27,9 @@ function parseRow(tableData: TableRow): TableRowNode {
 
 function TableBase({ data, type }: TableProps) {
   const keys = Object.keys(data)
-  const maxKey = useMemo(() => Math.max(...keys.map((x) => x.length)), [keys])
+  const maxKey = useMemo(() => Math.max(...keys.map((x) => x.length), 11), [
+    keys,
+  ])
 
   return (
     <Column paddingLeft={2}>

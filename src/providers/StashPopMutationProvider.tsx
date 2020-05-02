@@ -4,14 +4,14 @@ import useGitMutation from '../hooks/useGitMutation'
 import useInit from '../hooks/useInit'
 import { mutations } from '../lib/mutations'
 
-export default function StashApplyMutationProvider({
+export default function StashPopMutationProvider({
   children,
 }: {
   children: ReactNode
 }) {
-  const stashApplyMutation = useGitMutation(mutations.stashApply, undefined)
+  const stashPopMutation = useGitMutation(mutations.stashPop, undefined)
 
-  useInit(stashApplyMutation.run)
+  useInit(stashPopMutation.run)
 
-  return <GitRouter response={stashApplyMutation}>{children}</GitRouter>
+  return <GitRouter response={stashPopMutation}>{children}</GitRouter>
 }

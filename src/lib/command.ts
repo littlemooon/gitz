@@ -111,7 +111,7 @@ export const cliCommands: Record<CliCommandKey, CliCommand> = {
   [CliCommandKey.stash]: {
     key: CliCommandKey.stash,
     shortcut: 't',
-    description: `list stashed items`,
+    description: `manage stashed items`,
     exposed: true,
   },
 
@@ -147,7 +147,7 @@ export const exposedCliCommands = Object.values(cliCommands).filter(
 )
 
 export function getCommandHelpText(): { text: string; maxLength: number } {
-  const commandStrings = exposedCliCommands.map((command) => {
+  const commandStrings = Object.values(cliCommands).map((command) => {
     return join(
       [
         'gitz',

@@ -1,11 +1,11 @@
 import React, { ReactNode } from 'react'
 import Column from '../components/Column'
 import GitRouter from '../components/GitRouter'
-import LogText from '../components/LogText'
-import Row from '../components/Row'
+import StashStatus from '../components/StashStatus'
+import Table from '../components/Table'
+import Title from '../components/Title'
 import useGitQuery from '../hooks/useGitQuery'
 import { queries } from '../lib/queries'
-import { join } from '../lib/string'
 
 export default function StashStatusProvider({
   children,
@@ -18,27 +18,18 @@ export default function StashStatusProvider({
     <GitRouter response={stashQuery}>
       <Column>
         <Column paddingBottom={1}>
-          {stashQuery.state?.all.length ? (
-            stashQuery.state?.all.map((stash) => (
-              <Row gap={1} key={stash.hash}>
-                <LogText.Default>
-                  {new Date(stash.date).toLocaleDateString()}
-                </LogText.Default>
-                <LogText.Default magenta>
-                  {new Date(stash.date).toLocaleTimeString()}
-                </LogText.Default>
-
-                <LogText.Default>
-                  {join(
-                    [stash.authorEmail ?? stash.authorName, stash.message],
-                    ' '
-                  )}
-                </LogText.Default>
-              </Row>
-            ))
-          ) : (
-            <LogText.Warn prefix="No stashed items" />
-          )}
+          <Title>Stash</Title>
+          <Table.Info
+            data={{
+              items: (
+                <Column>
+                  {stashQuery.state?.all.map((stash) => (
+                    <StashStatus key={stash.hash} stash={stash} />
+                  ))}
+                </Column>
+              ),
+            }}
+          />
         </Column>
 
         {children}
