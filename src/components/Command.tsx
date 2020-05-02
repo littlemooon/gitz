@@ -11,7 +11,6 @@ import FeaturePushProvider from '../providers/FeaturePushProvider'
 import FeatureSelectProvider from '../providers/FeatureSelectProvider'
 import FeatureUpdateProvider from '../providers/FeatureUpdateProvider'
 import FileStatusProvider from '../providers/FileStatusProvider'
-import IndexCommandProvider from '../providers/IndexCommandProvider'
 import ResetMutationProvider from '../providers/ResetMutationProvider'
 import ResetSelectProvider from '../providers/ResetSelectProvider'
 import StashApplyMutationProvider from '../providers/StashApplyMutationProvider'
@@ -99,11 +98,11 @@ export default function Command({
     case CliCommandKey.unknown:
       return (
         <UnknownCommandProvider>
-          <IndexCommandProvider>{children}</IndexCommandProvider>
+          <CommandSelectProvider>{children}</CommandSelectProvider>
         </UnknownCommandProvider>
       )
 
     default:
-      return <IndexCommandProvider>{children}</IndexCommandProvider>
+      return <CommandSelectProvider>{children}</CommandSelectProvider>
   }
 }

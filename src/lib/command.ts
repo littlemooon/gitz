@@ -33,7 +33,6 @@ export interface CliCommand {
     staged?: boolean
     ahead?: boolean
     changes?: boolean
-    stash?: boolean
   }
 }
 
@@ -135,12 +134,10 @@ export const cliCommands: Record<CliCommandKey, CliCommand> = {
   [CliCommandKey.stashApply]: {
     key: CliCommandKey.stashApply,
     description: `apply latest stash item`,
-    require: { stash: true },
   },
   [CliCommandKey.stashDrop]: {
     key: CliCommandKey.stashDrop,
     description: `remove latest stash item`,
-    require: { stash: true },
   },
   [CliCommandKey.unknown]: createUnknownCommand(''),
 }

@@ -5,7 +5,6 @@ import Router from '../components/Router'
 import useCli from '../hooks/useCli'
 import { GitMutationResponse } from '../hooks/useGitMutation'
 import { GitQueryResponse, GitStatus } from '../hooks/useGitQuery'
-import useUuid from '../hooks/useUuid'
 import { parseGitError } from '../lib/error'
 import { isFunction } from '../lib/function'
 import { StoreKey } from '../lib/store'
@@ -28,9 +27,8 @@ export default function GitRouter({
 }: {
   response: GitQueryResponse<StoreKey> | GitMutationResponse<any>
   config?: GitRouteConfig
-  children?: ReactNode
+  children: ReactNode
 }) {
-  const uuid = useUuid('gitrouter')
   const { flags } = useCli()
   const error = parseGitError(response.error)
 

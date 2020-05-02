@@ -21,7 +21,6 @@ export default function CommandSelectProvider({
   const { flags } = useCli()
   const branchQuery = useGitQuery(queries.branch, undefined)
   const statusQuery = useGitQuery(queries.status, undefined)
-  const stashQuery = useGitQuery(queries.stash, undefined)
 
   const { exit } = useExit()
   const [command, setCommand] = useState<CliCommandKey | undefined>()
@@ -57,7 +56,6 @@ export default function CommandSelectProvider({
         x.require?.working ? hasWorkingChanges : true,
         x.require?.changes ? hasStagedChanges || hasWorkingChanges : true,
         x.require?.ahead ? statusQuery.state?.ahead : true,
-        x.require?.stash ? stashQuery.state?.latest : true,
       ].every(Boolean)
     })
 
@@ -76,33 +74,24 @@ export default function CommandSelectProvider({
         bold: keys?.includes(command.key),
       }))
     )
-  }, [
-    hasStagedChanges,
-    hasWorkingChanges,
-    keys,
-    onFeature,
-    stashQuery.state,
-    statusQuery.state,
-  ])
+  }, [hasStagedChanges, hasWorkingChanges, keys, onFeature, statusQuery.state])
 
   return flags.exit ? (
     <Exit reason="commandselect" />
   ) : (
     <GitRouter response={branchQuery}>
       <GitRouter response={statusQuery}>
-        <GitRouter response={stashQuery}>
-          {command ? (
-            <Command command={cliCommands[command]}>
-              {children ?? <CommandSelectProvider />}
-            </Command>
-          ) : (
-            <Select
-              title="Commands"
-              onSelect={handleSelect}
-              items={[...items, { id: 'exit', label: 'exit', shortcut: 'x' }]}
-            />
-          )}
-        </GitRouter>
+        {command ? (
+          <Command command={cliCommands[command]}>
+            {children ?? <CommandSelectProvider />}
+          </Command>
+        ) : (
+          <Select
+            title="Commands"
+            onSelect={handleSelect}
+            items={[...items, { id: 'exit', label: 'exit', shortcut: 'x' }]}
+          />
+        )}
       </GitRouter>
     </GitRouter>
   )

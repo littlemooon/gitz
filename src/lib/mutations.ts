@@ -135,7 +135,7 @@ export const mutations = {
 
   stashPut: createGitMutation<undefined>({
     getName: () => ({
-      title: 'Stash push',
+      title: 'Stash put',
     }),
     run: async (git) => {
       await git.stash()

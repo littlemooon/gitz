@@ -1,9 +1,9 @@
 import React, { ReactNode } from 'react'
 import BranchStatusProvider from './BranchStatusProvider'
-import CommandSelectProvider from './CommandSelectProvider'
 import FileStatusProvider from './FileStatusProvider'
+import StashStatusProvider from './StashStatusProvider'
 
-export default function IndexCommandProvider({
+export default function QueryStatusProvider({
   children,
 }: {
   children: ReactNode
@@ -11,7 +11,7 @@ export default function IndexCommandProvider({
   return (
     <BranchStatusProvider>
       <FileStatusProvider>
-        <CommandSelectProvider>{children}</CommandSelectProvider>
+        <StashStatusProvider>{children}</StashStatusProvider>
       </FileStatusProvider>
     </BranchStatusProvider>
   )

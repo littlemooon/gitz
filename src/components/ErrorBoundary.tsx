@@ -50,10 +50,9 @@ export default class ErrorBoundary extends Component<
               />
             ) : null}
 
-            <LogText.Error prefix={error.name}>
-              {error.message}
-              <Exit reason="errorboundary" />
-            </LogText.Error>
+            <LogText.Error prefix={error.name}>{error.message}</LogText.Error>
+
+            <Exit reason="errorboundary" />
           </Column>
         ) : (
           <>{this.props.children}</>

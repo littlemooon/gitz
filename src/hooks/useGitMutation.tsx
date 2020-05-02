@@ -3,7 +3,6 @@ import { useAsync } from 'react-async'
 import git from '../lib/git'
 import { GitMutation } from '../lib/mutations'
 import { GitOperationName } from '../lib/queries'
-import { useStatic } from '../providers/StaticProvider'
 import { GitStatus } from './useGitQuery'
 
 export interface GitMutationResponse<R> {
@@ -19,7 +18,6 @@ export default function useGitMutation<R, A>(
   mutation: GitMutation<A, R>,
   arg?: A
 ): GitMutationResponse<R> {
-  const { addStatic } = useStatic()
   const { run, status, data, error, isInitial } = useAsync({
     deferFn: () => mutation.run(git, arg as A),
   })
@@ -55,17 +53,7 @@ export default function useGitMutation<R, A>(
   const runCallback = useCallback(() => {
     run()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // useDebug('useGitMutation', {
-  //   type: 'mutation',
-  //   name,
-  //   state: data,
-  //   status: gitStatus,
-  //   error,
-  //   run: runCallback,
-  //   arg,
-  // })
+  }, [arg])
 
   return {
     type: 'mutation',

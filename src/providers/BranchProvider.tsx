@@ -1,8 +1,5 @@
-import React, { ReactNode } from 'react'
-import GitRouter from '../components/GitRouter'
-import useGitQuery from '../hooks/useGitQuery'
+import React, { ReactNode, useCallback } from 'react'
 import { Branch } from '../lib/branch'
-import { queries } from '../lib/queries'
 import BranchMutationProvider from './BranchMutationProvider'
 import StashCommitProvider from './StashCommitProvider'
 
@@ -13,23 +10,14 @@ export default function BranchProvider({
   branch?: Branch
   children: ReactNode
 }) {
-  const branchQuery = useGitQuery(queries.branch, undefined)
+  const provider = useCallback(
+    (stashCommitProps) => (
+      <BranchMutationProvider branch={branch} {...stashCommitProps} />
+    ),
+    [branch]
+  )
 
   return (
-    <GitRouter response={branchQuery}>
-      {branchQuery.state?.all.find(({ name }) => name === branch?.name) ? (
-        <>{children}</>
-      ) : (
-        <StashCommitProvider
-          Provider={({ children }: { children?: ReactNode }) => (
-            <BranchMutationProvider branch={branch}>
-              {children}
-            </BranchMutationProvider>
-          )}
-        >
-          {children}
-        </StashCommitProvider>
-      )}
-    </GitRouter>
+    <StashCommitProvider Provider={provider}>{children}</StashCommitProvider>
   )
 }

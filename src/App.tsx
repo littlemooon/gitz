@@ -2,10 +2,11 @@ import React from 'react'
 import Column from './components/Column'
 import Command from './components/Command'
 import ErrorBoundary from './components/ErrorBoundary'
-import Exit from './components/Exit'
 import Table from './components/Table'
 import store from './lib/store'
 import CliProvider from './providers/CliProvider'
+import CommandSelectProvider from './providers/CommandSelectProvider'
+import QueryStatusProvider from './providers/QueryStatusProvider'
 import StaticProvider from './providers/StaticProvider'
 
 export default function App() {
@@ -16,9 +17,12 @@ export default function App() {
           {(cli) => (
             <Column>
               <Table.Debug name="store" data={{ path: store.path }} />
-              <Command command={cli.command}>
-                <Exit reason="finished" />
-              </Command>
+              <QueryStatusProvider>
+                <Command command={cli.command}>
+                  {/* <Exit reason="finished" /> */}
+                  <CommandSelectProvider />
+                </Command>
+              </QueryStatusProvider>
             </Column>
           )}
         </CliProvider>

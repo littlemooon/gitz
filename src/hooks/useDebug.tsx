@@ -34,5 +34,6 @@ export default function useDebug<T extends { [x: string]: any }>(
         })}
       </Column>
     )
-  }, [addStatic, name, obj, prev])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 }
