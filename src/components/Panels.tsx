@@ -33,7 +33,7 @@ export default function Panels({ items }: { items: PanelItem[] }) {
 
   return (
     <FocusProvider focus={!selected}>
-      <Select items={focusItems} onSelect={setSelected} />
+      <Select title="Panels" items={focusItems} onSelect={setSelected} />
     </FocusProvider>
   )
 }
