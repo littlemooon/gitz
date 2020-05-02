@@ -3,7 +3,6 @@ import GitRouter from '../components/GitRouter'
 import Select, { SelectItem } from '../components/Select'
 import useCli from '../hooks/useCli'
 import useConstant from '../hooks/useConstant'
-import useDebug from '../hooks/useDebug'
 import useGitQuery from '../hooks/useGitQuery'
 import { Branch } from '../lib/branch'
 import { queries } from '../lib/queries'
@@ -27,9 +26,7 @@ export default function StashCommitProvider({
   const statusQuery = useGitQuery(queries.status, undefined)
 
   const initialBranch = useConstant(() => branchQuery.state)
-  const initialStatus = useConstant(() => statusQuery.state)
 
-  useDebug('StashCommitProvider', { initialStatus })
   return (
     <GitRouter response={branchQuery}>
       <GitRouter response={statusQuery}>
@@ -49,6 +46,7 @@ export default function StashCommitProvider({
           </FeatureCommitProvider>
         ) : (
           <Select
+            title="Select next step"
             items={[
               { id: 'stash', label: 'Stash changes', shortcut: 's' },
               { id: 'commit', label: 'Commit changes', shortcut: 'c' },

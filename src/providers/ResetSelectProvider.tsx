@@ -44,7 +44,11 @@ export default function ResetSelectProvider({
           {children}
         </ResetMutationProvider>
       ) : items.length ? (
-        <Radio items={items} onSelect={setSelected} />
+        <Radio
+          title="Remove from staged files"
+          items={items}
+          onSelect={setSelected}
+        />
       ) : (
         <Warning title="No staged files to reset">
           <CommandSelectProvider

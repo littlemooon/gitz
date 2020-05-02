@@ -27,7 +27,7 @@ export function isSelectGap(item: SelectItem | SelectGap): item is SelectGap {
 }
 
 export interface SelectProps {
-  title?: string
+  title: string
   items: Array<SelectItem | SelectGap>
   initialIndex?: number
   limit?: number

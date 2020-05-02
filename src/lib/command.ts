@@ -15,7 +15,7 @@ export enum CliCommandKey {
   'pushOrigin' = 'push-origin',
   'pushOriginMaster' = 'push-origin-master',
   'stash' = 'stash',
-  'stashPut' = 'stash-push',
+  'stashPut' = 'stash-put',
   'stashApply' = 'stash-apply',
   'stashDrop' = 'stash-drop',
   'unknown' = 'unknown',
@@ -32,7 +32,6 @@ export interface CliCommand {
     working?: boolean
     staged?: boolean
     ahead?: boolean
-    changes?: boolean
   }
 }
 
@@ -128,8 +127,8 @@ export const cliCommands: Record<CliCommandKey, CliCommand> = {
   },
   [CliCommandKey.stashPut]: {
     key: CliCommandKey.stashPut,
-    description: `push changes onto stash`,
-    require: { changes: true },
+    description: `put changes onto stash`,
+    require: { staged: true },
   },
   [CliCommandKey.stashApply]: {
     key: CliCommandKey.stashApply,

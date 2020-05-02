@@ -44,7 +44,11 @@ export default function AddSelectProvider({
           {children}
         </AddMutationProvider>
       ) : items.length ? (
-        <Radio items={items} onSelect={setSelected} />
+        <Radio
+          title="Add to staged files"
+          items={items}
+          onSelect={setSelected}
+        />
       ) : (
         <Warning title="No changed files to add">
           <CommandSelectProvider

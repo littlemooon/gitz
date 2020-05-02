@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useAsync } from 'react-async'
 import git from '../lib/git'
 import { GitMutation } from '../lib/mutations'
@@ -46,9 +46,17 @@ export default function useGitMutation<R, A>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [arg])
 
+  const [name, setName] = useState<GitOperationName>(mutation.getName(arg))
+
+  useEffect(() => {
+    if (arg) {
+      setName(mutation.getName(arg))
+    }
+  }, [arg, mutation])
+
   return {
     type: 'mutation',
-    name: mutation.getName(arg),
+    name,
     state: data,
     status: gitStatus,
     error,

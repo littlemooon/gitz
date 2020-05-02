@@ -37,8 +37,6 @@ export default function CommandSelectProvider({
   )
 
   const onFeature = branchQuery.state?.onFeature
-  const hasWorkingChanges = statusQuery.state?.hasWorkingChanges
-  const hasStagedChanges = statusQuery.state?.hasStagedChanges
 
   const items: SelectItem[] = useMemo(() => {
     const selected = keys
@@ -52,9 +50,8 @@ export default function CommandSelectProvider({
     const commands = [...selected, ...exposed].filter((x) => {
       return [
         x.require?.feature ? onFeature : true,
-        x.require?.staged ? hasStagedChanges : true,
-        x.require?.working ? hasWorkingChanges : true,
-        x.require?.changes ? hasStagedChanges || hasWorkingChanges : true,
+        x.require?.staged ? statusQuery.state?.hasStagedChanges : true,
+        x.require?.working ? statusQuery.state?.hasWorkingChanges : true,
         x.require?.ahead ? statusQuery.state?.ahead : true,
       ].every(Boolean)
     })
@@ -74,7 +71,7 @@ export default function CommandSelectProvider({
         bold: keys?.includes(command.key),
       }))
     )
-  }, [hasStagedChanges, hasWorkingChanges, keys, onFeature, statusQuery.state])
+  }, [keys, onFeature, statusQuery.state])
 
   return flags.exit ? (
     <Exit reason="commandselect" />

@@ -16,7 +16,7 @@ export type RadioItem<T extends object = {}> = T & {
 }
 
 export interface RadioProps {
-  title?: string
+  title: string
   items: RadioItem[]
   initialIndex?: number
   limit?: number

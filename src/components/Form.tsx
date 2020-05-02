@@ -99,7 +99,7 @@ export default function Form<D extends FormFields>({
   )
 
   return (
-    <Column>
+    <Column paddingTop={1}>
       <Title>{title}</Title>
 
       {Object.entries(readonlyForm).map(([id, item]) => (
