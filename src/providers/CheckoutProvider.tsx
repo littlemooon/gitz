@@ -1,6 +1,5 @@
 import React, { ReactNode } from 'react'
 import GitRouter from '../components/GitRouter'
-import useFirst from '../hooks/useFirst'
 import useGitQuery from '../hooks/useGitQuery'
 import { Branch } from '../lib/branch'
 import { queries } from '../lib/queries'
@@ -17,7 +16,7 @@ export default function CheckoutProvider({
   const branchQuery = useGitQuery(queries.branch, undefined)
   const statusQuery = useGitQuery(queries.status, undefined)
 
-  const current = useFirst(() => branchQuery.state?.current)
+  const current = branchQuery.state?.current
   const onBranch = current?.name === branch?.name
 
   return (

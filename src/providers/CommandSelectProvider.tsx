@@ -1,13 +1,15 @@
-import { useApp } from 'ink'
 import React, { ReactNode, useCallback, useMemo, useState } from 'react'
 import Command from '../components/Command'
+import Exit from '../components/Exit'
 import GitRouter from '../components/GitRouter'
 import Select, { SelectItem } from '../components/Select'
+import useCli from '../hooks/useCli'
 import useGitQuery from '../hooks/useGitQuery'
 import { filterArray } from '../lib/array'
 import { CliCommandKey, cliCommands, exposedCliCommands } from '../lib/command'
 import { queries } from '../lib/queries'
 import { getMaxLength, join } from '../lib/string'
+import { useExit } from './ExitProvider'
 
 export default function CommandSelectProvider({
   keys,
@@ -16,10 +18,12 @@ export default function CommandSelectProvider({
   children?: ReactNode
   keys?: CliCommandKey[]
 }) {
+  const { flags } = useCli()
   const branchQuery = useGitQuery(queries.branch, undefined)
   const statusQuery = useGitQuery(queries.status, undefined)
+  const stashQuery = useGitQuery(queries.stash, undefined)
 
-  const { exit } = useApp()
+  const { exit } = useExit()
   const [command, setCommand] = useState<CliCommandKey | undefined>()
 
   const handleSelect = useCallback(
@@ -53,6 +57,7 @@ export default function CommandSelectProvider({
         x.require?.working ? hasWorkingChanges : true,
         x.require?.changes ? hasStagedChanges || hasWorkingChanges : true,
         x.require?.ahead ? statusQuery.state?.ahead : true,
+        x.require?.stash ? stashQuery.state?.latest : true,
       ].every(Boolean)
     })
 
@@ -68,23 +73,37 @@ export default function CommandSelectProvider({
         ),
         id: command.key,
         shortcut: command.shortcut,
+        bold: keys?.includes(command.key),
       }))
     )
-  }, [hasStagedChanges, hasWorkingChanges, keys, onFeature, statusQuery.state])
+  }, [
+    hasStagedChanges,
+    hasWorkingChanges,
+    keys,
+    onFeature,
+    stashQuery.state,
+    statusQuery.state,
+  ])
 
-  return (
+  return flags.exit ? (
+    <Exit />
+  ) : (
     <GitRouter response={branchQuery}>
-      {command ? (
-        <Command command={cliCommands[command]}>
-          {children ?? <CommandSelectProvider />}
-        </Command>
-      ) : (
-        <Select
-          title="Commands"
-          onSelect={handleSelect}
-          items={[...items, { id: 'exit', label: 'exit', shortcut: 'x' }]}
-        />
-      )}
+      <GitRouter response={statusQuery}>
+        <GitRouter response={stashQuery}>
+          {command ? (
+            <Command command={cliCommands[command]}>
+              {children ?? <CommandSelectProvider />}
+            </Command>
+          ) : (
+            <Select
+              title="Commands"
+              onSelect={handleSelect}
+              items={[...items, { id: 'exit', label: 'exit', shortcut: 'x' }]}
+            />
+          )}
+        </GitRouter>
+      </GitRouter>
     </GitRouter>
   )
 }

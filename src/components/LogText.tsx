@@ -3,9 +3,6 @@ import { Color, ColorProps, Text } from 'ink'
 import Spinner from 'ink-spinner'
 import React, { ReactNode } from 'react'
 import useCli from '../hooks/useCli'
-import useConstant from '../hooks/useConstant'
-import { join } from '../lib/string'
-import getUuid from '../lib/uuid'
 import Row from './Row'
 import Static from './Static'
 
@@ -51,11 +48,10 @@ const LogText = {
     return <LogTextBase {...props} />
   },
   Debug(props: Omit<LogTextProps, 'type'>) {
-    const id = useConstant(() => getUuid())
     const { flags } = useCli()
 
     return flags.debug ? (
-      <Static id={join(['debug', id], '-')}>
+      <Static>
         <LogTextBase type={LogType.debug} {...props} />
       </Static>
     ) : null

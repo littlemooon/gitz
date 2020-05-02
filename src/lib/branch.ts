@@ -84,7 +84,7 @@ function parseBranchLabel(branch?: Branch) {
   const ahead = aheadMatch && aheadMatch[1]
   const behindMatch = /[behind (\d+)]/.exec(branch?.label ?? '')
   const behind = behindMatch && behindMatch[1]
-  console.log('-------------------- branch --> ', { aheadMatch, behindMatch })
+
   return branch?.label
     ?.replace(/[ahead (\d+)]/, chalk.green(`+ ${ahead}`))
     .replace(/[behind (\d+)]/, chalk.green(`- ${behind}`))

@@ -1,5 +1,5 @@
 import meow, { BooleanFlag, Result, StringFlag } from 'meow'
-import { CliCommand, cliCommands } from './command'
+import { CliCommand, cliCommands, createUnknownCommand } from './command'
 
 export const cliHelpText = `
 Usage:
@@ -62,18 +62,13 @@ export interface Cli {
   showVersion(): void
 }
 
-function parseCommand(command?: string): CliCommand | undefined {
-  if (command) {
-    const c = Object.values(cliCommands).find(
-      ({ key, shortcut }) => command === key || command === shortcut
+export function parseCommand(input?: string): CliCommand | undefined {
+  if (input) {
+    const command = Object.values(cliCommands).find(
+      ({ key, shortcut }) => input === key || input === shortcut
     )
-    if (c) {
-      return c
-    } else {
-      throw new Error(
-        `Unknown command: ${command} [${Object.keys(cliCommands).join(', ')}]`
-      )
-    }
+
+    return command ? command : createUnknownCommand(input)
   }
 }
 

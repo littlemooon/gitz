@@ -12,17 +12,17 @@ export interface GitMutation<I, R> {
   type: 'mutation'
   getName: (item?: I) => GitOperationName
   run: (git: SimpleGit, item: I) => Promise<R>
-  set?: (item: I) => void
+  set?: (git: SimpleGit, item: I) => Promise<void>
 }
 
-function createGitMutation<I, R>(
+function createGitMutation<I, R = void>(
   input: Omit<GitMutation<I, R>, 'type'>
 ): GitMutation<I, R> {
   return { type: 'mutation', ...input }
 }
 
 export const mutations = {
-  checkout: createGitMutation<Branch, void>({
+  checkout: createGitMutation<Branch>({
     getName: (branch) => ({
       title: 'Switch branch',
       content: [branch?.name],
@@ -30,11 +30,9 @@ export const mutations = {
     run: async (git, branch) => {
       await git.checkout(branch?.name)
       await updateQuery(queries.branch, { git })
-    },
-    set: (branch) => {
       const branches = store.get(StoreKey.branches)
 
-      return setStoreItem(StoreKey.branches, {
+      setStoreItem(StoreKey.branches, {
         all: branches?.all.map((x) => {
           return x.name === branch.name
             ? { ...x, lastCheckout: Date.now(), current: true }
@@ -46,7 +44,7 @@ export const mutations = {
     },
   }),
 
-  checkoutBranch: createGitMutation<Branch, void>({
+  checkoutBranch: createGitMutation<Branch>({
     getName: (branch) => ({
       title: 'Create branch',
       content: [branch?.name],
@@ -73,13 +71,13 @@ export const mutations = {
       content: [commit?.message],
     }),
     run: async (git, commit) => {
-      const result = await git.commit(commit.message)
+      const r = await git.commit(commit.message)
       await updateQuery(queries.status, { git })
-      return result
+      return r
     },
   }),
 
-  push: createGitMutation<Maybe<string>, void>({
+  push: createGitMutation<Maybe<string>>({
     getName: (arg) => ({
       title: 'Push',
       content: [`origin ${arg}`],
@@ -109,7 +107,7 @@ export const mutations = {
     },
   }),
 
-  add: createGitMutation<string | string[], void>({
+  add: createGitMutation<string | string[]>({
     getName: (paths) => ({
       title: 'Add',
       content: paths === '.' ? ['all files'] : toArray(paths),
@@ -120,7 +118,7 @@ export const mutations = {
     },
   }),
 
-  reset: createGitMutation<string | string[], void>({
+  reset: createGitMutation<string | string[]>({
     getName: (paths) => ({
       title: 'Reset',
       content: paths === '.' ? ['all files'] : toArray(paths),
@@ -131,30 +129,33 @@ export const mutations = {
     },
   }),
 
-  stashPut: createGitMutation<undefined, string>({
+  stashPut: createGitMutation<undefined>({
     getName: () => ({
       title: 'Stash push',
     }),
-    run: (git) => {
-      return git.stash()
+    run: async (git) => {
+      await git.stash()
+      await updateQuery(queries.status, { git })
+      await updateQuery(queries.stash, { git })
     },
   }),
 
-  stashApply: createGitMutation<undefined, string>({
+  stashApply: createGitMutation<undefined>({
     getName: () => ({
       title: 'Stash apply',
     }),
-    run: (git) => {
-      return git.raw(['stash', 'apply'])
+    run: async (git) => {
+      await git.raw(['stash', 'apply'])
     },
   }),
 
-  stashDrop: createGitMutation<undefined, string>({
+  stashDrop: createGitMutation<undefined>({
     getName: () => ({
       title: 'Stash drop',
     }),
-    run: (git) => {
-      return git.raw(['stash', 'drop'])
+    run: async (git) => {
+      await git.raw(['stash', 'drop'])
+      await updateQuery(queries.stash, { git })
     },
   }),
 }

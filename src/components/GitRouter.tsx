@@ -14,7 +14,6 @@ import { Maybe } from '../types'
 import Column from './Column'
 import Exit from './Exit'
 import Json from './Json'
-import Static from './Static'
 import Table from './Table'
 
 type GetGitRoute = (d: ReactNode) => Maybe<ReactNode>
@@ -86,9 +85,7 @@ export default function GitRouter({
             GitStatus.success,
             <Column>
               {response.type === 'mutation' ? (
-                <Static id={id}>
-                  <Box paddingBottom={1}>{defaults[GitStatus.success]}</Box>
-                </Static>
+                <Box paddingBottom={1}>{defaults[GitStatus.success]}</Box>
               ) : null}
 
               {children}
@@ -98,9 +95,7 @@ export default function GitRouter({
           [GitStatus.error]: getConfig(
             GitStatus.error,
             <Column>
-              <Static id={id}>
-                <Box paddingBottom={1}>{defaults[GitStatus.error]}</Box>
-              </Static>
+              <Box paddingBottom={1}>{defaults[GitStatus.error]}</Box>
 
               {flags.exit ? (
                 <Exit />

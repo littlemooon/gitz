@@ -46,7 +46,7 @@ export default function BranchSelectProvider<B extends Branch>({
             ? formatLabel(branch)
             : `${branch.name}: ${branch.label}`,
           id: branch.name,
-          current: branch.current,
+          bold: branch.current,
         })) ?? []
     )
   }, [branches, formatLabel])

@@ -12,7 +12,7 @@ export type SelectItem<T extends object = {}> = T & {
   label?: string
   content?: ReactNode
   id: string
-  current?: boolean
+  bold?: boolean
   shortcut?: string
 }
 
@@ -22,7 +22,7 @@ export interface SelectGap extends SelectItem {
 
 export const selectGap: SelectGap = { type: 'gap', id: 'gap' }
 
-function isSelectGap(item: SelectItem | SelectGap): item is SelectGap {
+export function isSelectGap(item: SelectItem | SelectGap): item is SelectGap {
   return (item as any).type === 'gap'
 }
 
@@ -59,7 +59,7 @@ export default function Select(props: SelectProps) {
       ? arrayRotate(props.items, state.rotateIndex).slice(0, limit)
       : props.items
 
-    return slicedItems.sort((x) => (x.current ? -1 : 1))
+    return slicedItems.sort((x) => (x.bold ? -1 : 1))
   }, [props.items, state.rotateIndex, limit, hasLimit])
 
   useInput((input, key) => {
@@ -142,7 +142,7 @@ export default function Select(props: SelectProps) {
               <SelectIndicator selected={focussed} />
               <Column>
                 {item.label ? (
-                  <LogText.Default bold={item.current} cyan={focus && focussed}>
+                  <LogText.Default bold={item.bold} cyan={focus && focussed}>
                     {join([item.shortcut, item.label], ': ')}
                   </LogText.Default>
                 ) : null}

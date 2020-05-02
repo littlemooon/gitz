@@ -37,11 +37,11 @@ export default function useGitMutation<R, I>(
   useEffect(() => {
     if (status === 'fulfilled' && !set) {
       if (mutation.set && item) {
-        mutation.set(item)
+        mutation.set(git, item).then(() => setSet(true))
       }
-      setSet(true)
     }
   }, [set, status, item, mutation])
+
   const gitStatus = useMemo(() => {
     switch (status) {
       case 'initial':

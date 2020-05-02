@@ -11,12 +11,14 @@ import FeaturePushProvider from '../providers/FeaturePushProvider'
 import FeatureSelectProvider from '../providers/FeatureSelectProvider'
 import FeatureUpdateProvider from '../providers/FeatureUpdateProvider'
 import FileStatusProvider from '../providers/FileStatusProvider'
+import IndexCommandProvider from '../providers/IndexCommandProvider'
 import ResetMutationProvider from '../providers/ResetMutationProvider'
 import ResetSelectProvider from '../providers/ResetSelectProvider'
 import StashApplyMutationProvider from '../providers/StashApplyMutationProvider'
 import StashDropMutationProvider from '../providers/StashDropMutationProvider'
 import StashPutMutationProvider from '../providers/StashPutMutationProvider'
 import StashStatusProvider from '../providers/StashStatusProvider'
+import UnknownCommandProvider from '../providers/UnknownCommandProvider'
 
 export default function Command({
   command,
@@ -94,13 +96,14 @@ export default function Command({
     case CliCommandKey.stashDrop:
       return <StashDropMutationProvider>{children}</StashDropMutationProvider>
 
-    default:
+    case CliCommandKey.unknown:
       return (
-        <BranchStatusProvider>
-          <FileStatusProvider>
-            <CommandSelectProvider>{children}</CommandSelectProvider>
-          </FileStatusProvider>
-        </BranchStatusProvider>
+        <UnknownCommandProvider>
+          <IndexCommandProvider>{children}</IndexCommandProvider>
+        </UnknownCommandProvider>
       )
+
+    default:
+      return <IndexCommandProvider>{children}</IndexCommandProvider>
   }
 }

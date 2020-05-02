@@ -1,6 +1,3 @@
-import chalk from 'chalk'
-import figures from 'figures'
-import { cliHelpText } from './cli'
 import env from './env'
 import { capitalize, getMaxLength, join } from './string'
 
@@ -21,6 +18,7 @@ export enum CliCommandKey {
   'stashPut' = 'stash-push',
   'stashApply' = 'stash-apply',
   'stashDrop' = 'stash-drop',
+  'unknown' = 'unknown',
 }
 
 export interface CliCommand {
@@ -35,6 +33,14 @@ export interface CliCommand {
     staged?: boolean
     ahead?: boolean
     changes?: boolean
+    stash?: boolean
+  }
+}
+
+export function createUnknownCommand(command: string) {
+  return {
+    key: CliCommandKey.unknown,
+    description: command,
   }
 }
 
@@ -129,40 +135,19 @@ export const cliCommands: Record<CliCommandKey, CliCommand> = {
   [CliCommandKey.stashApply]: {
     key: CliCommandKey.stashApply,
     description: `apply latest stash item`,
+    require: { stash: true },
   },
   [CliCommandKey.stashDrop]: {
     key: CliCommandKey.stashDrop,
     description: `remove latest stash item`,
+    require: { stash: true },
   },
+  [CliCommandKey.unknown]: createUnknownCommand(''),
 }
 
 export const exposedCliCommands = Object.values(cliCommands).filter(
   (command) => command.exposed
 )
-
-export function parseCommand(command?: string): CliCommand | undefined {
-  if (command) {
-    const c = Object.values(cliCommands).find(
-      ({ key, shortcut }) => command === key || command === shortcut
-    )
-    if (c) {
-      return c
-    } else {
-      throw new Error(
-        join(
-          [
-            join(
-              [chalk.red.bold(`${figures.cross} Unknown command`), command],
-              ' '
-            ),
-            cliHelpText,
-          ],
-          '\n'
-        )
-      )
-    }
-  }
-}
 
 export function getCommandHelpText(): { text: string; maxLength: number } {
   const commandStrings = exposedCliCommands.map((command) => {

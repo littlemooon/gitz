@@ -48,7 +48,7 @@ function TableBase({ data, type }: TableProps) {
 
 const Table = {
   Base: TableBase,
-  Debug({ name, ...props }: Omit<TableProps, 'type'> & { name: string }) {
+  Debug({ name, ...props }: Omit<TableProps, 'type'> & { name?: string }) {
     const { flags } = useCli()
     return flags.debug ? (
       <Static id={name}>
