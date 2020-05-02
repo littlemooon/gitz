@@ -74,18 +74,9 @@ export default function useGitQuery<K extends StoreKey, A, R>(
     }
   }, [status, state])
 
-  const { title, content } = query.getName(args)
-  const name = useMemo(
-    () => ({
-      title,
-      content,
-    }),
-    [title, content]
-  )
-
   return {
     type: 'query',
-    name,
+    name: query.getName(args),
     state,
     status: gitStatus,
     error,

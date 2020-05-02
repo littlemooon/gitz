@@ -41,15 +41,6 @@ export default function useGitMutation<R, A>(
     }
   }, [status])
 
-  const { title, content } = mutation.getName(arg)
-  const name = useMemo(
-    () => ({
-      title,
-      content,
-    }),
-    [title, content]
-  )
-
   const runCallback = useCallback(() => {
     run()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -57,7 +48,7 @@ export default function useGitMutation<R, A>(
 
   return {
     type: 'mutation',
-    name,
+    name: mutation.getName(arg),
     state: data,
     status: gitStatus,
     error,

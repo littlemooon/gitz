@@ -56,7 +56,7 @@ export default function StaticProvider({ children }: { children: ReactNode }) {
           })}
         </Static>
 
-        <Box paddingTop={1}>{children}</Box>
+        <Box>{children}</Box>
       </StaticContext.Provider>
     </ExitContext.Provider>
   )

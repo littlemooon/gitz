@@ -1,10 +1,10 @@
-import { Box } from 'ink'
 import React, { ReactNode } from 'react'
 import LogText from '../components/LogText'
 import Router from '../components/Router'
 import useCli from '../hooks/useCli'
 import { GitMutationResponse } from '../hooks/useGitMutation'
 import { GitQueryResponse, GitStatus } from '../hooks/useGitQuery'
+import { toArray } from '../lib/array'
 import { parseGitError } from '../lib/error'
 import { isFunction } from '../lib/function'
 import { StoreKey } from '../lib/store'
@@ -41,7 +41,11 @@ export default function GitRouter({
     ),
     [GitStatus.success]: (
       <LogText.Success prefix={response.name.title}>
-        <Column>{response.name.content}</Column>
+        <Column>
+          {toArray(response.name.content).map((text, i) => (
+            <LogText.Default key={i}>{text}</LogText.Default>
+          ))}
+        </Column>
       </LogText.Success>
     ),
     [GitStatus.error]: (
@@ -86,9 +90,9 @@ export default function GitRouter({
           [GitStatus.success]: getConfig(
             GitStatus.success,
             <Column>
-              {response.type === 'mutation' ? (
-                <Box paddingBottom={1}>{defaults[GitStatus.success]}</Box>
-              ) : null}
+              {response.type === 'mutation'
+                ? defaults[GitStatus.success]
+                : null}
 
               {children}
             </Column>
@@ -97,7 +101,7 @@ export default function GitRouter({
           [GitStatus.error]: getConfig(
             GitStatus.error,
             <Column>
-              <Box paddingBottom={1}>{defaults[GitStatus.error]}</Box>
+              {defaults[GitStatus.error]}
 
               {flags.exit ? (
                 <Exit reason={join([response.name.title, 'error'], ' ')} />

@@ -128,7 +128,7 @@ export default function Select(props: SelectProps) {
   })
 
   return (
-    <Column>
+    <Column paddingTop={1}>
       {props.title && <Title>{props.title}</Title>}
 
       {items.map((item, index) => {

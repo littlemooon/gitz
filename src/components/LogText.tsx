@@ -68,7 +68,7 @@ const LogText = {
   },
   Info({ prefix, ...props }: { prefix?: string } & Omit<LogTextProps, 'type'>) {
     return (
-      <Row gap={1}>
+      <Row gap={1} paddingTop={1}>
         <LogTextBase type={LogType.info}>{figures.info}</LogTextBase>
         <LogTextBase type={LogType.info} bold {...props}>
           {prefix}
@@ -82,7 +82,7 @@ const LogText = {
     ...props
   }: { prefix?: string } & Omit<LogTextProps, 'type'>) {
     return (
-      <Row gap={1}>
+      <Row gap={1} paddingTop={1}>
         <LogTextBase type={LogType.loading}>{figures.bullet}</LogTextBase>
         <LogTextBase type={LogType.loading} {...props}>
           {prefix}...
@@ -96,7 +96,7 @@ const LogText = {
     ...props
   }: { prefix?: string } & Omit<LogTextProps, 'type'>) {
     return (
-      <Row gap={1}>
+      <Row gap={1} paddingTop={1}>
         <LogTextBase type={LogType.success}>{figures.tick}</LogTextBase>
         <LogTextBase type={LogType.success} bold {...props}>
           {prefix}
@@ -107,7 +107,7 @@ const LogText = {
   },
   Warn({ prefix, ...props }: { prefix?: string } & Omit<LogTextProps, 'type'>) {
     return (
-      <Row gap={1}>
+      <Row gap={1} paddingTop={1}>
         <LogTextBase type={LogType.warn}>{figures.warning}</LogTextBase>
         <LogTextBase type={LogType.warn} bold {...props}>
           {prefix}
@@ -122,7 +122,7 @@ const LogText = {
     ...props
   }: { prefix?: string } & Omit<LogTextProps, 'type'>) {
     return (
-      <Row gap={1}>
+      <Row gap={1} paddingTop={1}>
         <LogTextBase type={LogType.error}>{figures.cross}</LogTextBase>
         <LogTextBase type={LogType.error} bold {...props}>
           {prefix ?? 'Error'}
@@ -135,7 +135,7 @@ const LogText = {
   },
   Exit({ prefix, ...props }: { prefix?: string } & Omit<LogTextProps, 'type'>) {
     return (
-      <Row gap={1}>
+      <Row gap={1} paddingTop={1}>
         <LogTextBase type={LogType.exit}>{figures.pointer}</LogTextBase>
         <LogTextBase type={LogType.exit} bold {...props}>
           {prefix}
